@@ -27,14 +27,22 @@ MVP funcional con arquitectura modular propia tipo MVC ligero:
 - Edicion controlada de datos del cliente/equipo al crear orden.
 - Opcion de crear equipo nuevo tomando como base un equipo existente.
 - Selector de tipo de servicio con busqueda.
-- Patron/PIN del equipo en registro de orden.
+- Patron/PIN del equipo en registro de orden (rejilla 3x3 o clave).
 - Diagnosticos, cotizaciones y pagos.
-- Entrega de equipos por clave/codigo de barras.
+- Entrega de equipos por clave/codigo de barras aleatoria.
 - Registro de quien entrega el equipo.
+- Documentos imprimibles de orden y de entrega en tamano carta y ticket
+  termico 80/58 mm, con logo del negocio configurable.
+- PDF de la orden generado al vuelo (no se almacena).
+- Evidencia de aceptacion del cliente (foto del ticket firmado) y bitacora
+  por orden.
+- Temas de diseno seleccionables, incluido "Blueprint neon".
 - Portal publico de consulta por folio/token.
 - Dashboard, reportes iniciales, configuracion y auditoria.
-- API JSON interna con formato consistente.
+- API JSON interna con formato consistente (con CSRF).
 - Seed con usuarios, roles, cliente demo, equipos demo, orden demo y pagos demo.
+
+> El historial detallado de cambios esta en [CHANGELOG.md](CHANGELOG.md).
 
 ## Requisitos
 
@@ -235,6 +243,25 @@ El cliente puede ver estado, equipo, diagnostico visible, cotizacion visible,
 comentarios visibles, saldo y datos de contacto. No ve notas internas, usuarios
 internos, costos internos ni auditoria privada.
 
+## Actualizacion de una instalacion existente
+
+Si ya tenias el sistema instalado, ejecuta una vez estas migraciones (no borran
+datos; solo ajustan claves de entrega y agregan configuracion nueva):
+
+```bash
+php database/upgrade_delivery_codes.php   # claves de entrega aleatorias
+php database/upgrade_ticket_config.php     # config de logo y garantia del ticket
+```
+
+Opcional en `.env` (solo si corres detras de un proxy/balanceador):
+
+```ini
+APP_TRUST_PROXY=false
+```
+
+Tras migrar, en Configuracion puedes fijar el logo (`negocio.logo_url`) y el
+texto de garantia del ticket (`ticket.garantia`).
+
 ## Entrega por codigo de barras
 
 La entrega se hace desde:
@@ -244,8 +271,29 @@ La entrega se hace desde:
 ```
 
 El usuario escanea o teclea la clave de entrega de la nota del cliente. Esa clave
-no es el folio y no se deriva del folio. Esto reduce entregas equivocadas y deja
-registro de quien libero el equipo.
+es aleatoria (`ENT-XXXXXXXX`), no es el folio y no se deriva de el. Esto reduce
+entregas equivocadas y deja registro de quien libero el equipo.
+
+## Impresion de documentos
+
+Tanto la orden de recepcion como el comprobante de entrega se imprimen en tres
+formatos, elegibles desde la ficha de la orden (boton Imprimir / Comprobante):
+
+- Hoja carta (recuadros, garantia y firmas).
+- Ticket termico 80 mm.
+- Ticket termico 58 mm.
+
+El encabezado usa el logo y los datos del negocio de Configuracion. El patron de
+desbloqueo se dibuja en el documento a partir del campo del equipo. El PDF de la
+orden se genera al momento y no se almacena.
+
+## Evidencia y bitacora
+
+En la ficha de la orden se puede subir la foto del ticket firmado como evidencia
+y marcar que el cliente acepto presupuesto y terminos. La foto se guarda en
+`storage/uploads` (fuera del webroot) y se sirve por ruta autenticada; el PDF no
+se guarda. La bitacora muestra el historico de la orden (creacion, cambios de
+estado, evidencia, aceptacion, PDF generado y entrega).
 
 ## API JSON
 
@@ -312,11 +360,19 @@ tests/             Pruebas de funciones puras
 ## Seguridad aplicada
 
 - PDO con prepared statements.
-- CSRF en formularios.
+- CSRF en formularios y en la API (`_csrf` o header `X-CSRF-TOKEN`).
 - Escape HTML con `e()`.
-- Sesiones con cookie `HttpOnly` y `SameSite=Lax`.
+- Sesiones con cookie `HttpOnly` y `SameSite=Lax`, y `session.use_strict_mode`.
 - Regeneracion de ID de sesion al iniciar login.
-- Passwords hasheadas con `password_hash`.
+- Passwords hasheadas con `password_hash` (minimo 8 caracteres al crear).
+- Freno de fuerza bruta en login (5 intentos por email/IP en 15 minutos).
+- Manejador global de excepciones: registra en `storage/logs` y no expone
+  trazas ni SQL al navegador salvo con `APP_DEBUG=true`.
+- Cabeceras de seguridad (nosniff, X-Frame-Options, Referrer-Policy,
+  Permissions-Policy, HSTS en HTTPS) y sin `X-Powered-By`.
+- URLs internas relativas a la raiz (evita contenido mixto en HTTPS).
+- Cabeceras `X-Forwarded-*` solo se aceptan con `APP_TRUST_PROXY=true`.
+- Clave de entrega aleatoria (no derivada del folio).
 - Validacion de entrada en servicios/controladores.
 - Auditoria para acciones criticas.
 - `storage` protegido con `.htaccess`.
