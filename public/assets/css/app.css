@@ -557,6 +557,22 @@ a {
   display: none;
 }
 
+.print-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -8px 0 18px;
+  padding: 10px 12px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+}
+
 @media (max-width: 960px) {
   .app-shell {
     grid-template-columns: 1fr;
@@ -674,6 +690,16 @@ a {
 
   .equipment-type-grid {
     grid-template-columns: repeat(3, minmax(86px, 1fr));
+  }
+
+  .print-toolbar {
+    position: static;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .print-toolbar .btn {
+    flex: 1 1 auto;
   }
 }
 
