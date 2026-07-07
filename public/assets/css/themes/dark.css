@@ -1,0 +1,153 @@
+/* =======================================================================
+   TEMA: Dark
+   Modo oscuro: fondo navy/carbon, texto claro, paneles traslucidos
+   oscuros y acentos neon.
+   Se activa con: <html data-theme="dark">
+   No modifica la logica: solo redefine variables y superficies.
+   ======================================================================= */
+
+[data-theme="dark"] {
+  --ink: #e6f1f5;
+  --muted: #8aa3ad;
+  --panel: rgba(22, 32, 40, 0.72);
+  --panel-strong: rgba(26, 38, 47, 0.92);
+  --line: rgba(120, 180, 195, 0.14);
+  --aqua: #2dd4e0;
+  --mint: #5fe0ab;
+  --coral: #ff8a73;
+  --violet: #9a8cff;
+}
+
+[data-theme="dark"] body {
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 18% 8%, rgba(45, 212, 224, 0.12), transparent 32rem),
+    radial-gradient(circle at 86% 18%, rgba(95, 224, 171, 0.10), transparent 28rem),
+    linear-gradient(135deg, #0b141a 0%, #0e1a22 45%, #121020 100%);
+}
+
+[data-theme="dark"] a {
+  color: #4fd6e2;
+}
+
+[data-theme="dark"] .sidebar {
+  background: rgba(10, 18, 24, 0.86);
+  border-right: 1px solid rgba(120, 180, 195, 0.14);
+}
+
+[data-theme="dark"] .glass-card,
+[data-theme="dark"] .table-wrap,
+[data-theme="dark"] .metric,
+[data-theme="dark"] .timeline-item,
+[data-theme="dark"] .auth-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="dark"] .auth-card {
+  background: var(--panel-strong);
+}
+
+/* Tablas */
+[data-theme="dark"] .table {
+  --bs-table-color: var(--ink);
+  --bs-table-bg: transparent;
+  --bs-table-border-color: var(--line);
+  color: var(--ink);
+}
+
+[data-theme="dark"] .table thead th {
+  color: var(--muted);
+  border-bottom-color: var(--line);
+}
+
+/* Formularios */
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .form-select,
+[data-theme="dark"] select.form-select {
+  background-color: #f7fbfd;
+  color: #17242c;
+  border-color: rgba(120, 180, 195, 0.32);
+}
+
+[data-theme="dark"] .form-select option,
+[data-theme="dark"] select.form-select option,
+[data-theme="dark"] .form-select optgroup {
+  background-color: #f7fbfd;
+  color: #17242c;
+}
+
+[data-theme="dark"] .form-select:disabled {
+  background-color: #cfdde3;
+  color: #526873;
+  opacity: 1;
+}
+
+[data-theme="dark"] .form-control::placeholder {
+  color: var(--muted);
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--ink);
+  border-color: var(--aqua);
+  box-shadow: 0 0 0 0.2rem rgba(45, 212, 224, 0.2);
+}
+
+[data-theme="dark"] .form-select:focus {
+  background-color: #fff;
+  color: #10202a;
+}
+
+/* Botones / acentos */
+[data-theme="dark"] .btn-primary {
+  --bs-btn-bg: #0f9fab;
+  --bs-btn-border-color: #0f9fab;
+  --bs-btn-hover-bg: #11b3c1;
+  --bs-btn-hover-border-color: #11b3c1;
+}
+
+[data-theme="dark"] .btn-outline-dark {
+  --bs-btn-color: #e6f1f5;
+  --bs-btn-border-color: rgba(230, 241, 245, 0.4);
+  --bs-btn-hover-bg: rgba(255, 255, 255, 0.1);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-border-color: rgba(255, 255, 255, 0.55);
+}
+
+[data-theme="dark"] .btn-outline-secondary {
+  --bs-btn-color: #cfdde3;
+  --bs-btn-border-color: rgba(207, 221, 227, 0.35);
+  --bs-btn-hover-bg: rgba(255, 255, 255, 0.1);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-border-color: rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="dark"] .text-muted {
+  color: var(--muted) !important;
+}
+
+/* Menus desplegables (incluye el selector de tema) */
+[data-theme="dark"] .dropdown-menu {
+  background: #16222b;
+  color: #e6f1f5;
+  border-color: rgba(120, 180, 195, 0.18);
+}
+
+[data-theme="dark"] .dropdown-item {
+  color: #cfdde3;
+}
+
+[data-theme="dark"] .dropdown-item:hover,
+[data-theme="dark"] .dropdown-item:focus {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+}

@@ -1,0 +1,26 @@
+{
+  "name": "servicio-tecnico/gestion-reparaciones",
+  "description": "Sistema Web de Gestion de Servicios Tecnicos y Reparaciones",
+  "type": "project",
+  "license": "MIT",
+  "require": {
+    "php": ">=8.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    },
+    "files": [
+      "app/Helpers/money.php",
+      "app/Helpers/dates.php",
+      "app/Helpers/strings.php",
+      "app/Helpers/whatsapp.php",
+      "app/Helpers/files.php",
+      "app/Helpers/barcode.php",
+      "app/Helpers/security.php"
+    ]
+  },
+  "scripts": {
+    "test": "php tests/run.php"
+  }
+}

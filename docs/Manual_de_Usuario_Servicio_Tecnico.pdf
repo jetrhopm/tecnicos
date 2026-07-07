@@ -1,0 +1,643 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+3 0 obj
+<< /Length 3593 >>
+stream
+BT /F2 19 Tf 1 0 0 1 54.00 723.00 Tm (Manual de Usuario) Tj ET
+BT /F2 19 Tf 1 0 0 1 54.00 686.00 Tm (Sistema Web de Gestion de Servicios Tecnicos y) Tj ET
+BT /F2 19 Tf 1 0 0 1 54.00 663.00 Tm (Reparaciones) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 629.00 Tm (Version del manual: 1.0) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 615.00 Tm (Fecha: 2026-06-14) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 596.00 Tm (Este manual explica los roles del sistema, las tareas que realiza cada usuario y el flujo) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 582.00 Tm (completo para recibir un equipo, levantar una orden, diagnosticar, cotizar, cobrar, entregar y) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 568.00 Tm (dar seguimiento al cliente.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 539.00 Tm (1. Objetivo del sistema) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 514.00 Tm (El sistema permite administrar servicios tecnicos y reparaciones desde la recepcion del equipo) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 500.00 Tm (hasta la entrega final. Centraliza clientes, equipos, ordenes, diagnosticos, cotizaciones,) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 486.00 Tm (pagos, garantias, inventario, reportes y comunicacion con el cliente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 467.00 Tm (El flujo principal recomendado es:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 448.00 Tm (- Recibir al cliente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 434.00 Tm (- Registrar o seleccionar cliente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 420.00 Tm (- Registrar o seleccionar equipo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 406.00 Tm (- Levantar orden de servicio.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 392.00 Tm (- Imprimir comprobante con codigo de barras y link/QR de consulta.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 378.00 Tm (- Revisar y diagnosticar.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 364.00 Tm (- Generar cotizacion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 350.00 Tm (- Autorizar o rechazar cotizacion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 336.00 Tm (- Reparar y registrar avances.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 322.00 Tm (- Cobrar anticipo, parcialidades o liquidacion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 308.00 Tm (- Entregar equipo usando clave/codigo de entrega.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 294.00 Tm (- Iniciar garantia si aplica.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 280.00 Tm (- Conservar historial y auditoria.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 251.00 Tm (2. Conceptos basicos) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 226.00 Tm (Cliente: Persona o empresa que deja un equipo para diagnostico o reparacion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 207.00 Tm (Equipo: Aparato asociado al cliente. Puede ser celular, laptop, PC, consola, impresora,) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 193.00 Tm (electrodomestico, herramienta, moto u otro.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 174.00 Tm (Orden de servicio: Registro central de la reparacion. Contiene folio, cliente, equipo, falla,) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 160.00 Tm (diagnostico, estado, costos, pagos, tecnico y entrega.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 141.00 Tm (Folio: Identificador publico de la orden. Sirve para buscar y consultar.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 122.00 Tm (Clave de entrega / codigo de barras: Llave interna para localizar y liberar el equipo al) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 108.00 Tm (momento de entrega.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 89.00 Tm (Token publico: Llave segura para que el cliente consulte su orden desde el portal publico sin) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 75.00 Tm (ver informacion interna.) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.00 30 Tm (Manual de Usuario - Sistema de Servicios Tecnicos) Tj ET
+BT /F1 8 Tf 1 0 0 1 488.00 30 Tm (1 / 12) Tj ET
+endstream
+endobj
+4 0 obj
+<< /Type /Page /Parent 27 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 3 0 R >>
+endobj
+5 0 obj
+<< /Length 3573 >>
+stream
+BT /F1 10 Tf 1 0 0 1 54.00 736.00 Tm (Bitacora / auditoria: Registro de cambios importantes, usuarios responsables, fecha, IP y datos) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 722.00 Tm (modificados.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 693.00 Tm (3. Roles del sistema) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 662.00 Tm (Superadmin) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 641.00 Tm (Es el usuario con control total del sistema.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 622.00 Tm (Puede:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 608.00 Tm (- Administrar usuarios, roles y permisos.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 594.00 Tm (- Ver, crear, editar, eliminar y administrar todos los modulos.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 580.00 Tm (- Cambiar configuraciones generales del negocio.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 566.00 Tm (- Revisar reportes, auditoria y movimientos criticos.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 552.00 Tm (- Autorizar excepciones especiales.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 533.00 Tm (Procesos principales:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 519.00 Tm (- Configurar el sistema antes de iniciar operaciones.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 505.00 Tm (- Crear usuarios para recepcion, tecnicos, caja y almacen.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 491.00 Tm (- Revisar permisos si un usuario no puede completar una tarea.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 477.00 Tm (- Supervisar informacion sensible y auditoria.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 463.00 Tm (- Preparar el sistema para produccion.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 438.00 Tm (Admin) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 417.00 Tm (Es responsable de la operacion diaria del taller.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 398.00 Tm (Puede:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 384.00 Tm (- Ver y gestionar clientes, equipos y ordenes.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 370.00 Tm (- Asignar tecnicos.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 356.00 Tm (- Revisar diagnosticos, cotizaciones, pagos y entregas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 342.00 Tm (- Consultar reportes operativos.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 328.00 Tm (- Apoyar a recepcion, caja o tecnicos si hay dudas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 309.00 Tm (Procesos principales:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 295.00 Tm (- Monitorear el dashboard.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 281.00 Tm (- Revisar ordenes abiertas, urgentes y pendientes.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 267.00 Tm (- Validar que las ordenes tengan tecnico asignado.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 253.00 Tm (- Dar seguimiento a equipos listos para entrega.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 239.00 Tm (- Revisar saldos pendientes y garantias activas.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 214.00 Tm (Recepcion) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 193.00 Tm (Es el rol encargado de recibir clientes y equipos.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 174.00 Tm (Puede:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 160.00 Tm (- Buscar o crear clientes.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 146.00 Tm (- Buscar o registrar equipos.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 132.00 Tm (- Levantar ordenes de servicio.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 118.00 Tm (- Imprimir comprobantes de recepcion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 104.00 Tm (- Enviar o copiar link de consulta al cliente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 90.00 Tm (- Consultar el estado de una orden.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 76.00 Tm (- Entregar equipos usando la clave de entrega, si el sistema lo permite.) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.00 30 Tm (Manual de Usuario - Sistema de Servicios Tecnicos) Tj ET
+BT /F1 8 Tf 1 0 0 1 488.00 30 Tm (2 / 12) Tj ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 27 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 5 0 R >>
+endobj
+7 0 obj
+<< /Length 3778 >>
+stream
+BT /F1 10 Tf 1 0 0 1 54.00 736.00 Tm (Procesos principales:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 722.00 Tm (- Usar Nueva orden para capturar cliente, equipo y falla en una sola pantalla.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 708.00 Tm (- Confirmar accesorios recibidos, estado fisico y observaciones.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 694.00 Tm (- Registrar anticipo si el cliente paga algo al dejar el equipo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 680.00 Tm (- Imprimir comprobante con folio y codigo de barras.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 666.00 Tm (- Explicar al cliente como consultar el avance.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 641.00 Tm (Tecnico) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 620.00 Tm (Es el rol encargado de revisar y reparar equipos asignados.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 601.00 Tm (Puede:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 587.00 Tm (- Ver ordenes asignadas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 573.00 Tm (- Consultar datos tecnicos del equipo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 559.00 Tm (- Registrar diagnostico tecnico.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 545.00 Tm (- Registrar pruebas realizadas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 531.00 Tm (- Agregar observaciones internas y visibles para cliente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 517.00 Tm (- Registrar avance de reparacion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 503.00 Tm (- Marcar resultados como reparado, no reparable o pendiente por refaccion, segun permisos.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 484.00 Tm (Procesos principales:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 470.00 Tm (- Abrir la orden asignada.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 456.00 Tm (- Leer falla reportada, accesorios, estado fisico y clave/patron si fue capturado.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 442.00 Tm (- Registrar diagnostico claro.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 428.00 Tm (- Indicar piezas necesarias y costo sugerido.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 414.00 Tm (- Actualizar estado cuando avance el trabajo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 400.00 Tm (- No entregar equipo directamente sin seguir el proceso de entrega.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 375.00 Tm (Tecnico senior) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 354.00 Tm (Es un tecnico con permisos ampliados para casos complejos.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 335.00 Tm (Puede:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 321.00 Tm (- Revisar ordenes criticas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 307.00 Tm (- Corregir o complementar diagnosticos.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 293.00 Tm (- Autorizar cambios tecnicos especiales.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 279.00 Tm (- Apoyar a otros tecnicos.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 265.00 Tm (- Validar reparaciones antes de entrega.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 246.00 Tm (Procesos principales:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 232.00 Tm (- Revisar equipos complicados o garantias.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 218.00 Tm (- Confirmar diagnosticos antes de cotizar.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 204.00 Tm (- Validar piezas y tiempos estimados.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 190.00 Tm (- Definir si un equipo es no reparable.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 165.00 Tm (Almacen) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 144.00 Tm (Es responsable de refacciones e inventario.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 125.00 Tm (Puede:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 111.00 Tm (- Consultar refacciones.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 97.00 Tm (- Registrar entradas y salidas de inventario cuando el modulo este habilitado.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 83.00 Tm (- Vigilar stock bajo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 69.00 Tm (- Asociar refacciones a reparaciones.) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.00 30 Tm (Manual de Usuario - Sistema de Servicios Tecnicos) Tj ET
+BT /F1 8 Tf 1 0 0 1 488.00 30 Tm (3 / 12) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 27 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 7 0 R >>
+endobj
+9 0 obj
+<< /Length 3546 >>
+stream
+BT /F1 10 Tf 1 0 0 1 64.00 736.00 Tm (- Reportar refacciones mas usadas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 717.00 Tm (Procesos principales:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 703.00 Tm (- Revisar alertas de stock bajo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 689.00 Tm (- Registrar movimientos de inventario con motivo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 675.00 Tm (- Evitar stock negativo salvo permiso especial.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 661.00 Tm (- Confirmar disponibilidad antes de que una orden pase a reparacion.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 636.00 Tm (Caja) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 615.00 Tm (Es responsable de cobros, recibos y cortes.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 596.00 Tm (Puede:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 582.00 Tm (- Registrar anticipos, pagos parciales y liquidaciones.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 568.00 Tm (- Ver saldo pendiente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 554.00 Tm (- Imprimir ticket o recibo de pago.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 540.00 Tm (- Consultar corte de caja.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 526.00 Tm (- Entregar equipos usando la clave/codigo de entrega, segun la configuracion actual.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 507.00 Tm (Procesos principales:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 493.00 Tm (- Buscar orden por folio o clave de entrega.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 479.00 Tm (- Confirmar total, pagos previos y saldo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 465.00 Tm (- Registrar pago final si hay saldo pendiente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 451.00 Tm (- Marcar entrega cuando el cliente presenta la clave correcta.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 437.00 Tm (- Generar comprobante de entrega.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 412.00 Tm (Cliente consulta) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 391.00 Tm (Es un rol pensado para consulta limitada o acceso publico controlado.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 372.00 Tm (Puede:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 358.00 Tm (- Consultar el avance de una orden con folio y token.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 344.00 Tm (- Ver estado actual, equipo, diagnostico visible, cotizacion visible y saldo pendiente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 330.00 Tm (- Aceptar o rechazar cotizacion si el portal lo permite.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 311.00 Tm (No puede:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 297.00 Tm (- Ver notas internas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 283.00 Tm (- Ver costos internos o utilidad.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 269.00 Tm (- Ver datos de otros clientes.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 255.00 Tm (- Ver usuarios internos.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 241.00 Tm (- Cambiar estados administrativos.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 212.00 Tm (4. Proceso recomendado para levantar una orden) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 187.00 Tm (La forma mas rapida es entrar a Ordenes > Nueva orden.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 162.00 Tm (Paso 1: Cliente) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 141.00 Tm (- Busca al cliente por nombre, telefono o email.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 127.00 Tm (- Si aparece, seleccionalo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 113.00 Tm (- Si no aparece, llena los datos del cliente nuevo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 99.00 Tm (- Minimo recomendado: nombre completo y telefono.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 85.00 Tm (- WhatsApp se puede usar igual que telefono si el cliente lo autoriza.) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.00 30 Tm (Manual de Usuario - Sistema de Servicios Tecnicos) Tj ET
+BT /F1 8 Tf 1 0 0 1 488.00 30 Tm (4 / 12) Tj ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 27 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 9 0 R >>
+endobj
+11 0 obj
+<< /Length 3517 >>
+stream
+BT /F1 10 Tf 1 0 0 1 54.00 736.00 Tm (Consejo: Antes de crear un cliente nuevo, busca por telefono para evitar duplicados.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 711.00 Tm (Paso 2: Equipo) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 690.00 Tm (- Busca un equipo existente por marca, modelo, serie o IMEI.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 676.00 Tm (- Si el cliente ya habia dejado ese equipo, seleccionalo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 662.00 Tm (- Si es un equipo nuevo, captura:) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 648.00 Tm (- Tipo de equipo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 634.00 Tm (- Marca y modelo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 620.00 Tm (- Serie o IMEI si aplica.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 606.00 Tm (- Color.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 592.00 Tm (- Contrasena o patron si el cliente lo proporciona.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 578.00 Tm (- Accesorios recibidos.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 564.00 Tm (- Estado fisico al recibir.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 550.00 Tm (- Observaciones.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 531.00 Tm (Consejo: El estado fisico y accesorios ayudan a evitar reclamos al entregar.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 506.00 Tm (Paso 3: Orden de servicio) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 485.00 Tm (Captura:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 471.00 Tm (- Tipo de servicio: revision, reparacion, mantenimiento, garantia, etc.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 457.00 Tm (- Prioridad: baja, normal, alta o urgente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 443.00 Tm (- Fecha estimada de entrega.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 429.00 Tm (- Costo estimado si aplica.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 415.00 Tm (- Anticipo y metodo de pago si el cliente paga al recibir.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 401.00 Tm (- Falla reportada por el cliente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 387.00 Tm (- Diagnostico inicial si se detecta algo al recibir.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 373.00 Tm (- Observaciones internas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 359.00 Tm (- Observaciones visibles para cliente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 340.00 Tm (Al guardar, el sistema:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 326.00 Tm (- Crea el cliente si no existia.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 312.00 Tm (- Crea el equipo si no existia.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 298.00 Tm (- Crea la orden.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 284.00 Tm (- Genera folio unico.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 270.00 Tm (- Genera token publico.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 256.00 Tm (- Genera clave/codigo de entrega.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 242.00 Tm (- Registra anticipo si aplica.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 228.00 Tm (- Guarda auditoria.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 199.00 Tm (5. Estados de una orden) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 174.00 Tm (Recibida: La orden fue creada y el equipo ya ingreso al taller.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 155.00 Tm (En revision: El tecnico esta revisando el equipo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 136.00 Tm (Diagnosticada: Ya existe diagnostico tecnico.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 117.00 Tm (Esperando autorizacion: La cotizacion fue enviada o esta pendiente de aceptacion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 98.00 Tm (Autorizada: El cliente acepto la reparacion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 79.00 Tm (Rechazada: El cliente no autorizo la cotizacion.) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.00 30 Tm (Manual de Usuario - Sistema de Servicios Tecnicos) Tj ET
+BT /F1 8 Tf 1 0 0 1 488.00 30 Tm (5 / 12) Tj ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 27 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 11 0 R >>
+endobj
+13 0 obj
+<< /Length 3181 >>
+stream
+BT /F1 10 Tf 1 0 0 1 54.00 736.00 Tm (En reparacion: El tecnico esta trabajando el equipo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 717.00 Tm (Esperando refaccion: Falta pieza o material.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 698.00 Tm (Reparada: El trabajo tecnico termino.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 679.00 Tm (No reparable: No se puede reparar o no conviene reparar.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 660.00 Tm (Lista para entrega: El equipo puede entregarse al cliente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 641.00 Tm (Entregada: El equipo fue liberado y entregado.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 622.00 Tm (Cancelada: La orden fue cancelada.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 603.00 Tm (Garantia: La orden esta en proceso relacionado con garantia.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 574.00 Tm (6. Diagnostico) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 549.00 Tm (El diagnostico lo registra tecnico o tecnico senior.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 530.00 Tm (Debe incluir:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 516.00 Tm (- Diagnostico tecnico interno.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 502.00 Tm (- Diagnostico visible para cliente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 488.00 Tm (- Causa probable.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 474.00 Tm (- Pruebas realizadas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 460.00 Tm (- Piezas necesarias.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 446.00 Tm (- Mano de obra estimada.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 432.00 Tm (- Refacciones estimadas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 418.00 Tm (- Costo total sugerido.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 399.00 Tm (Buenas practicas:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 385.00 Tm (- No escribir informacion sensible en diagnostico visible.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 371.00 Tm (- Separar notas internas de comentarios para cliente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 357.00 Tm (- Tomar evidencias cuando aplique.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 343.00 Tm (- No modificar diagnosticos autorizados sin permiso especial.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 314.00 Tm (7. Cotizacion) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 289.00 Tm (La cotizacion se genera a partir del diagnostico o manualmente en la orden.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 270.00 Tm (Incluye:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 256.00 Tm (- Conceptos de mano de obra, refaccion, servicio u otro.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 242.00 Tm (- Cantidad.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 228.00 Tm (- Precio unitario.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 214.00 Tm (- Subtotal.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 200.00 Tm (- Descuento si aplica.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 186.00 Tm (- IVA si esta configurado.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 172.00 Tm (- Total.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 158.00 Tm (- Vigencia y terminos.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 139.00 Tm (Estados:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 125.00 Tm (- Pendiente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 111.00 Tm (- Aceptada.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 97.00 Tm (- Rechazada.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 83.00 Tm (- Vencida.) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.00 30 Tm (Manual de Usuario - Sistema de Servicios Tecnicos) Tj ET
+BT /F1 8 Tf 1 0 0 1 488.00 30 Tm (6 / 12) Tj ET
+endstream
+endobj
+14 0 obj
+<< /Type /Page /Parent 27 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 13 0 R >>
+endobj
+15 0 obj
+<< /Length 3211 >>
+stream
+BT /F1 10 Tf 1 0 0 1 54.00 736.00 Tm (Reglas:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 722.00 Tm (- Una cotizacion aceptada no debe modificarse; se crea una nueva version.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 708.00 Tm (- Si el cliente autoriza por llamada o WhatsApp, registrar autorizacion manual.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 694.00 Tm (- Mantener historial para evitar dudas.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 665.00 Tm (8. Reparacion) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 640.00 Tm (Cuando la cotizacion esta autorizada, el equipo puede pasar a reparacion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 621.00 Tm (El tecnico debe registrar:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 607.00 Tm (- Trabajo realizado.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 593.00 Tm (- Piezas instaladas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 579.00 Tm (- Pruebas finales.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 565.00 Tm (- Observaciones internas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 551.00 Tm (- Observaciones para cliente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 537.00 Tm (- Resultado.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 518.00 Tm (Resultados posibles:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 504.00 Tm (- Reparado.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 490.00 Tm (- No reparable.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 476.00 Tm (- Requiere mas revision.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 462.00 Tm (- Esperando refaccion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 443.00 Tm (Buenas practicas:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 429.00 Tm (- No mover a reparacion sin autorizacion salvo permiso especial.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 415.00 Tm (- Registrar pruebas finales antes de entregar.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 401.00 Tm (- Si se usa refaccion, generar movimiento de salida de inventario cuando el modulo este) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 387.00 Tm (  activo.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 358.00 Tm (9. Pagos y caja) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 333.00 Tm (El sistema permite:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 319.00 Tm (- Anticipo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 305.00 Tm (- Pago parcial.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 291.00 Tm (- Liquidacion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 277.00 Tm (- Corte de caja.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 263.00 Tm (- Reporte por fechas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 249.00 Tm (- Reporte por usuario.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 230.00 Tm (Al registrar pago:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 216.00 Tm (- Selecciona orden.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 202.00 Tm (- Captura monto.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 188.00 Tm (- Elige metodo: efectivo, transferencia, tarjeta u otro.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 174.00 Tm (- Captura referencia si aplica.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 160.00 Tm (- Guarda notas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 141.00 Tm (Reglas:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 127.00 Tm (- Un pago no debe borrarse; se cancela con motivo y permiso.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 113.00 Tm (- El saldo pendiente se recalcula.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 99.00 Tm (- Antes de entregar se debe revisar si queda saldo.) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.00 30 Tm (Manual de Usuario - Sistema de Servicios Tecnicos) Tj ET
+BT /F1 8 Tf 1 0 0 1 488.00 30 Tm (7 / 12) Tj ET
+endstream
+endobj
+16 0 obj
+<< /Type /Page /Parent 27 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 15 0 R >>
+endobj
+17 0 obj
+<< /Length 3424 >>
+stream
+BT /F2 14 Tf 1 0 0 1 54.00 736.00 Tm (10. Entrega de equipo) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 711.00 Tm (La entrega se hace desde el modulo Entregas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 692.00 Tm (Proceso recomendado:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 678.00 Tm (- El cliente presenta su comprobante o clave/codigo de entrega.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 664.00 Tm (- El usuario busca o escanea la clave.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 650.00 Tm (- El sistema muestra orden, cliente, equipo, saldo y estado.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 636.00 Tm (- Si hay saldo pendiente, caja registra el pago final.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 622.00 Tm (- Se confirma quien recibe el equipo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 608.00 Tm (- Se registra quien entrego el equipo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 594.00 Tm (- Se marca la orden como entregada.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 580.00 Tm (- Se genera comprobante de entrega.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 566.00 Tm (- Se inicia garantia si aplica.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 547.00 Tm (Regla importante:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 533.00 Tm (- La clave/codigo de entrega sirve como llave para liberar el equipo. Esto reduce entregas) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 519.00 Tm (  equivocadas y ayuda a encontrar equipos rapidamente.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 490.00 Tm (11. Codigo de barras y QR) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 465.00 Tm (Codigo de barras interno:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 451.00 Tm (- Se usa en recepcion, tecnico y caja.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 437.00 Tm (- Contiene una clave o folio, no necesariamente un link.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 423.00 Tm (- Puede leerse con lector USB o escribirse manualmente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 409.00 Tm (- Ayuda a localizar el equipo fisico.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 390.00 Tm (QR publico del cliente:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 376.00 Tm (- Lleva al portal publico de consulta.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 362.00 Tm (- Permite al cliente revisar avance sin entrar al panel.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 348.00 Tm (- Debe usar folio y token seguro.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 319.00 Tm (12. Portal publico del cliente) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 294.00 Tm (El cliente puede consultar con folio y token.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 275.00 Tm (Puede ver:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 261.00 Tm (- Folio.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 247.00 Tm (- Equipo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 233.00 Tm (- Estado actual.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 219.00 Tm (- Fecha de recepcion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 205.00 Tm (- Fecha estimada.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 191.00 Tm (- Diagnostico visible.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 177.00 Tm (- Cotizacion visible.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 163.00 Tm (- Saldo pendiente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 149.00 Tm (- Comentarios visibles.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 130.00 Tm (No puede ver:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 116.00 Tm (- Notas internas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 102.00 Tm (- Costos internos.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 88.00 Tm (- Datos de otros clientes.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 74.00 Tm (- Usuarios internos.) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.00 30 Tm (Manual de Usuario - Sistema de Servicios Tecnicos) Tj ET
+BT /F1 8 Tf 1 0 0 1 488.00 30 Tm (8 / 12) Tj ET
+endstream
+endobj
+18 0 obj
+<< /Type /Page /Parent 27 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 17 0 R >>
+endobj
+19 0 obj
+<< /Length 3076 >>
+stream
+BT /F1 10 Tf 1 0 0 1 64.00 736.00 Tm (- Bitacora privada.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 707.00 Tm (13. Inventario y refacciones) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 682.00 Tm (El modulo de inventario ayuda a controlar piezas y materiales.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 663.00 Tm (Debe usarse para:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 649.00 Tm (- Alta de refaccion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 635.00 Tm (- Entrada de inventario.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 621.00 Tm (- Salida por reparacion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 607.00 Tm (- Ajuste manual con motivo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 593.00 Tm (- Alertas de stock bajo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 579.00 Tm (- Historial de movimientos.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 560.00 Tm (Buenas practicas:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 546.00 Tm (- No permitir stock negativo salvo permiso especial.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 532.00 Tm (- Asociar refacciones a ordenes.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 518.00 Tm (- Revisar utilidad por refaccion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 504.00 Tm (- Consultar refacciones mas usadas.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 475.00 Tm (14. Garantias) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 450.00 Tm (La garantia puede generarse al entregar una orden.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 431.00 Tm (Contiene:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 417.00 Tm (- Orden original.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 403.00 Tm (- Fecha de inicio.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 389.00 Tm (- Fecha de fin.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 375.00 Tm (- Condiciones.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 361.00 Tm (- Estado.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 347.00 Tm (- Motivo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 333.00 Tm (- Resolucion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 314.00 Tm (Proceso:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 300.00 Tm (- Cliente regresa por garantia.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 286.00 Tm (- Se busca la orden original.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 272.00 Tm (- Se revisa si la garantia esta vigente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 258.00 Tm (- Se registra ingreso por garantia.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 244.00 Tm (- Se asocia nueva revision a la orden original.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 230.00 Tm (- Se evita duplicar cobros si aplica.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 201.00 Tm (15. Dashboard) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 176.00 Tm (El dashboard permite revisar el estado general del taller.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 157.00 Tm (Muestra:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 143.00 Tm (- Ordenes abiertas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 129.00 Tm (- Ordenes urgentes.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 115.00 Tm (- Ordenes esperando autorizacion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 101.00 Tm (- Ordenes en reparacion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 87.00 Tm (- Ordenes listas para entrega.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 73.00 Tm (- Pagos del dia.) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.00 30 Tm (Manual de Usuario - Sistema de Servicios Tecnicos) Tj ET
+BT /F1 8 Tf 1 0 0 1 488.00 30 Tm (9 / 12) Tj ET
+endstream
+endobj
+20 0 obj
+<< /Type /Page /Parent 27 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 19 0 R >>
+endobj
+21 0 obj
+<< /Length 2980 >>
+stream
+BT /F1 10 Tf 1 0 0 1 64.00 736.00 Tm (- Saldo pendiente total.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 722.00 Tm (- Stock bajo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 708.00 Tm (- Garantias activas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 694.00 Tm (- Carga por tecnico.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 675.00 Tm (Uso recomendado:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 661.00 Tm (- Revisarlo al inicio del dia.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 647.00 Tm (- Revisarlo antes del cierre.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 633.00 Tm (- Detectar cuellos de botella.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 604.00 Tm (16. Reportes) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 579.00 Tm (Los reportes ayudan a controlar operacion y dinero.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 560.00 Tm (Reportes utiles:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 546.00 Tm (- Ordenes por estado.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 532.00 Tm (- Ordenes por tecnico.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 518.00 Tm (- Ordenes por fecha.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 504.00 Tm (- Reparaciones terminadas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 490.00 Tm (- Reparaciones pendientes.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 476.00 Tm (- Ingresos por periodo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 462.00 Tm (- Saldos pendientes.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 448.00 Tm (- Refacciones mas usadas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 434.00 Tm (- Clientes frecuentes.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 420.00 Tm (- Tiempo promedio de reparacion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 406.00 Tm (- Garantias activas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 392.00 Tm (- Corte de caja.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 363.00 Tm (17. Configuracion) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 338.00 Tm (En configuracion se administran datos del negocio y reglas generales.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 319.00 Tm (Puede incluir:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 305.00 Tm (- Nombre del negocio.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 291.00 Tm (- Logo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 277.00 Tm (- Telefono.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 263.00 Tm (- WhatsApp.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 249.00 Tm (- Email.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 235.00 Tm (- Direccion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 221.00 Tm (- Moneda.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 207.00 Tm (- IVA activo/inactivo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 193.00 Tm (- Porcentaje de IVA.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 179.00 Tm (- Garantia por defecto.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 165.00 Tm (- Plantillas de mensajes.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 151.00 Tm (- Terminos de servicio.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 137.00 Tm (- Politica de garantia.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 123.00 Tm (- Formato de folios.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 109.00 Tm (- Tema visual.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 80.00 Tm (18. Comunicacion con cliente) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.00 30 Tm (Manual de Usuario - Sistema de Servicios Tecnicos) Tj ET
+BT /F1 8 Tf 1 0 0 1 488.00 30 Tm (10 / 12) Tj ET
+endstream
+endobj
+22 0 obj
+<< /Type /Page /Parent 27 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 21 0 R >>
+endobj
+23 0 obj
+<< /Length 3481 >>
+stream
+BT /F1 10 Tf 1 0 0 1 54.00 736.00 Tm (El sistema genera mensajes de WhatsApp prellenados.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 717.00 Tm (Ejemplos:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 703.00 Tm (- Orden recibida.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 689.00 Tm (- Equipo en revision.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 675.00 Tm (- Diagnostico listo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 661.00 Tm (- Cotizacion pendiente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 647.00 Tm (- Reparacion en proceso.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 633.00 Tm (- Equipo listo para entrega.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 619.00 Tm (- Pago pendiente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 605.00 Tm (- Garantia.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 586.00 Tm (El sistema no depende obligatoriamente de una API pagada de WhatsApp. Abre enlaces tipo wa.me) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 572.00 Tm (con texto prellenado.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 543.00 Tm (19. Seguridad operativa) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 518.00 Tm (Recomendaciones:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 504.00 Tm (- Cada usuario debe usar su propia cuenta.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 490.00 Tm (- No compartir contrasenas.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 476.00 Tm (- Cambiar la contrasena inicial.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 462.00 Tm (- Revisar permisos por rol.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 448.00 Tm (- No entregar equipos sin clave de entrega.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 434.00 Tm (- No mostrar notas internas al cliente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 420.00 Tm (- No subir archivos peligrosos.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 406.00 Tm (- Usar HTTPS en produccion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 392.00 Tm (- Mantener respaldos de base de datos.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 363.00 Tm (20. Flujo completo resumido) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 338.00 Tm (1. Recepcion recibe al cliente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 324.00 Tm (2. Recepcion usa Nueva orden.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 310.00 Tm (3. Selecciona o crea cliente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 296.00 Tm (4. Selecciona o crea equipo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 282.00 Tm (5. Captura falla y datos de recepcion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 268.00 Tm (6. Guarda la orden.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 254.00 Tm (7. Imprime comprobante.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 240.00 Tm (8. Cliente recibe folio/link/QR de consulta.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 226.00 Tm (9. Tecnico revisa y diagnostica.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 212.00 Tm (10. Se genera cotizacion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 198.00 Tm (11. Cliente acepta o rechaza.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 184.00 Tm (12. Si acepta, tecnico repara.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 170.00 Tm (13. Caja registra pagos.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 156.00 Tm (14. Orden pasa a lista para entrega.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 142.00 Tm (15. Cliente presenta clave/codigo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 128.00 Tm (16. Entregas busca o escanea la clave.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 114.00 Tm (17. Se confirma saldo y receptor.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 100.00 Tm (18. Se entrega equipo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 86.00 Tm (19. Se genera comprobante de entrega.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 72.00 Tm (20. Se inicia garantia si aplica.) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.00 30 Tm (Manual de Usuario - Sistema de Servicios Tecnicos) Tj ET
+BT /F1 8 Tf 1 0 0 1 488.00 30 Tm (11 / 12) Tj ET
+endstream
+endobj
+24 0 obj
+<< /Type /Page /Parent 27 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 23 0 R >>
+endobj
+25 0 obj
+<< /Length 1532 >>
+stream
+BT /F2 14 Tf 1 0 0 1 54.00 726.00 Tm (21. Recomendacion para capacitacion) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 701.00 Tm (Para capacitar al personal, practicar estos casos:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 682.00 Tm (- Crear orden con cliente nuevo y equipo nuevo.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 668.00 Tm (- Crear orden con cliente existente y equipo existente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 654.00 Tm (- Registrar diagnostico.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 640.00 Tm (- Crear cotizacion.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 626.00 Tm (- Autorizar cotizacion manualmente.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 612.00 Tm (- Registrar anticipo y pago final.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 598.00 Tm (- Entregar equipo usando clave de entrega.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 584.00 Tm (- Consultar orden desde portal publico.) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 570.00 Tm (- Revisar dashboard y reportes.) Tj ET
+BT /F2 14 Tf 1 0 0 1 54.00 541.00 Tm (22. Credenciales iniciales locales) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 516.00 Tm (Usuario administrador local:) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 502.00 Tm (- Email: admin@local.test) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 488.00 Tm (- Contrasena: password) Tj ET
+BT /F1 10 Tf 1 0 0 1 64.00 474.00 Tm (- Rol: superadmin) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 455.00 Tm (Importante: cambiar esta contrasena antes de usar el sistema en produccion.) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.00 30 Tm (Manual de Usuario - Sistema de Servicios Tecnicos) Tj ET
+BT /F1 8 Tf 1 0 0 1 488.00 30 Tm (12 / 12) Tj ET
+endstream
+endobj
+26 0 obj
+<< /Type /Page /Parent 27 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 25 0 R >>
+endobj
+27 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R 10 0 R 12 0 R 14 0 R 16 0 R 18 0 R 20 0 R 22 0 R 24 0 R 26 0 R] /Count 12 >>
+endobj
+28 0 obj
+<< /Type /Catalog /Pages 27 0 R >>
+endobj
+29 0 obj
+<< /Title (Manual de Usuario Servicio Tecnico) /Author (Sistema Web de Gestion de Servicios Tecnicos) /Producer (Codex PDF generator) >>
+endobj
+xref
+0 30
+0000000000 65535 f 
+0000000015 00000 n 
+0000000112 00000 n 
+0000000214 00000 n 
+0000003859 00000 n 
+0000003996 00000 n 
+0000007621 00000 n 
+0000007758 00000 n 
+0000011588 00000 n 
+0000011725 00000 n 
+0000015323 00000 n 
+0000015461 00000 n 
+0000019031 00000 n 
+0000019170 00000 n 
+0000022404 00000 n 
+0000022543 00000 n 
+0000025807 00000 n 
+0000025946 00000 n 
+0000029423 00000 n 
+0000029562 00000 n 
+0000032691 00000 n 
+0000032830 00000 n 
+0000035863 00000 n 
+0000036002 00000 n 
+0000039536 00000 n 
+0000039675 00000 n 
+0000041260 00000 n 
+0000041399 00000 n 
+0000041533 00000 n 
+0000041584 00000 n 
+trailer
+<< /Size 30 /Root 28 0 R /Info 29 0 R >>
+startxref
+41737
+%%EOF

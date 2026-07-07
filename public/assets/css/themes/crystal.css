@@ -1,0 +1,96 @@
+/* =======================================================================
+   TEMA: Crystal e.liquid
+   Estilo "liquid glass": vidrio esmerilado, brillo iridiscente,
+   bordes muy redondeados y desenfoque profundo.
+   Se activa con: <html data-theme="crystal">
+   No modifica la logica: solo redefine variables y superficies.
+   ======================================================================= */
+
+[data-theme="crystal"] {
+  --ink: #0d2330;
+  --muted: #5f7d8a;
+  --panel: rgba(255, 255, 255, 0.55);
+  --panel-strong: rgba(255, 255, 255, 0.72);
+  --line: rgba(255, 255, 255, 0.6);
+  --aqua: #38bdf8;
+  --mint: #7dd3fc;
+  --coral: #f0abfc;
+  --violet: #a5b4fc;
+}
+
+[data-theme="crystal"] body {
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 18% 8%, rgba(56, 189, 248, 0.30), transparent 34rem),
+    radial-gradient(circle at 86% 18%, rgba(165, 180, 252, 0.28), transparent 30rem),
+    radial-gradient(circle at 50% 96%, rgba(240, 171, 252, 0.22), transparent 34rem),
+    linear-gradient(135deg, #eef7ff 0%, #f3f0ff 50%, #fef0ff 100%);
+}
+
+[data-theme="crystal"] a {
+  color: #0284c7;
+}
+
+/* Panel lateral traslucido (texto oscuro) */
+[data-theme="crystal"] .sidebar {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.2));
+  color: var(--ink);
+  border-right: 1px solid rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(30px) saturate(170%);
+}
+
+[data-theme="crystal"] .brand {
+  color: var(--ink);
+}
+
+[data-theme="crystal"] .text-white-50 {
+  color: rgba(13, 35, 48, 0.55) !important;
+}
+
+[data-theme="crystal"] .nav-link {
+  color: rgba(13, 35, 48, 0.74);
+}
+
+[data-theme="crystal"] .nav-link:hover,
+[data-theme="crystal"] .nav-link.active {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="crystal"] .brand-mark {
+  background: linear-gradient(145deg, var(--aqua), var(--violet));
+  box-shadow: inset 0 1px 8px rgba(255, 255, 255, 0.6), 0 12px 30px rgba(56, 189, 248, 0.35);
+}
+
+/* Tarjetas de cristal liquido */
+[data-theme="crystal"] .glass-card,
+[data-theme="crystal"] .table-wrap,
+[data-theme="crystal"] .metric,
+[data-theme="crystal"] .timeline-item,
+[data-theme="crystal"] .auth-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.32));
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 18px 50px rgba(56, 120, 180, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(26px) saturate(160%);
+  border-radius: 18px;
+}
+
+[data-theme="crystal"] .btn {
+  border-radius: 12px;
+}
+
+[data-theme="crystal"] .btn-primary {
+  --bs-btn-bg: #0ea5e9;
+  --bs-btn-border-color: #0ea5e9;
+  --bs-btn-hover-bg: #0284c7;
+  --bs-btn-hover-border-color: #0284c7;
+}
+
+[data-theme="crystal"] .form-control,
+[data-theme="crystal"] .form-select {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+}

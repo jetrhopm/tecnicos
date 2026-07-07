@@ -1,0 +1,72 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controllers;
+
+use App\Core\Auth;
+use App\Core\Request;
+use App\Core\Response;
+use App\Core\Session;
+use App\Core\View;
+use App\Services\EntregaService;
+
+final class EntregaController
+{
+    public function index(Request $request): void
+    {
+        Auth::requireLogin();
+
+        // Cualquier usuario autenticado puede abrir esta pantalla. El codigo
+        // llega desde teclado, lector de barras o camara; solo se usa para
+        // buscar la orden candidata, no para entregarla automaticamente.
+        $codigo = strtoupper(trim((string) $request->input('codigo', '')));
+        View::render('entregas/index', [
+            'title' => 'Entrega de equipo',
+            'codigo' => $codigo,
+            'orden' => $codigo ? (new EntregaService())->buscar($codigo) : null,
+        ]);
+    }
+
+    public function buscar(Request $request): void
+    {
+        Auth::requireLogin();
+
+        // El POST de busqueda se convierte a GET para que la recepcion/caja
+        // pueda recargar o compartir la pantalla sin repetir acciones.
+        $codigo = strtoupper(trim((string) $request->input('codigo_entrega', '')));
+        Response::redirect('/entregas' . ($codigo !== '' ? '?codigo=' . urlencode($codigo) : ''));
+    }
+
+    public function entregar(Request $request): void
+    {
+        Auth::requireLogin();
+
+        // La entrega si modifica datos: el servicio valida codigo, saldo,
+        // pagos finales y registra quien libero el equipo en auditoria.
+        try {
+            $entregaId = (new EntregaService())->entregar($request->all());
+            Session::flash('success', 'Equipo entregado correctamente.');
+            Response::redirect('/entregas/' . $entregaId . '/comprobante');
+        } catch (\Throwable $exception) {
+            Session::flash('error', $exception->getMessage());
+            Response::redirect('/entregas?codigo=' . urlencode((string) $request->input('codigo_entrega', '')));
+        }
+    }
+
+    public function comprobante(Request $request, string $id): void
+    {
+        Auth::requireLogin();
+
+        // El comprobante se consulta por id de entrega y sale en layout de
+        // impresion. Sirve como prueba operativa de quien entrego y cuando.
+        $entrega = (new EntregaService())->comprobante((int) $id);
+        if (!$entrega) {
+            Response::status(404);
+            View::render('errors/404', ['title' => 'Entrega no encontrada']);
+            return;
+        }
+
+        View::render('print/entrega', ['title' => 'Comprobante de entrega', 'entrega' => $entrega], 'layouts/print');
+    }
+}
