@@ -19,16 +19,46 @@ function old(string $key, mixed $default = ''): mixed
 
 function url(string $path = ''): string
 {
-    return app_url($path);
+    /*
+     * Enlace interno relativo a la raiz, por ejemplo "/tecnico/clientes".
+     * No incluye esquema ni host: la pagina hereda los del navegador, asi
+     * evitamos contenido mixto cuando se entra por https y problemas al
+     * abrir el sistema desde otra IP o dominio (localhost, LAN, etc.).
+     * Para enlaces que salen del sistema usa absolute_url().
+     */
+    $prefix = rtrim(base_path_prefix(), '/');
+    return $prefix . '/' . ltrim($path, '/');
 }
 
-function app_url(string $path = ''): string
+function base_path_prefix(): string
 {
+    // Solo la parte de ruta del sitio (p. ej. "/tecnico" o "" si va en la raiz).
+    $app = require BASE_PATH . '/config/app.php';
+    $configured = rtrim((string) ($app['url'] ?? 'auto'), '/');
+    if ($configured !== '' && strtolower($configured) !== 'auto') {
+        return parse_url($configured, PHP_URL_PATH) ?: '';
+    }
+
+    return parse_url(request_base_url(), PHP_URL_PATH) ?: '';
+}
+
+function absolute_url(string $path = ''): string
+{
+    /*
+     * URL absoluta con esquema y host. Solo para enlaces que se comparten
+     * fuera del navegador actual: mensaje de WhatsApp, portal publico, QR.
+     */
     $app = require BASE_PATH . '/config/app.php';
     $configured = rtrim((string) ($app['url'] ?? 'auto'), '/');
     $base = ($configured === '' || strtolower($configured) === 'auto') ? request_base_url() : $configured;
 
     return rtrim($base, '/') . '/' . ltrim($path, '/');
+}
+
+function app_url(string $path = ''): string
+{
+    // Alias historico: devuelve URL absoluta (equivale a absolute_url()).
+    return absolute_url($path);
 }
 
 function request_base_url(): string

@@ -11,7 +11,9 @@ final class MensajeService
         $config = new ConfiguracionService();
         $plantilla = (string) $config->get($plantillaClave, '');
         $equipo = trim(($orden['equipo_marca'] ?? '') . ' ' . ($orden['equipo_modelo'] ?? '')) ?: ($orden['equipo_tipo'] ?? 'equipo');
-        $link = url('/consulta?folio=' . urlencode((string) $orden['folio']) . '&token=' . urlencode((string) $orden['token_publico']));
+        // Absoluto a proposito: este enlace viaja en el mensaje de WhatsApp y
+        // el cliente lo abre desde su telefono, fuera de este navegador.
+        $link = absolute_url('/consulta?folio=' . urlencode((string) $orden['folio']) . '&token=' . urlencode((string) $orden['token_publico']));
         $mensaje = crearMensajeWhatsapp($plantilla, [
             'cliente' => $orden['cliente_nombre'] ?? '',
             'folio' => $orden['folio'] ?? '',
