@@ -13,5 +13,9 @@
         <label class="form-label" for="password" data-icon="&#128274;">Contrasena</label>
         <input class="form-control" id="password" type="password" name="password" value="password" required>
     </div>
+    <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" id="recordarme" name="recordarme" value="1">
+        <label class="form-check-label" for="recordarme">No cerrar sesion en este dispositivo</label>
+    </div>
     <button class="btn btn-primary w-100" data-icon="&#128274;">Entrar</button>
 </form>

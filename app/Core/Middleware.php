@@ -28,6 +28,37 @@ final class Middleware
         }
     }
 
+    public static function enforceSession(): void
+    {
+        /*
+         * Cierre de sesion por inactividad. Por defecto 2 h (SESSION_IDLE_MINUTES).
+         * Si el usuario eligio "No cerrar sesion" (_persist), no expira por
+         * inactividad; solo cierra con logout explicito o al vencer la cookie.
+         */
+        if (PHP_SAPI === 'cli' || !Auth::check()) {
+            return;
+        }
+
+        if (Session::get('_persist')) {
+            Session::put('_last_activity', time());
+            return;
+        }
+
+        $idle = max(1, (int) env_value('SESSION_IDLE_MINUTES', 120)) * 60;
+        $last = (int) Session::get('_last_activity', time());
+
+        if (time() - $last > $idle) {
+            Session::forget('user_id');
+            Session::forget('user_name');
+            Session::forget('_persist');
+            Session::forget('_last_activity');
+            Session::flash('error', 'Tu sesion se cerro por inactividad.');
+            return;
+        }
+
+        Session::put('_last_activity', time());
+    }
+
     public static function csrf(Request $request): void
     {
         /*

@@ -253,10 +253,14 @@ php database/upgrade_delivery_codes.php   # claves de entrega aleatorias
 php database/upgrade_ticket_config.php     # config de logo y garantia del ticket
 ```
 
-Opcional en `.env` (solo si corres detras de un proxy/balanceador):
+Opcional en `.env`:
 
 ```ini
+# Solo si corres detras de un proxy/balanceador
 APP_TRUST_PROXY=false
+# Sesion: minutos de inactividad y dias que dura "No cerrar sesion"
+SESSION_IDLE_MINUTES=120
+SESSION_REMEMBER_DAYS=30
 ```
 
 Tras migrar, en Configuracion puedes fijar el logo (`negocio.logo_url`) y el
@@ -363,6 +367,8 @@ tests/             Pruebas de funciones puras
 - CSRF en formularios y en la API (`_csrf` o header `X-CSRF-TOKEN`).
 - Escape HTML con `e()`.
 - Sesiones con cookie `HttpOnly` y `SameSite=Lax`, y `session.use_strict_mode`.
+- Cierre de sesion por inactividad (2 h por defecto) con opcion "No cerrar
+  sesion" y carpeta de sesiones propia en `storage/sessions`.
 - Regeneracion de ID de sesion al iniciar login.
 - Passwords hasheadas con `password_hash` (minimo 8 caracteres al crear).
 - Freno de fuerza bruta en login (5 intentos por email/IP en 15 minutos).

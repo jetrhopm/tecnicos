@@ -26,9 +26,10 @@ final class AuthController
     {
         $email = trim((string) $request->input('email'));
         $password = (string) $request->input('password');
+        $recordar = (bool) $request->input('recordarme');
 
         try {
-            if ((new AuthService())->attempt($email, $password)) {
+            if ((new AuthService())->attempt($email, $password, $recordar)) {
                 Response::redirect('/');
             }
             Session::flash('error', 'Credenciales incorrectas o usuario inactivo.');

@@ -27,6 +27,9 @@ Nuevas variables de entorno (opcional) en `.env`:
 ```ini
 # Solo true si la app corre detras de un proxy/balanceador que manda X-Forwarded-*
 APP_TRUST_PROXY=false
+# Cierre de sesion por inactividad (minutos) y duracion de "No cerrar sesion" (dias)
+SESSION_IDLE_MINUTES=120
+SESSION_REMEMBER_DAYS=30
 ```
 
 Nuevas claves de configuracion (editables en el panel de Configuracion):
@@ -176,6 +179,29 @@ orden.
 - `EntregaService::ultimaPorOrden()` permite reimprimir el comprobante desde la
   ficha de la orden; la ficha muestra un menu "Comprobante" (carta/80/58) cuando
   la orden ya fue entregada.
+
+### 8. Sesion: opcion "No cerrar sesion" e inactividad de 2 horas
+
+**Por que:** antes la sesion dependia del `session.gc_maxlifetime` de PHP (24 min)
+y del `C:\xampp\tmp` compartido, lo que cerraba sesion antes de tiempo y sin
+control.
+
+- **Cierre por inactividad configurable** (2 h por defecto,
+  `SESSION_IDLE_MINUTES`), aplicado por la app en
+  [app/Core/Middleware.php](app/Core/Middleware.php) `enforceSession()`, no por
+  la recoleccion de basura de PHP. Se reinicia con cada actividad.
+- **Casilla "No cerrar sesion en este dispositivo"** en el login: la sesion no
+  expira por inactividad y la cookie se vuelve persistente
+  (`SESSION_REMEMBER_DAYS`, 30 dias por defecto), sobreviviendo al cierre del
+  navegador ([resources/views/auth/login.php](resources/views/auth/login.php),
+  [app/Services/AuthService.php](app/Services/AuthService.php),
+  [app/Core/Session.php](app/Core/Session.php) `persistCookie()`).
+- **Carpeta de sesiones propia** en `storage/sessions` (fuera del
+  `C:\xampp\tmp` compartido), para que la limpieza de otros proyectos no cierre
+  las sesiones de este sistema.
+
+> Nota: al cambiar la carpeta de sesiones, las sesiones abiertas antes de
+> actualizar se invalidan una vez (todos vuelven a iniciar sesion).
 
 ### Otros cambios de la ronda
 

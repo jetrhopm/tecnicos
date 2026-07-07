@@ -19,7 +19,7 @@ final class AuthService
     ) {
     }
 
-    public function attempt(string $email, string $password): bool
+    public function attempt(string $email, string $password, bool $recordar = false): bool
     {
         /*
          * Login.
@@ -47,8 +47,16 @@ final class AuthService
         // Regenerar ID reduce session fixation despues de autenticacion correcta.
         Session::put('user_id', (int) $user['id']);
         Session::put('user_name', $user['name']);
+        Session::put('_persist', $recordar);
+        Session::put('_last_activity', time());
+
+        if ($recordar) {
+            // "No cerrar sesion": cookie persistente que sobrevive al navegador.
+            Session::persistCookie((int) env_value('SESSION_REMEMBER_DAYS', 30));
+        }
+
         $this->users->markLogin((int) $user['id']);
-        $this->auditoria->registrar('login_correcto', 'auth', (int) $user['id']);
+        $this->auditoria->registrar('login_correcto', 'auth', (int) $user['id'], null, ['recordar' => $recordar]);
         return true;
     }
 
