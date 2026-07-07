@@ -147,6 +147,35 @@ $whatsappPdf = linkWhatsapp($telefonoCliente, 'Hola ' . (string) $orden['cliente
         </div>
 
         <div class="glass-card mb-3">
+            <h2 class="h5" data-icon="&#128247;">Evidencia y aceptacion</h2>
+            <?php if (!empty($orden['firma_recepcion'])): ?>
+                <div class="alert alert-success py-2 small mb-3"><?= e($orden['firma_recepcion']) ?></div>
+            <?php else: ?>
+                <p class="small text-muted">Aun no se registra la aceptacion del cliente. Sube la foto del ticket firmado como evidencia.</p>
+            <?php endif; ?>
+            <form method="post" enctype="multipart/form-data" action="<?= e(url('/ordenes/' . $orden['id'] . '/evidencia')) ?>">
+                <?= csrf_field() ?>
+                <label class="form-label" data-icon="&#128247;">Foto del ticket firmado</label>
+                <input class="form-control mb-2" type="file" name="evidencia" accept="image/*" capture="environment" required>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="acepta_terminos" name="acepta_terminos" value="1" checked>
+                    <label class="form-check-label small" for="acepta_terminos">El cliente acepta el presupuesto y los terminos y condiciones.</label>
+                </div>
+                <input class="form-control mb-2" name="nota_evidencia" placeholder="Nota (opcional)">
+                <button class="btn btn-primary w-100" data-icon="&#128228;">Subir evidencia</button>
+            </form>
+            <?php if (!empty($evidencias)): ?>
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    <?php foreach ($evidencias as $ev): ?>
+                        <a target="_blank" href="<?= e(url('/ordenes/' . $orden['id'] . '/evidencia/' . $ev['id'])) ?>" title="<?= e($ev['nombre_original']) ?>">
+                            <img src="<?= e(url('/ordenes/' . $orden['id'] . '/evidencia/' . $ev['id'])) ?>" alt="Evidencia de la orden" width="70" height="70" style="object-fit:cover;border-radius:8px;border:1px solid var(--line);">
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="glass-card mb-3">
             <h2 class="h5" data-icon="&#128179;">Registrar pago</h2>
             <form method="post" action="<?= e(url('/pagos')) ?>">
                 <?= csrf_field() ?>
@@ -163,7 +192,7 @@ $whatsappPdf = linkWhatsapp($telefonoCliente, 'Hola ' . (string) $orden['cliente
             </form>
         </div>
 
-        <div class="glass-card">
+        <div class="glass-card mb-3">
             <h2 class="h5" data-icon="&#128179;">Pagos</h2>
             <?php foreach ($pagos as $pago): ?>
                 <div class="d-flex justify-content-between border-bottom py-2">
@@ -171,6 +200,34 @@ $whatsappPdf = linkWhatsapp($telefonoCliente, 'Hola ' . (string) $orden['cliente
                     <strong><?= e(formatearMoneda((float) $pago['monto'])) ?></strong>
                 </div>
             <?php endforeach; ?>
+        </div>
+
+        <div class="glass-card">
+            <h2 class="h5" data-icon="&#128220;">Bitacora de la orden</h2>
+            <?php
+            $accionLabel = [
+                'crear' => 'Orden creada',
+                'editar' => 'Orden editada',
+                'cambiar_estado' => 'Cambio de estado',
+                'asignar_tecnico' => 'Tecnico asignado',
+                'entregar' => 'Equipo entregado',
+                'evidencia_subida' => 'Evidencia subida',
+                'terminos_aceptados' => 'Cliente acepto terminos',
+                'pdf_generado' => 'PDF generado',
+            ];
+            ?>
+            <?php if (empty($bitacora)): ?>
+                <p class="small text-muted mb-0">Sin movimientos registrados aun.</p>
+            <?php else: ?>
+                <div class="timeline">
+                    <?php foreach ($bitacora as $evento): ?>
+                        <div class="timeline-item">
+                            <strong><?= e($accionLabel[$evento['accion']] ?? ucfirst(str_replace('_', ' ', (string) $evento['accion']))) ?></strong>
+                            <div class="small text-muted"><?= e(fechaHumana($evento['created_at'])) ?> &middot; <?= e($evento['usuario'] ?: 'sistema') ?></div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>

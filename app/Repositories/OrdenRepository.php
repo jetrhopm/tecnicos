@@ -100,6 +100,15 @@ final class OrdenRepository extends BaseRepository
         );
     }
 
+    public function updateAcceptance(int $id, string $firmaRecepcion): void
+    {
+        // Deja constancia en la orden de que el cliente acepto presupuesto/terminos.
+        $this->execute(
+            'UPDATE ordenes_servicio SET firma_recepcion = :firma WHERE id = :id',
+            ['firma' => $firmaRecepcion, 'id' => $id]
+        );
+    }
+
     public function deliveryCodeExists(string $code): bool
     {
         $row = $this->fetch(

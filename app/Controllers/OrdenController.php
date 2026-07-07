@@ -11,9 +11,11 @@ use App\Core\Response;
 use App\Core\Session;
 use App\Core\View;
 use App\Repositories\UserRepository;
+use App\Services\AuditoriaService;
 use App\Services\ClienteService;
 use App\Services\ConfiguracionService;
 use App\Services\CotizacionService;
+use App\Services\EvidenciaService;
 use App\Services\DiagnosticoService;
 use App\Services\EquipoService;
 use App\Services\MensajeService;
@@ -117,7 +119,56 @@ final class OrdenController
             'pagos' => (new PagoService())->listarOrden((int) $id),
             'whatsapp' => (new MensajeService())->whatsappOrden($orden),
             'tecnicos' => (new UserRepository())->activeTechnicians(),
+            'evidencias' => (new EvidenciaService())->listar((int) $id),
+            'bitacora' => (new AuditoriaService())->historial('ordenes', (int) $id),
         ]);
+    }
+
+    public function subirEvidencia(Request $request, string $id): void
+    {
+        Auth::requirePermission('ordenes', 'editar');
+
+        // Guarda la foto del ticket firmado como evidencia y, si se marco,
+        // registra que el cliente acepto presupuesto y terminos.
+        try {
+            (new EvidenciaService())->subir(
+                (int) $id,
+                $request->file('evidencia'),
+                (bool) $request->input('acepta_terminos'),
+                trim((string) $request->input('nota_evidencia', ''))
+            );
+            Session::flash('success', 'Evidencia guardada.');
+        } catch (\Throwable $exception) {
+            Session::flash('error', $exception->getMessage());
+        }
+        Response::redirect('/ordenes/' . $id);
+    }
+
+    public function verEvidencia(Request $request, string $id, string $archivo): void
+    {
+        Auth::requirePermission('ordenes', 'ver');
+
+        // Sirve la evidencia guardada en storage (fuera del webroot) validando
+        // que pertenezca a la orden y con la sesion autenticada.
+        $registro = (new EvidenciaService())->archivoDeOrden((int) $id, (int) $archivo);
+        if (!$registro) {
+            Response::status(404);
+            View::render('errors/404', ['title' => 'Evidencia no encontrada']);
+            return;
+        }
+
+        $ruta = BASE_PATH . '/storage/uploads/' . $registro['ruta'];
+        if (!is_file($ruta)) {
+            Response::status(404);
+            View::render('errors/404', ['title' => 'Archivo no encontrado']);
+            return;
+        }
+
+        header('Content-Type: ' . $registro['mime']);
+        header('Content-Disposition: inline; filename="' . $registro['nombre_original'] . '"');
+        header('Content-Length: ' . (string) filesize($ruta));
+        header('X-Content-Type-Options: nosniff');
+        readfile($ruta);
     }
 
     public function cambiarEstado(Request $request, string $id): void
@@ -199,6 +250,9 @@ final class OrdenController
         $cotizacion = (new CotizacionService())->obtenerPorOrden((int) $id);
         $pdf = (new OrdenPdfService())->recepcion($orden, $diagnostico, $cotizacion);
         $filename = 'orden-' . preg_replace('/[^A-Za-z0-9_-]+/', '-', (string) $orden['folio']) . '.pdf';
+
+        // El PDF no se guarda; solo se deja constancia en la bitacora de que se genero.
+        (new AuditoriaService())->registrar('pdf_generado', 'ordenes', (int) $id);
 
         header('Content-Type: application/pdf');
         header('Content-Disposition: inline; filename="' . $filename . '"');

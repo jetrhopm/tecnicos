@@ -32,6 +32,26 @@ final class AuditoriaService
         }
     }
 
+    public function historial(string $modulo, int|string $registroId, int $limite = 40): array
+    {
+        // Bitacora de un registro: eventos ordenados del mas reciente al mas antiguo.
+        try {
+            $limite = max(1, min(200, $limite));
+            $stmt = Database::connection()->prepare(
+                "SELECT a.accion, a.datos_anteriores, a.datos_nuevos, a.created_at, u.name usuario
+                 FROM auditoria a
+                 LEFT JOIN users u ON u.id = a.usuario_id
+                 WHERE a.modulo = :modulo AND a.registro_id = :rid
+                 ORDER BY a.id DESC
+                 LIMIT {$limite}"
+            );
+            $stmt->execute(['modulo' => $modulo, 'rid' => (string) $registroId]);
+            return $stmt->fetchAll();
+        } catch (\Throwable) {
+            return [];
+        }
+    }
+
     public function intentosLoginFallidos(string $email, string $ip, int $minutos = 15): int
     {
         /*
