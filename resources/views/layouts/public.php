@@ -10,7 +10,17 @@ $error = Session::flash('error');
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= e($title ?? 'Consulta') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= e(asset('css/app.css') . '?v=20260614-table-search2') ?>" rel="stylesheet">
+    <link href="<?= e(asset('css/app.css') . '?v=20260707-form-ui2') ?>" rel="stylesheet">
+    <link href="<?= e(asset('css/themes/crystal.css') . '?v=20260707-form-ui2') ?>" rel="stylesheet">
+    <link href="<?= e(asset('css/themes/dark.css') . '?v=20260707-form-ui2') ?>" rel="stylesheet">
+    <link href="<?= e(asset('css/themes/live.css') . '?v=20260707-form-ui2') ?>" rel="stylesheet">
+    <link href="<?= e(asset('css/themes/blueprint.css') . '?v=20260707-form-ui2') ?>" rel="stylesheet">
+    <script>
+        (function () {
+            var t = localStorage.getItem('tecnico-theme') || '';
+            if (t) { document.documentElement.setAttribute('data-theme', t); }
+        })();
+    </script>
 </head>
 <body>
 <main class="public-wrap">
@@ -20,6 +30,6 @@ $error = Session::flash('error');
         <?= $content ?>
     </section>
 </main>
-<script src="<?= e(asset('js/app.js') . '?v=20260614-table-search2') ?>"></script>
+<script src="<?= e(asset('js/app.js') . '?v=20260707-form-ui2') ?>"></script>
 </body>
 </html>

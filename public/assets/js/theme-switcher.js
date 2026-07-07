@@ -6,6 +6,7 @@
 (function () {
   // Clave por usuario (definida temprano en el <head> del layout).
   var key = window.__themeKey || 'tecnico-theme';
+  var fallbackKey = 'tecnico-theme';
 
   function applyTheme(value) {
     if (value) {
@@ -28,10 +29,21 @@
         applyTheme(input.value);
         try {
           localStorage.setItem(key, input.value);
+          localStorage.setItem(fallbackKey, input.value);
         } catch (e) {
           /* almacenamiento no disponible: el tema solo dura la sesion */
         }
       });
     });
+
+    // Si el tema venia de una clave por usuario antigua, sincronizalo con la
+    // clave global para que login y portal publico usen el mismo tema.
+    if (current) {
+      try {
+        localStorage.setItem(fallbackKey, current);
+      } catch (e) {
+        /* almacenamiento no disponible: no hay nada mas que sincronizar */
+      }
+    }
   });
 })();

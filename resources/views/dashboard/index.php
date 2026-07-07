@@ -26,8 +26,8 @@
     <div class="col-lg-8">
         <div class="glass-card mb-3">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="h5 mb-0">Ordenes recientes</h2>
-                <a class="btn btn-primary btn-sm" href="<?= e(url('/ordenes/create')) ?>">Nueva orden</a>
+                <h2 class="h5 mb-0" data-icon="&#128203;">Ordenes recientes</h2>
+                <a class="btn btn-primary btn-sm" data-icon="&#43;" href="<?= e(url('/ordenes/create')) ?>">Nueva orden</a>
             </div>
             <div class="table-wrap">
                 <table class="table align-middle">
@@ -49,7 +49,7 @@
     </div>
     <div class="col-lg-4">
         <div class="glass-card">
-            <h2 class="h5">Carga por tecnico</h2>
+            <h2 class="h5" data-icon="&#128295;">Carga por tecnico</h2>
             <?php foreach ($dashboard['por_tecnico'] as $row): ?>
                 <div class="d-flex justify-content-between border-bottom py-2">
                     <span><?= e($row['tecnico']) ?></span>

@@ -30,6 +30,7 @@
   let mode = 'patron';
   let sequence = [];
   let dragging = false;
+  const initialValue = hidden.value.trim();
 
   function dotCenter(n) {
     // viewBox 0..300; celdas centradas en 50/150/250.
@@ -163,6 +164,19 @@
     });
   });
 
-  // Estado inicial coherente.
+  // Estado inicial coherente. Si el formulario trae valor guardado (edicion de
+  // equipo), se restaura sin obligar al usuario a capturarlo de nuevo.
   clearPattern();
+  if (initialValue.startsWith('Patron:')) {
+    initialValue.replace('Patron:', '').split('-').forEach((part) => {
+      const n = Number(part.trim());
+      if (n >= 1 && n <= 9) {
+        addDot(n);
+      }
+    });
+  } else if (initialValue !== '' && claveInput) {
+    setMode('clave');
+    claveInput.value = initialValue;
+    hidden.value = initialValue;
+  }
 })();

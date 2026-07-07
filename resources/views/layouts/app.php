@@ -14,11 +14,11 @@ $error = Session::flash('error');
     <meta name="csrf-token" content="<?= e(\App\Core\Csrf::token()) ?>">
     <title><?= e($title ?? 'Servicio Tecnico') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= e(asset('css/app.css') . '?v=20260614-table-search2') ?>" rel="stylesheet">
+    <link href="<?= e(asset('css/app.css') . '?v=20260707-form-ui2') ?>" rel="stylesheet">
     <link href="<?= e(asset('css/themes/crystal.css')) ?>" rel="stylesheet">
     <link href="<?= e(asset('css/themes/dark.css') . '?v=20260614-selects') ?>" rel="stylesheet">
     <link href="<?= e(asset('css/themes/live.css')) ?>" rel="stylesheet">
-    <link href="<?= e(asset('css/themes/blueprint.css') . '?v=20260706') ?>" rel="stylesheet">
+    <link href="<?= e(asset('css/themes/blueprint.css') . '?v=20260707-form-ui2') ?>" rel="stylesheet">
     <script>
         (function () {
             var u = <?= json_encode($user['name'] ?? 'guest') ?>;
@@ -58,7 +58,7 @@ $error = Session::flash('error');
         <header class="topbar">
             <div class="topbar-title">
                 <button class="mobile-menu-toggle btn btn-outline-dark btn-sm" type="button" aria-controls="app-sidebar" aria-expanded="false" data-sidebar-toggle>Menu</button>
-                <h1 class="h3 mb-1"><?= e($title ?? '') ?></h1>
+                <h1 class="h3 mb-1" data-icon="&#9671;"><?= e($title ?? '') ?></h1>
                 <div class="text-muted">Operacion diaria del taller</div>
             </div>
             <div class="d-flex align-items-center gap-2">
@@ -67,7 +67,7 @@ $error = Session::flash('error');
                 </form>
                 <span class="badge text-bg-light"><?= e($user['name'] ?? 'Usuario') ?></span>
                 <div class="dropdown theme-switcher">
-                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Tema</button>
+                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-icon="&#9681;">Tema</button>
                     <div class="dropdown-menu dropdown-menu-end p-2" style="min-width: 230px;">
                         <div class="fw-bold small text-muted px-1 mb-1">Tema de diseno</div>
                         <label class="dropdown-item d-flex align-items-center gap-2">
@@ -89,7 +89,7 @@ $error = Session::flash('error');
                 </div>
                 <form method="post" action="<?= e(url('/logout')) ?>">
                     <?= csrf_field() ?>
-                    <button class="btn btn-outline-dark btn-sm">Salir</button>
+                    <button class="btn btn-outline-dark btn-sm" data-icon="&#128274;">Salir</button>
                 </form>
             </div>
         </header>
@@ -106,7 +106,7 @@ $error = Session::flash('error');
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="<?= e(asset('js/app.js') . '?v=20260614-table-search2') ?>"></script>
-<script src="<?= e(asset('js/theme-switcher.js')) ?>"></script>
+<script src="<?= e(asset('js/theme-switcher.js') . '?v=20260707-theme-sync') ?>"></script>
 <?php foreach (($pageScripts ?? []) as $script): ?>
     <script src="<?= e($script) ?>"></script>
 <?php endforeach; ?>

@@ -156,6 +156,48 @@ a {
   border-radius: 8px;
 }
 
+.btn[data-icon] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.btn[data-icon]::before {
+  content: attr(data-icon);
+  line-height: 1;
+}
+
+.glass-card h1[data-icon],
+.glass-card h2[data-icon],
+.metric h2[data-icon],
+.auth-card h1[data-icon],
+.public-wrap h1[data-icon],
+.topbar h1[data-icon] {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.glass-card h1[data-icon]::before,
+.glass-card h2[data-icon]::before,
+.metric h2[data-icon]::before,
+.auth-card h1[data-icon]::before,
+.public-wrap h1[data-icon]::before,
+.topbar h1[data-icon]::before {
+  content: attr(data-icon);
+  display: inline-grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 1px solid rgba(19, 184, 200, 0.22);
+  border-radius: 8px;
+  color: #087f8c;
+  background: rgba(19, 184, 200, 0.1);
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
 .btn-primary {
   --bs-btn-bg: #0f9fab;
   --bs-btn-border-color: #0f9fab;
@@ -168,10 +210,58 @@ a {
   --bs-btn-border-color: #24a86d;
 }
 
+.form-label {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.form-label[data-icon] {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.form-label[data-icon]::before {
+  content: attr(data-icon);
+  display: inline-grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 1px solid rgba(19, 184, 200, 0.22);
+  border-radius: 8px;
+  color: #087f8c;
+  background: rgba(19, 184, 200, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  font-size: 0.92rem;
+  line-height: 1;
+}
+
 .form-control,
 .form-select {
   border-radius: 8px;
   border-color: var(--line);
+  background-color: rgba(255, 255, 255, 0.86);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.66);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--aqua);
+  box-shadow: 0 0 0 0.18rem rgba(19, 184, 200, 0.16), 0 8px 24px rgba(19, 184, 200, 0.12);
+}
+
+.form-control[type="number"],
+.form-control[data-money] {
+  color: #0d6e49;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.form-control[data-warning] {
+  border-color: rgba(255, 126, 103, 0.42);
+  background: rgba(255, 247, 244, 0.9);
 }
 
 .badge-state {
@@ -216,6 +306,73 @@ a {
   border: 1px dashed rgba(33, 91, 103, 0.24);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.46);
+}
+
+.equipment-type-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(92px, 1fr));
+  gap: 10px;
+}
+
+.equipment-type-card {
+  position: relative;
+  display: grid;
+  min-height: 84px;
+  gap: 6px;
+  place-items: center;
+  padding: 12px 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.58);
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, color 0.15s ease;
+}
+
+.equipment-type-card input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.equipment-type-card__icon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 10px;
+  color: #087f8c;
+  background: rgba(19, 184, 200, 0.12);
+  border: 1px solid rgba(19, 184, 200, 0.24);
+  font-size: 1.1rem;
+}
+
+.equipment-type-card__text {
+  font-size: 0.76rem;
+  font-weight: 800;
+  line-height: 1.1;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.equipment-type-card:hover {
+  color: var(--ink);
+  border-color: rgba(19, 184, 200, 0.38);
+  box-shadow: 0 10px 24px rgba(19, 184, 200, 0.14);
+  transform: translateY(-1px);
+}
+
+.equipment-type-card:has(input:checked) {
+  color: var(--ink);
+  border-color: var(--aqua);
+  background: linear-gradient(145deg, rgba(19, 184, 200, 0.16), rgba(87, 214, 164, 0.14));
+  box-shadow: 0 0 0 3px rgba(19, 184, 200, 0.12), 0 14px 28px rgba(19, 184, 200, 0.14);
+}
+
+.equipment-type-card:has(input:checked) .equipment-type-card__icon {
+  color: #04282e;
+  background: linear-gradient(145deg, var(--aqua), var(--mint));
+  border-color: transparent;
 }
 
 .camera-scanner-wrap {
@@ -378,6 +535,16 @@ a {
   .table-wrap > .table,
   .table-wrap > table {
     min-width: 720px;
+  }
+
+  .equipment-type-grid {
+    grid-template-columns: repeat(3, minmax(86px, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .equipment-type-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

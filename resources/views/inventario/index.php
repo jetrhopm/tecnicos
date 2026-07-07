@@ -1,6 +1,6 @@
 <div class="glass-card">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="h5 mb-0">Inventario y refacciones</h2>
+        <h2 class="h5 mb-0" data-icon="&#128230;">Inventario y refacciones</h2>
         <span class="badge text-bg-warning"><?= count($stockBajo) ?> con stock bajo</span>
     </div>
     <div class="table-wrap">

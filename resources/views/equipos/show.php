@@ -4,10 +4,10 @@
 <div class="glass-card">
     <div class="d-flex justify-content-between align-items-start">
         <div>
-            <h2 class="h5"><?= e(trim($equipo['marca'] . ' ' . $equipo['modelo']) ?: $equipo['tipo']) ?></h2>
+            <h2 class="h5" data-icon="&#128421;"><?= e(trim($equipo['marca'] . ' ' . $equipo['modelo']) ?: $equipo['tipo']) ?></h2>
             <p class="text-muted"><?= e($equipo['cliente_nombre']) ?></p>
         </div>
-        <a class="btn btn-outline-dark btn-sm" href="<?= e(url('/equipos/' . $equipo['id'] . '/edit')) ?>">Editar</a>
+        <a class="btn btn-outline-dark btn-sm" data-icon="&#9998;" href="<?= e(url('/equipos/' . $equipo['id'] . '/edit')) ?>">Editar</a>
     </div>
     <div class="row g-3">
         <div class="col-md-3"><strong>Tipo</strong><br><?= e($equipo['tipo']) ?></div>

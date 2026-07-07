@@ -7,14 +7,14 @@ $pageScripts = [
 <div class="glass-card mb-3">
     <form method="post" action="<?= e(url('/entregas/buscar')) ?>" id="delivery-scan-form">
         <?= csrf_field() ?>
-        <label class="form-label" for="codigo_entrega">Clave del codigo de barras de la nota del cliente</label>
+        <label class="form-label" for="codigo_entrega" data-icon="&#9635;">Clave del codigo de barras de la nota del cliente</label>
         <div class="input-group input-group-lg">
             <input class="form-control" id="codigo_entrega" name="codigo_entrega" value="<?= e($codigo) ?>" placeholder="Escanea o escribe la clave" autofocus>
-            <button class="btn btn-primary">Buscar</button>
+            <button class="btn btn-primary" data-icon="&#128269;">Buscar</button>
         </div>
         <div class="d-flex gap-2 flex-wrap mt-3">
-            <button class="btn btn-outline-dark" type="button" id="start-camera-scan">Usar camara</button>
-            <button class="btn btn-outline-secondary d-none" type="button" id="stop-camera-scan">Detener camara</button>
+            <button class="btn btn-outline-dark" type="button" id="start-camera-scan" data-icon="&#128247;">Usar camara</button>
+            <button class="btn btn-outline-secondary d-none" type="button" id="stop-camera-scan" data-icon="&#9632;">Detener camara</button>
         </div>
         <div class="form-text">El lector de barras USB funciona como teclado. En celular puedes usar camara si el navegador permite acceso seguro.</div>
     </form>
@@ -36,7 +36,7 @@ $pageScripts = [
             <div class="glass-card h-100">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <h2 class="h4 mb-1"><?= e($orden['folio']) ?></h2>
+                        <h2 class="h4 mb-1" data-icon="&#128203;"><?= e($orden['folio']) ?></h2>
                         <p class="text-muted mb-2"><?= e($orden['cliente_nombre']) ?> · <?= e($equipo) ?></p>
                     </div>
                     <span class="badge-state status-<?= e($orden['estado']) ?>"><?= e($orden['estado']) ?></span>
@@ -56,7 +56,7 @@ $pageScripts = [
         </div>
         <div class="col-lg-5">
             <div class="glass-card">
-                <h2 class="h5">Liberar equipo</h2>
+                <h2 class="h5" data-icon="&#128275;">Liberar equipo</h2>
                 <?php if ($orden['estado'] === 'entregada'): ?>
                     <div class="alert alert-info mb-0">Esta orden ya esta marcada como entregada.</div>
                 <?php else: ?>
@@ -64,20 +64,20 @@ $pageScripts = [
                         <?= csrf_field() ?>
                         <input type="hidden" name="codigo_entrega" value="<?= e($orden['codigo_entrega']) ?>">
                         <div class="mb-3">
-                            <label class="form-label">Nombre de quien recibe</label>
+                            <label class="form-label" data-icon="&#128100;">Nombre de quien recibe</label>
                             <input class="form-control" name="recibido_por_nombre" value="<?= e($orden['cliente_nombre']) ?>" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Identificacion opcional</label>
+                            <label class="form-label" data-icon="&#35;">Identificacion opcional</label>
                             <input class="form-control" name="recibido_por_identificacion">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Pago final</label>
-                            <input class="form-control" type="number" step="0.01" name="pago_final" value="<?= e((string) max(0, (float) $orden['saldo_pendiente'])) ?>">
+                            <label class="form-label" data-icon="&#36;">Pago final</label>
+                            <input class="form-control" type="number" step="0.01" name="pago_final" value="<?= e((string) max(0, (float) $orden['saldo_pendiente'])) ?>" data-money>
                             <div class="form-text">Debe quedar saldo cero para liberar el equipo.</div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Metodo de pago</label>
+                            <label class="form-label" data-icon="&#9679;">Metodo de pago</label>
                             <select class="form-select" name="metodo_pago">
                                 <?php foreach (['efectivo','transferencia','tarjeta','otro'] as $metodo): ?>
                                     <option value="<?= e($metodo) ?>"><?= e($metodo) ?></option>
@@ -85,14 +85,14 @@ $pageScripts = [
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Referencia</label>
+                            <label class="form-label" data-icon="&#35;">Referencia</label>
                             <input class="form-control" name="referencia_pago">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Observaciones de entrega</label>
+                            <label class="form-label" data-icon="&#9998;">Observaciones de entrega</label>
                             <textarea class="form-control" name="observaciones" rows="3"></textarea>
                         </div>
-                        <button class="btn btn-success w-100">Entregar equipo</button>
+                        <button class="btn btn-success w-100" data-icon="&#10003;">Entregar equipo</button>
                     </form>
                 <?php endif; ?>
             </div>

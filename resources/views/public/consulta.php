@@ -1,15 +1,15 @@
 <div class="d-flex justify-content-between align-items-start mb-4">
     <div>
-        <h1 class="h4 mb-1">Consulta de reparacion</h1>
+        <h1 class="h4 mb-1" data-icon="&#128269;">Consulta de reparacion</h1>
         <p class="text-muted mb-0">Seguimiento publico por folio y token seguro</p>
     </div>
-    <a class="btn btn-outline-dark btn-sm" href="<?= e(url('/login')) ?>">Panel</a>
+    <a class="btn btn-outline-dark btn-sm" data-icon="&#128274;" href="<?= e(url('/login')) ?>">Panel</a>
 </div>
 
 <form class="row g-2 mb-4" method="get" action="<?= e(url('/consulta')) ?>">
     <div class="col-md-5"><input class="form-control" name="folio" value="<?= e($folio) ?>" placeholder="Folio"></div>
     <div class="col-md-5"><input class="form-control" name="token" value="<?= e($token) ?>" placeholder="Token"></div>
-    <div class="col-md-2 d-grid"><button class="btn btn-primary">Consultar</button></div>
+    <div class="col-md-2 d-grid"><button class="btn btn-primary" data-icon="&#128269;">Consultar</button></div>
 </form>
 
 <?php if ($folio && !$orden): ?>
@@ -21,7 +21,7 @@
     <div class="row g-3">
         <div class="col-lg-5">
             <div class="glass-card">
-                <h2 class="h5"><?= e($orden['folio']) ?></h2>
+                <h2 class="h5" data-icon="&#128203;"><?= e($orden['folio']) ?></h2>
                 <p class="text-muted"><?= e($equipo) ?></p>
                 <p><span class="badge-state status-<?= e($orden['estado']) ?>"><?= e($orden['estado']) ?></span></p>
                 <dl class="mb-0">
@@ -34,11 +34,11 @@
         </div>
         <div class="col-lg-7">
             <div class="glass-card mb-3">
-                <h2 class="h5">Diagnostico visible</h2>
+                <h2 class="h5" data-icon="&#128269;">Diagnostico visible</h2>
                 <p class="mb-0"><?= nl2br(e($diagnostico['diagnostico_cliente'] ?? 'Aun no hay diagnostico visible para cliente.')) ?></p>
             </div>
             <div class="glass-card">
-                <h2 class="h5">Cotizacion</h2>
+                <h2 class="h5" data-icon="&#128179;">Cotizacion</h2>
                 <?php if ($cotizacion): ?>
                     <div class="table-wrap mb-3">
                         <table class="table">
@@ -57,10 +57,10 @@
                     <?php if ($cotizacion['estado'] === 'pendiente'): ?>
                         <div class="d-flex gap-2 mt-3">
                             <form method="post" action="<?= e(url('/consulta/' . urlencode($orden['folio']) . '/' . urlencode($orden['token_publico']) . '/cotizacion/' . $cotizacion['id'])) ?>">
-                                <?= csrf_field() ?><input type="hidden" name="estado" value="aceptada"><button class="btn btn-success">Aceptar cotizacion</button>
+                                <?= csrf_field() ?><input type="hidden" name="estado" value="aceptada"><button class="btn btn-success" data-icon="&#10003;">Aceptar cotizacion</button>
                             </form>
                             <form method="post" action="<?= e(url('/consulta/' . urlencode($orden['folio']) . '/' . urlencode($orden['token_publico']) . '/cotizacion/' . $cotizacion['id'])) ?>">
-                                <?= csrf_field() ?><input type="hidden" name="estado" value="rechazada"><input type="hidden" name="motivo" value="Rechazada desde portal publico"><button class="btn btn-outline-danger">Rechazar</button>
+                                <?= csrf_field() ?><input type="hidden" name="estado" value="rechazada"><input type="hidden" name="motivo" value="Rechazada desde portal publico"><button class="btn btn-outline-danger" data-icon="&#10005;">Rechazar</button>
                             </form>
                         </div>
                     <?php endif; ?>

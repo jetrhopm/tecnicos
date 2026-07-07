@@ -1,7 +1,7 @@
 <div class="glass-card">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="h5 mb-0">Usuarios y roles</h2>
-        <a class="btn btn-primary btn-sm" href="<?= e(url('/usuarios/create')) ?>">Nuevo usuario</a>
+        <h2 class="h5 mb-0" data-icon="&#128100;">Usuarios y roles</h2>
+        <a class="btn btn-primary btn-sm" data-icon="&#43;" href="<?= e(url('/usuarios/create')) ?>">Nuevo usuario</a>
     </div>
     <div class="table-wrap">
         <table class="table align-middle">

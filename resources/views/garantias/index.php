@@ -1,5 +1,5 @@
 <div class="glass-card">
-    <h2 class="h5">Garantias activas</h2>
+    <h2 class="h5" data-icon="&#128737;">Garantias activas</h2>
     <div class="table-wrap">
         <table class="table align-middle">
             <thead><tr><th>Folio</th><th>Cliente</th><th>Inicio</th><th>Fin</th><th>Estado</th></tr></thead>

@@ -1,11 +1,11 @@
 <div class="glass-card mb-3">
     <form class="row g-2 align-items-end">
         <div class="col-md-5">
-            <label class="form-label">Buscar</label>
+            <label class="form-label" data-icon="&#128269;">Buscar</label>
             <input class="form-control" name="q" value="<?= e($_GET['q'] ?? '') ?>" placeholder="Folio, cliente o telefono" data-table-search-source>
         </div>
         <div class="col-md-3">
-            <label class="form-label">Estado</label>
+            <label class="form-label" data-icon="&#9679;">Estado</label>
             <select class="form-select" name="estado">
                 <option value="">Todos</option>
                 <?php foreach ($estados as $estado): ?>
@@ -14,7 +14,7 @@
             </select>
         </div>
         <div class="col-md-2">
-            <label class="form-label">Prioridad</label>
+            <label class="form-label" data-icon="&#9888;">Prioridad</label>
             <select class="form-select" name="prioridad">
                 <option value="">Todas</option>
                 <?php foreach (['baja','normal','alta','urgente'] as $prioridad): ?>
@@ -23,14 +23,14 @@
             </select>
         </div>
         <div class="col-md-2 d-grid">
-            <button class="btn btn-outline-dark">Filtrar</button>
+            <button class="btn btn-outline-dark" data-icon="&#128269;">Filtrar</button>
         </div>
     </form>
 </div>
 <div class="glass-card">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="h5 mb-0">Ordenes de servicio</h2>
-        <a class="btn btn-primary btn-sm" href="<?= e(url('/ordenes/create')) ?>">Nueva orden</a>
+        <h2 class="h5 mb-0" data-icon="&#128203;">Ordenes de servicio</h2>
+        <a class="btn btn-primary btn-sm" data-icon="&#43;" href="<?= e(url('/ordenes/create')) ?>">Nueva orden</a>
     </div>
     <div class="table-wrap">
         <table class="table align-middle">

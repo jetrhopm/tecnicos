@@ -1,7 +1,7 @@
 <div class="glass-card">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="h5 mb-0">Equipos</h2>
-        <a class="btn btn-primary btn-sm" href="<?= e(url('/equipos/create')) ?>">Nuevo equipo</a>
+        <h2 class="h5 mb-0" data-icon="&#128421;">Equipos</h2>
+        <a class="btn btn-primary btn-sm" data-icon="&#43;" href="<?= e(url('/equipos/create')) ?>">Nuevo equipo</a>
     </div>
     <div class="table-wrap">
         <table class="table align-middle">
