@@ -9,6 +9,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
 use App\Core\View;
+use App\Services\ConfiguracionService;
 use App\Services\EntregaService;
 
 final class EntregaController
@@ -67,6 +68,27 @@ final class EntregaController
             return;
         }
 
-        View::render('print/entrega', ['title' => 'Comprobante de entrega', 'entrega' => $entrega], 'layouts/print');
+        $formato = (string) $request->input('formato', 'carta');
+        if (!in_array($formato, ['carta', '80', '58'], true)) {
+            $formato = 'carta';
+        }
+
+        $cfg = new ConfiguracionService();
+        $config = [
+            'negocio.nombre' => $cfg->get('negocio.nombre', 'Servicio Tecnico'),
+            'negocio.telefono' => $cfg->get('negocio.telefono', ''),
+            'negocio.whatsapp' => $cfg->get('negocio.whatsapp', ''),
+            'negocio.direccion' => $cfg->get('negocio.direccion', ''),
+            'negocio.logo_url' => $cfg->get('negocio.logo_url', ''),
+            'ticket.garantia' => $cfg->get('ticket.garantia', ''),
+            'legal.politica_garantia' => $cfg->get('legal.politica_garantia', ''),
+        ];
+
+        View::render('print/entrega', [
+            'title' => 'Comprobante de entrega',
+            'entrega' => $entrega,
+            'formato' => $formato,
+            'config' => $config,
+        ], 'layouts/print');
     }
 }

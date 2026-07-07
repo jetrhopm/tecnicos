@@ -119,6 +119,17 @@ final class EntregaService
         }
     }
 
+    public function ultimaPorOrden(int $ordenId): ?array
+    {
+        // Ultima entrega registrada de una orden, para reimprimir su comprobante.
+        $stmt = Database::connection()->prepare(
+            'SELECT id FROM entregas WHERE orden_id = :orden_id ORDER BY id DESC LIMIT 1'
+        );
+        $stmt->execute(['orden_id' => $ordenId]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
     public function comprobante(int $id): ?array
     {
         $stmt = Database::connection()->prepare(

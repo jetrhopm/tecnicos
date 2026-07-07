@@ -27,6 +27,16 @@ $whatsappPdf = linkWhatsapp($telefonoCliente, 'Hola ' . (string) $orden['cliente
                         </ul>
                     </div>
                     <a class="btn btn-outline-dark btn-sm" data-icon="PDF" target="_blank" href="<?= e(url('/ordenes/' . $orden['id'] . '/pdf')) ?>">PDF</a>
+                    <?php if (!empty($entrega['id'])): ?>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-dark btn-sm dropdown-toggle" data-icon="&#128230;" type="button" data-bs-toggle="dropdown" aria-expanded="false">Comprobante</button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" target="_blank" href="<?= e(url('/entregas/' . $entrega['id'] . '/comprobante?formato=carta')) ?>">Hoja carta</a></li>
+                                <li><a class="dropdown-item" target="_blank" href="<?= e(url('/entregas/' . $entrega['id'] . '/comprobante?formato=80')) ?>">Ticket 80&nbsp;mm</a></li>
+                                <li><a class="dropdown-item" target="_blank" href="<?= e(url('/entregas/' . $entrega['id'] . '/comprobante?formato=58')) ?>">Ticket 58&nbsp;mm</a></li>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
                     <a class="btn btn-success btn-sm" data-icon="&#128241;" target="_blank" href="<?= e($whatsappPdf) ?>">Enviar PDF</a>
                 </div>
             </div>

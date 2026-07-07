@@ -15,6 +15,7 @@ use App\Services\AuditoriaService;
 use App\Services\ClienteService;
 use App\Services\ConfiguracionService;
 use App\Services\CotizacionService;
+use App\Services\EntregaService;
 use App\Services\EvidenciaService;
 use App\Services\DiagnosticoService;
 use App\Services\EquipoService;
@@ -121,6 +122,7 @@ final class OrdenController
             'tecnicos' => (new UserRepository())->activeTechnicians(),
             'evidencias' => (new EvidenciaService())->listar((int) $id),
             'bitacora' => (new AuditoriaService())->historial('ordenes', (int) $id),
+            'entrega' => (new EntregaService())->ultimaPorOrden((int) $id),
         ]);
     }
 
