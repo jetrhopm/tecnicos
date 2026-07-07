@@ -13,6 +13,8 @@ final class Session
         }
 
         $name = (string) env_value('SESSION_NAME', 'servicio_tecnico_session');
+        // Rechaza IDs de sesion no generados por el servidor (anti session fixation).
+        ini_set('session.use_strict_mode', '1');
         session_name($name);
         session_set_cookie_params([
             'lifetime' => 0,

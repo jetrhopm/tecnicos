@@ -31,4 +31,25 @@ final class AuditoriaService
             // La auditoria no debe tumbar la operacion principal.
         }
     }
+
+    public function intentosLoginFallidos(string $email, string $ip, int $minutos = 15): int
+    {
+        /*
+         * Cuenta fallos de login recientes por IP o por email para frenar
+         * fuerza bruta. Se apoya en los registros login_fallido de auditoria.
+         */
+        try {
+            $stmt = Database::connection()->prepare(
+                "SELECT COUNT(*) FROM auditoria
+                 WHERE modulo = 'auth' AND accion = 'login_fallido'
+                   AND created_at >= DATE_SUB(NOW(), INTERVAL :minutos MINUTE)
+                   AND (ip = :ip OR JSON_UNQUOTE(JSON_EXTRACT(datos_nuevos, '$.email')) = :email)"
+            );
+            $stmt->execute(['minutos' => $minutos, 'ip' => $ip, 'email' => $email]);
+            return (int) $stmt->fetchColumn();
+        } catch (\Throwable) {
+            // Si auditoria falla, no bloquea el login; solo pierde el conteo.
+            return 0;
+        }
+    }
 }

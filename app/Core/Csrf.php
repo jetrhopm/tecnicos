@@ -29,7 +29,14 @@ final class Csrf
 
     public static function verify(?string $token): bool
     {
+        // Ambos lados deben existir: sin token en sesion o con token vacio
+        // la comparacion hash_equals('','') daria true y abriria un bypass.
+        $stored = (string) Session::get('_csrf_token', '');
+        if ($stored === '' || $token === null || $token === '') {
+            return false;
+        }
+
         // hash_equals evita comparaciones vulnerables a timing attacks.
-        return is_string($token) && hash_equals((string) Session::get('_csrf_token', ''), $token);
+        return hash_equals($stored, $token);
     }
 }

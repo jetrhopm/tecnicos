@@ -31,6 +31,9 @@ final class UserService
         if ($name === '' || $email === '' || $password === '') {
             throw new RuntimeException('Nombre, email y contrasena son obligatorios.');
         }
+        if (strlen($password) < 8) {
+            throw new RuntimeException('La contrasena debe tener al menos 8 caracteres.');
+        }
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new RuntimeException('El email no es valido.');
         }

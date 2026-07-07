@@ -14,7 +14,19 @@ final class Response
 
     public static function back(): never
     {
-        header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? url('/')));
+        // Solo se regresa a paginas del propio sistema; un Referer externo
+        // o manipulado no debe convertirse en redireccion (open redirect).
+        $target = url('/');
+        $referer = (string) ($_SERVER['HTTP_REFERER'] ?? '');
+        if ($referer !== '') {
+            $refererHost = parse_url($referer, PHP_URL_HOST);
+            $ownHost = parse_url(request_base_url(), PHP_URL_HOST);
+            if ($refererHost !== null && $refererHost === $ownHost) {
+                $target = $referer;
+            }
+        }
+
+        header('Location: ' . $target);
         exit;
     }
 

@@ -14,7 +14,16 @@ final class Request
      */
     public function method(): string
     {
-        $method = strtoupper($_POST['_method'] ?? $_SERVER['REQUEST_METHOD'] ?? 'GET');
+        $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
+
+        // El override _method solo aplica desde un POST real y solo hacia
+        // verbos de modificacion; asi no se puede degradar a GET para
+        // esquivar la validacion CSRF.
+        $override = strtoupper((string) ($_POST['_method'] ?? ''));
+        if ($method === 'POST' && in_array($override, ['PUT', 'PATCH', 'DELETE'], true)) {
+            return $override;
+        }
+
         return in_array($method, ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], true) ? $method : 'GET';
     }
 

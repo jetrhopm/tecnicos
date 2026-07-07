@@ -25,6 +25,7 @@ use App\Core\Request;
 use App\Core\Router;
 
 $request = new Request();
+Middleware::securityHeaders();
 Middleware::csrf($request);
 
 $router = new Router();

@@ -11,6 +11,7 @@ $error = Session::flash('error');
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="<?= e(\App\Core\Csrf::token()) ?>">
     <title><?= e($title ?? 'Servicio Tecnico') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= e(asset('css/app.css') . '?v=20260614-table-search2') ?>" rel="stylesheet">

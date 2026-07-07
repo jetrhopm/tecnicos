@@ -33,10 +33,16 @@ function app_url(string $path = ''): string
 
 function request_base_url(): string
 {
+    // Los headers X-Forwarded-* los puede mandar cualquier cliente; solo se
+    // aceptan cuando la app declara estar detras de un proxy (APP_TRUST_PROXY=true).
+    $trustProxy = filter_var(env_value('APP_TRUST_PROXY', false), FILTER_VALIDATE_BOOL);
     $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-        || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+        || ($trustProxy && ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
     $scheme = $https ? 'https' : 'http';
-    $host = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
+    $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
+    if ($trustProxy && !empty($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+        $host = trim(explode(',', (string) $_SERVER['HTTP_X_FORWARDED_HOST'])[0]);
+    }
     $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
     $basePath = '';
 

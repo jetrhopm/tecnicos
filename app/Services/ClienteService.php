@@ -29,6 +29,18 @@ final class ClienteService
     {
         $payload = $this->normalizar($data);
 
+        // Validacion minima en el servicio: la API llama directo aqui sin
+        // pasar por ClienteValidator, y no deben existir clientes sin datos.
+        if ($payload['nombre_completo'] === '') {
+            throw new RuntimeException('El nombre del cliente es obligatorio.');
+        }
+        if ($payload['telefono'] === '') {
+            throw new RuntimeException('El telefono del cliente es obligatorio.');
+        }
+        if ($payload['email'] !== null && !filter_var($payload['email'], FILTER_VALIDATE_EMAIL)) {
+            throw new RuntimeException('El email del cliente no es valido.');
+        }
+
         if ($id) {
             $anterior = $this->clientes->find($id);
             if (!$anterior) {
@@ -71,6 +83,8 @@ final class ClienteService
 
     private function normalizar(array $data): array
     {
+        $estatus = $data['estatus'] ?? 'activo';
+
         return [
             'nombre_completo' => trim((string) ($data['nombre_completo'] ?? '')),
             'telefono' => normalizarTelefono((string) ($data['telefono'] ?? '')),
@@ -82,7 +96,7 @@ final class ClienteService
             'codigo_postal' => trim((string) ($data['codigo_postal'] ?? '')) ?: null,
             'rfc' => strtoupper(trim((string) ($data['rfc'] ?? ''))) ?: null,
             'notas_internas' => trim((string) ($data['notas_internas'] ?? '')) ?: null,
-            'estatus' => in_array(($data['estatus'] ?? 'activo'), ['activo', 'inactivo'], true) ? $data['estatus'] : 'activo',
+            'estatus' => in_array($estatus, ['activo', 'inactivo'], true) ? $estatus : 'activo',
         ];
     }
 }

@@ -27,11 +27,16 @@ final class AuthController
         $email = trim((string) $request->input('email'));
         $password = (string) $request->input('password');
 
-        if ((new AuthService())->attempt($email, $password)) {
-            Response::redirect('/');
+        try {
+            if ((new AuthService())->attempt($email, $password)) {
+                Response::redirect('/');
+            }
+            Session::flash('error', 'Credenciales incorrectas o usuario inactivo.');
+        } catch (\RuntimeException $exception) {
+            // Bloqueo temporal por demasiados intentos fallidos.
+            Session::flash('error', $exception->getMessage());
         }
 
-        Session::flash('error', 'Credenciales incorrectas o usuario inactivo.');
         Response::redirect('/login');
     }
 
