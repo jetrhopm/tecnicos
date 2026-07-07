@@ -897,3 +897,23 @@ a {
   outline: 2px solid var(--aqua);
   outline-offset: 2px;
 }
+
+/* Botones de accion de la orden: en movil se apilan verticalmente y todos
+   quedan del mismo ancho/alto para una linea de acciones uniforme. */
+@media (max-width: 720px) {
+  .order-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .order-actions > .btn,
+  .order-actions > .dropdown {
+    width: 100%;
+  }
+
+  .order-actions > .dropdown > .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

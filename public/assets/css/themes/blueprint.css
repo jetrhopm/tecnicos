@@ -34,7 +34,9 @@
   background-attachment: fixed;
 }
 
-[data-theme="blueprint"] a {
+/* Enlaces normales en cian; los botones (.btn) conservan el color de su
+   variante para no perder contraste (verde con texto oscuro, etc.). */
+[data-theme="blueprint"] a:not(.btn) {
   color: #5cc6ff;
 }
 

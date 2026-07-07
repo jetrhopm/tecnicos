@@ -15,7 +15,7 @@ $whatsappPdf = linkWhatsapp($telefonoCliente, 'Hola ' . (string) $orden['cliente
                     <span class="badge-state status-<?= e($orden['estado']) ?>"><?= e($orden['estado']) ?></span>
                     <span class="badge text-bg-light"><?= e($orden['prioridad']) ?></span>
                 </div>
-                <div class="d-flex gap-2 flex-wrap justify-content-end">
+                <div class="d-flex gap-2 flex-wrap justify-content-end order-actions">
                     <a class="btn btn-success btn-sm" data-icon="&#128241;" target="_blank" href="<?= e($whatsapp) ?>">WhatsApp</a>
                     <a class="btn btn-outline-dark btn-sm" data-icon="&#128065;" target="_blank" href="<?= e($consulta) ?>">Portal</a>
                     <div class="dropdown">
@@ -26,7 +26,7 @@ $whatsappPdf = linkWhatsapp($telefonoCliente, 'Hola ' . (string) $orden['cliente
                             <li><a class="dropdown-item" target="_blank" href="<?= e(url('/ordenes/' . $orden['id'] . '/imprimir?formato=58')) ?>">Ticket 58&nbsp;mm</a></li>
                         </ul>
                     </div>
-                    <a class="btn btn-outline-dark btn-sm" data-icon="PDF" target="_blank" href="<?= e(url('/ordenes/' . $orden['id'] . '/pdf')) ?>">PDF</a>
+                    <a class="btn btn-outline-dark btn-sm" data-icon="&#128196;" target="_blank" href="<?= e(url('/ordenes/' . $orden['id'] . '/pdf')) ?>">PDF</a>
                     <?php if (!empty($entrega['id'])): ?>
                         <div class="dropdown">
                             <button class="btn btn-outline-dark btn-sm dropdown-toggle" data-icon="&#128230;" type="button" data-bs-toggle="dropdown" aria-expanded="false">Comprobante</button>
