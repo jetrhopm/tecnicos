@@ -1,7 +1,7 @@
 <?php
 $pageScripts = [
-    asset('js/orden-rapida.js') . '?v=20260614',
-    asset('js/pattern-lock.js') . '?v=20260707-form-ui',
+    asset('js/orden-rapida.js') . '?v=20260707-equipment-decision-final',
+    asset('js/pattern-lock.js') . '?v=20260707-clear-hidden',
 ];
 $tiposEquipo = ['celular','laptop','pc','consola','impresora','electrodomestico','herramienta','moto','otro'];
 $tipoIconos = [
@@ -14,6 +14,28 @@ $tipoIconos = [
     'herramienta' => '&#128295;',
     'moto' => '&#127949;',
     'otro' => '&#9671;',
+];
+$serviciosComunes = [
+    'Recepcion completa / diagnostico inicial',
+    'Solo presupuesto / revision sin reparar',
+    'No enciende / queda en logo',
+    'Diagnostico de pila / consumo / corto',
+    'Humedad / sulfatacion / limpieza tecnica',
+    'Cambio de modulo / pantalla',
+    'Cambio de modulo calidad original',
+    'Vidrio / tactil / display sin imagen',
+    'Colocacion de mica / vidrio templado',
+    'Tapa trasera / carcasa / marco',
+    'Bateria se descarga / dura poco',
+    'Centro de carga / flex',
+    'Pin de carga con soldadura',
+    'Bocina / auricular / microfono',
+    'Camara / sensor / proximidad',
+    'Software / actualizacion / flasheo',
+    'Liberacion / desbloqueo',
+    'Respaldo / recuperacion de datos',
+    'Mantenimiento preventivo',
+    'Reparacion electronica avanzada',
 ];
 ?>
 <form class="quick-order-form" method="post" action="<?= e(url('/ordenes')) ?>">
@@ -29,22 +51,44 @@ $tipoIconos = [
         </div>
 
         <div class="row g-3">
-            <div class="col-lg-5">
-                <label class="form-label" data-icon="&#128269;">Buscar cliente existente</label>
-                <input class="form-control mb-2" id="cliente_search" placeholder="Nombre, telefono o email">
-                <select class="form-select" name="cliente_id" id="cliente_id">
-                    <option value="">Crear cliente nuevo</option>
-                    <?php foreach ($clientes as $cliente): ?>
-                        <option value="<?= e($cliente['id']) ?>" data-search="<?= e(strtolower($cliente['nombre_completo'] . ' ' . $cliente['telefono'] . ' ' . $cliente['email'])) ?>">
-                            <?= e($cliente['nombre_completo'] . ' - ' . $cliente['telefono']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+            <div class="col-12">
+                <label class="form-label" data-icon="&#128269;">Cliente</label>
+                <div class="entity-combo" data-entity-combo>
+                    <div class="input-group">
+                        <input class="form-control" id="cliente_lookup" placeholder="Buscar cliente por nombre, telefono o email" autocomplete="off" data-entity-input>
+                        <button class="btn btn-outline-dark" type="button" data-entity-toggle data-icon="&#9662;" aria-label="Mostrar clientes"></button>
+                    </div>
+                    <select class="form-select d-none" name="cliente_id" id="cliente_id" data-entity-select>
+                        <option value="">Crear cliente nuevo</option>
+                        <?php foreach ($clientes as $cliente): ?>
+                            <option value="<?= e($cliente['id']) ?>"
+                                    data-search="<?= e(strtolower($cliente['nombre_completo'] . ' ' . $cliente['telefono'] . ' ' . $cliente['email'])) ?>"
+                                    data-nombre-completo="<?= e($cliente['nombre_completo'] ?? '') ?>"
+                                    data-telefono="<?= e($cliente['telefono'] ?? '') ?>"
+                                    data-whatsapp="<?= e($cliente['whatsapp'] ?? '') ?>"
+                                    data-email="<?= e($cliente['email'] ?? '') ?>"
+                                    data-domicilio="<?= e($cliente['domicilio'] ?? '') ?>"
+                                    data-ciudad="<?= e($cliente['ciudad'] ?? '') ?>"
+                                    data-estado="<?= e($cliente['estado'] ?? '') ?>"
+                                    data-notas-cliente="<?= e($cliente['notas_internas'] ?? '') ?>">
+                                <?= e($cliente['nombre_completo'] . ' - ' . $cliente['telefono']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <div class="entity-combo__menu d-none" data-entity-menu></div>
+                </div>
             </div>
 
-            <div class="col-lg-7">
+            <div class="col-12">
                 <div class="quick-order-new" data-new-client>
+                    <input type="hidden" name="cliente_accion" value="crear" data-client-action>
                     <div class="row g-3">
+                        <div class="col-12">
+                            <div class="form-check quick-order-action">
+                                <input class="form-check-input" type="checkbox" name="actualizar_cliente" value="1" id="actualizar_cliente" data-client-update-check>
+                                <label class="form-check-label" for="actualizar_cliente" data-client-update-label>Crear cliente nuevo</label>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <label class="form-label" data-icon="&#128100;">Nombre completo</label>
                             <input class="form-control" name="nombre_completo" data-client-required>
@@ -93,24 +137,41 @@ $tipoIconos = [
         </div>
 
         <div class="row g-3">
-            <div class="col-lg-5">
-                <label class="form-label" data-icon="&#128269;">Buscar equipo existente</label>
-                <input class="form-control mb-2" id="equipo_search" placeholder="Marca, modelo, serie o IMEI">
-                <select class="form-select" name="equipo_id" id="equipo_id">
-                    <option value="">Crear equipo nuevo</option>
-                    <?php foreach ($equipos as $equipo): ?>
-                        <?php $equipoNombre = trim(($equipo['marca'] ?? '') . ' ' . ($equipo['modelo'] ?? '')) ?: $equipo['tipo']; ?>
-                        <option value="<?= e($equipo['id']) ?>"
-                                data-cliente-id="<?= e($equipo['cliente_id']) ?>"
-                                data-search="<?= e(strtolower($equipo['cliente_nombre'] . ' ' . $equipoNombre . ' ' . $equipo['numero_serie'] . ' ' . $equipo['imei'] . ' ' . $equipo['color'])) ?>">
-                            <?= e($equipo['cliente_nombre'] . ' - ' . $equipoNombre . ' - ' . ($equipo['numero_serie'] ?: $equipo['imei'] ?: 'sin serie')) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+            <div class="col-12">
+                <label class="form-label" data-icon="&#128269;">Equipo</label>
+                <div class="entity-combo" data-entity-combo>
+                    <div class="input-group">
+                        <input class="form-control" id="equipo_lookup" placeholder="Buscar equipo por marca, modelo, serie o IMEI" autocomplete="off" data-entity-input>
+                        <button class="btn btn-outline-dark" type="button" data-entity-toggle data-icon="&#9662;" aria-label="Mostrar equipos"></button>
+                    </div>
+                    <select class="form-select d-none" name="equipo_id" id="equipo_id" data-entity-select>
+                        <option value="">Crear equipo nuevo</option>
+                        <?php foreach ($equipos as $equipo): ?>
+                            <?php $equipoNombre = trim(($equipo['marca'] ?? '') . ' ' . ($equipo['modelo'] ?? '')) ?: $equipo['tipo']; ?>
+                            <option value="<?= e($equipo['id']) ?>"
+                                    data-cliente-id="<?= e($equipo['cliente_id']) ?>"
+                                    data-search="<?= e(strtolower($equipo['cliente_nombre'] . ' ' . $equipoNombre . ' ' . $equipo['numero_serie'] . ' ' . $equipo['imei'] . ' ' . $equipo['color'])) ?>"
+                                    data-tipo="<?= e($equipo['tipo'] ?? '') ?>"
+                                    data-marca="<?= e($equipo['marca'] ?? '') ?>"
+                                    data-modelo="<?= e($equipo['modelo'] ?? '') ?>"
+                                    data-numero-serie="<?= e($equipo['numero_serie'] ?? '') ?>"
+                                    data-imei="<?= e($equipo['imei'] ?? '') ?>"
+                                    data-color="<?= e($equipo['color'] ?? '') ?>"
+                                    data-password-equipo="<?= e($equipo['password_equipo'] ?? '') ?>"
+                                    data-accesorios-recibidos="<?= e($equipo['accesorios_recibidos'] ?? '') ?>"
+                                    data-estado-fisico="<?= e($equipo['estado_fisico'] ?? '') ?>"
+                                    data-observaciones="<?= e($equipo['observaciones'] ?? '') ?>">
+                                <?= e($equipo['cliente_nombre'] . ' - ' . $equipoNombre . ' - ' . ($equipo['numero_serie'] ?: $equipo['imei'] ?: 'sin serie')) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <div class="entity-combo__menu d-none" data-entity-menu></div>
+                </div>
             </div>
 
-            <div class="col-lg-7">
+            <div class="col-12">
                 <div class="quick-order-new" data-new-equipment>
+                    <input type="hidden" name="equipo_accion" value="crear" data-equipment-action>
                     <div class="row g-3">
                         <div class="col-12">
                             <label class="form-label" data-icon="&#9671;">Tipo de equipo</label>
@@ -179,6 +240,29 @@ $tipoIconos = [
                         <div class="col-md-8"><label class="form-label" data-icon="&#9671;">Accesorios recibidos</label><input class="form-control" name="accesorios_recibidos" placeholder="Cargador, funda, memoria, caja"></div>
                         <div class="col-md-6"><label class="form-label" data-icon="&#9888;">Estado fisico al recibir</label><textarea class="form-control" name="estado_fisico" rows="3" data-warning></textarea></div>
                         <div class="col-md-6"><label class="form-label" data-icon="&#9998;">Observaciones del equipo</label><textarea class="form-control" name="observaciones_equipo" rows="3"></textarea></div>
+                        <div class="col-12">
+                            <div class="quick-order-action quick-order-action--stack" data-equipment-action-status>
+                                <strong data-equipment-action-label>Crear equipo nuevo</strong>
+                                <span class="quick-order-action__hint">Si editas datos de un equipo existente, elige si se actualiza o si se crea otro registro.</span>
+                                <div class="quick-order-decision d-none" data-equipment-decision>
+                                    <span class="quick-order-decision__title">Cambios detectados en el equipo seleccionado</span>
+                                    <label class="quick-order-choice">
+                                        <input class="form-check-input" type="radio" name="equipo_decision" value="actualizar" data-equipment-decision-option>
+                                        <span>
+                                            <strong>Actualizar equipo seleccionado</strong>
+                                            <small>Corrige la ficha existente. Usalo si es el mismo equipo.</small>
+                                        </span>
+                                    </label>
+                                    <label class="quick-order-choice">
+                                        <input class="form-check-input" type="radio" name="equipo_decision" value="duplicar" data-equipment-decision-option>
+                                        <span>
+                                            <strong>Crear nuevo equipo con estos datos</strong>
+                                            <small>Reutiliza marca, modelo, color y tipo como base para otro equipo.</small>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="alert alert-info mb-0 d-none" data-existing-equipment-note>Se usara el equipo seleccionado. Si no aparece, cambia de cliente o crea uno nuevo.</div>
@@ -206,7 +290,20 @@ $tipoIconos = [
             </div>
             <div class="col-md-4">
                 <label class="form-label" data-icon="&#9889;">Tipo de servicio</label>
-                <input class="form-control" name="tipo_servicio" value="Revision" required>
+                <div class="service-combo" data-service-combo>
+                    <div class="input-group">
+                        <input class="form-control" name="tipo_servicio" value="" placeholder="Escribe o elige un tipo de servicio" required autocomplete="off" data-service-input>
+                        <button class="btn btn-outline-dark" type="button" data-service-toggle data-icon="&#9662;" aria-label="Mostrar tipos de servicio"></button>
+                    </div>
+                    <div class="service-combo__menu d-none" data-service-menu>
+                        <?php foreach ($serviciosComunes as $servicio): ?>
+                            <button type="button" class="service-combo__option" data-service-option="<?= e($servicio) ?>">
+                                <?= e($servicio) ?>
+                            </button>
+                        <?php endforeach; ?>
+                        <div class="service-combo__empty d-none" data-service-empty>Sin coincidencias. Puedes dejar el texto escrito.</div>
+                    </div>
+                </div>
             </div>
             <div class="col-md-2">
                 <label class="form-label" data-icon="&#9888;">Prioridad</label>

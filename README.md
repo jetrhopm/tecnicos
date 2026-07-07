@@ -1,154 +1,255 @@
-﻿# Sistema Web de Gestion de Servicios Tecnicos y Reparaciones
+# Sistema Web de Gestion de Servicios Tecnicos y Reparaciones
 
-Sistema PHP/MySQL para talleres y negocios de reparacion de celulares, computadoras, electrodomesticos, electronica, motos, impresoras, herramientas y otros equipos.
+Sistema web PHP/MySQL para negocios de reparacion de celulares, computadoras,
+electrodomesticos, electronica, impresoras, motos, herramientas y otros equipos.
+
+El objetivo es controlar el ciclo completo de una reparacion: cliente, equipo,
+orden, diagnostico, cotizacion, autorizacion, pago, entrega, garantia,
+comunicacion y consulta publica del avance.
+
+> Importante: este repositorio incluye credenciales locales y datos demo para
+> instalar rapido en XAMPP/Laragon/WAMP. Son credenciales de prueba. Antes de
+> usar el sistema en Hostinger, hosting publico o produccion, cambia todas las
+> contrasenas, `APP_DEBUG`, usuario MySQL y datos del negocio.
 
 ## Estado del proyecto
 
-Esta entrega incluye un MVP instalable con arquitectura modular propia tipo MVC ligero:
+MVP funcional con arquitectura modular propia tipo MVC ligero:
 
-- Login, logout, sesiones seguras, CSRF y `password_hash`/`password_verify`.
-- Roles y permisos configurables por modulo/accion en base de datos.
-- Clientes con busqueda, alta, edicion e historial.
-- Equipos asociados a cliente.
-- Ordenes de servicio con folio unico, token publico, estado, tecnico, diagnostico, cotizacion, pagos, WhatsApp e impresion.
-- Portal publico: `/consulta.php?folio=FOLIO&token=TOKEN` y `/consulta/FOLIO/TOKEN`.
-- Ligas amigables con `.htaccess`: `/clientes`, `/ordenes`, `/configuracion`, `/consulta/FOLIO/TOKEN`.
-- API JSON basica con formato consistente.
-- Dashboard, reportes iniciales, configuracion, usuarios, inventario stock bajo y garantias activas.
-- Auditoria para acciones criticas.
-- SQL completo y seed inicial.
-- Entrega de equipos con clave de codigo de barras desde `/entregas`; cualquier usuario logueado puede liberar, pero el sistema registra quien entrego.
-
-Los modulos de inventario avanzado, agenda, garantias profundas, archivos/evidencias, PDF, firma digital, QR, multi-sucursal y WhatsApp Business API quedan preparados en estructura y base de datos para segunda/tercera version.
+- PHP 8.4+, MySQL/MariaDB y PDO.
+- HTML5, CSS3, JavaScript vanilla y Bootstrap 5.
+- Rutas amigables con `.htaccess`.
+- Login, logout, sesiones seguras, CSRF y hashes con `password_hash`.
+- Roles y permisos configurables por modulo/accion.
+- Usuarios y roles desde panel.
+- Clientes, equipos y ordenes de servicio.
+- Alta rapida de orden con cliente/equipo nuevo o existente.
+- Edicion controlada de datos del cliente/equipo al crear orden.
+- Opcion de crear equipo nuevo tomando como base un equipo existente.
+- Selector de tipo de servicio con busqueda.
+- Patron/PIN del equipo en registro de orden.
+- Diagnosticos, cotizaciones y pagos.
+- Entrega de equipos por clave/codigo de barras.
+- Registro de quien entrega el equipo.
+- Portal publico de consulta por folio/token.
+- Dashboard, reportes iniciales, configuracion y auditoria.
+- API JSON interna con formato consistente.
+- Seed con usuarios, roles, cliente demo, equipos demo, orden demo y pagos demo.
 
 ## Requisitos
 
 - PHP 8.4 o superior.
 - MySQL 8 o MariaDB compatible.
-- Apache o Nginx. Funciona en XAMPP, Laragon o WAMP.
-- Extensiones PHP: PDO, pdo_mysql, mbstring, openssl.
-- Composer es opcional. El sistema trae autoload propio.
+- Apache con `mod_rewrite` o Nginx configurado para enrutar a `public/index.php`.
+- Extensiones PHP: `pdo`, `pdo_mysql`, `mbstring`, `openssl`.
+- Composer es opcional. El sistema puede correr con el autoload propio incluido.
 
-## Instalacion local en XAMPP/Laragon
+## Instalacion local rapida
 
-1. Coloca la carpeta del proyecto en:
+Ruta recomendada en Windows/XAMPP:
 
-   `C:\xampp\htdocs\tecnico`
+```text
+C:\xampp\htdocs\tecnico
+```
 
-2. Crea la base de datos e importa el esquema. Opcion recomendada por consola:
+Credenciales locales incluidas para demo:
+
+```ini
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=servicio_tecnico_db
+DB_USERNAME=root
+DB_PASSWORD=rufles123
+APP_URL=auto
+```
+
+Pasos:
+
+1. Copia el proyecto a `C:\xampp\htdocs\tecnico`.
+2. Copia `.env.example` a `.env`.
+3. Verifica que `.env` tenga las credenciales anteriores.
+4. Ejecuta instalacion:
 
    ```bash
    php database/install.php
    php database/check.php
    ```
 
-   O importacion manual:
-
-   ```sql
-   SOURCE C:/xampp/htdocs/tecnico/database/schema.sql;
-   SOURCE C:/xampp/htdocs/tecnico/database/seed.sql;
-   ```
-
-   Tambien puedes importarlos desde phpMyAdmin en este orden:
-
-   1. `database/schema.sql`
-   2. `database/seed.sql`
-
-3. Copia `.env.example` a `.env` si no existe y ajusta credenciales:
-
-   ```ini
-   DB_HOST=localhost
-   DB_DATABASE=servicio_tecnico_db
-   DB_USERNAME=root
-   DB_PASSWORD=rufles123
-   APP_URL=auto
-   ```
-
-4. Asegura permisos de escritura en:
-
-   - `storage/uploads`
-   - `storage/logs`
-   - `storage/backups`
-
 5. Abre:
 
-   `http://localhost/tecnico`
+   ```text
+   http://localhost/tecnico
+   ```
 
-   Si quieres probar desde celular en la misma red, entra con la IP de tu computadora, por ejemplo:
+Si pruebas desde celular en la misma red, entra con la IP de la computadora:
 
-   `http://192.168.1.130/tecnico`
+```text
+http://192.168.1.130/tecnico
+```
 
-   Con `APP_URL=auto`, el sistema genera ligas usando el host real desde donde entras. En produccion tambien puedes fijarlo a tu dominio, por ejemplo `APP_URL=https://tudominio.com`.
+Con `APP_URL=auto`, las ligas se generan usando el host real desde donde entras.
+En hosting puedes cambiarlo a tu dominio:
 
-   El proyecto incluye un `.htaccess` raiz que redirige internamente hacia `public/index.php`, protege carpetas privadas y permite URLs amigables sin mostrar `/public`.
+```ini
+APP_URL=https://tudominio.com
+```
+
+## Instalacion manual por phpMyAdmin
+
+1. Crea la base de datos:
+
+   ```sql
+   CREATE DATABASE servicio_tecnico_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   ```
+
+2. Importa en este orden:
+
+   ```text
+   database/schema.sql
+   database/seed.sql
+   ```
+
+3. Copia `.env.example` a `.env`.
+4. Ajusta credenciales si tu MySQL no usa `root / rufles123`.
 
 ## Credenciales iniciales
 
-- Email: `admin@local.test`
-- Contrasena: `password`
-- Rol: `superadmin`
+Administrador principal:
 
-Cambia esta contrasena antes de usar el sistema fuera de local.
+| Rol | Correo | Contrasena |
+| --- | --- | --- |
+| superadmin | `admin@local.test` | `password` |
 
-## Usuarios demo
+Todos los usuarios demo usan la misma contrasena:
 
-Todos usan contrasena `password`:
+```text
+password
+```
 
-- `superadmin@local.test`
-- `administrador@local.test`
-- `recepcion@local.test`
-- `tecnico@local.test`
-- `tecnico_senior@local.test`
-- `almacen@local.test`
-- `caja@local.test`
-- `cliente_consulta@local.test`
+## Roles y usuarios demo
 
-El seed tambien crea un cliente demo, nueve equipos demo, una orden con diagnostico, cotizacion, pago, garantia, mensaje y evento de agenda.
+El archivo `database/seed.sql` crea todos los roles base y un usuario demo por
+rol. Estos usuarios son para pruebas locales, capturas, capacitacion y revision
+funcional.
+
+| Rol tecnico | Nombre demo | Correo | Contrasena | Uso principal |
+| --- | --- | --- | --- | --- |
+| `superadmin` | Superadmin Demo | `superadmin@local.test` | `password` | Acceso total, permisos, configuracion y usuarios. |
+| `admin` | Administrador Demo | `administrador@local.test` | `password` | Administracion general sin eliminaciones sensibles. |
+| `recepcion` | Recepcion Demo | `recepcion@local.test` | `password` | Clientes, equipos, ordenes, recepcion y mensajes. |
+| `tecnico` | Tecnico Demo | `tecnico@local.test` | `password` | Ordenes, diagnosticos, reparaciones y avances. |
+| `tecnico_senior` | Tecnico Senior Demo | `tecnico_senior@local.test` | `password` | Diagnostico avanzado, cotizaciones, autorizaciones e inventario. |
+| `almacen` | Almacen Demo | `almacen@local.test` | `password` | Inventario, proveedores y refacciones. |
+| `caja` | Caja Demo | `caja@local.test` | `password` | Pagos, caja, reportes y entrega operativa. |
+| `cliente_consulta` | Cliente Consulta Demo | `cliente_consulta@local.test` | `password` | Rol reservado para consulta/portal; no debe tener acceso administrativo amplio. |
+
+Nota sobre `cliente_consulta`: el portal publico actual no requiere login; usa
+folio y token. Este rol queda sembrado para evolucion futura, por ejemplo app
+de cliente o acceso autenticado limitado.
+
+## Permisos por rol
+
+Los permisos se guardan en base de datos:
+
+- `roles`
+- `permissions`
+- `role_permissions`
+- `user_roles`
+
+Permisos disponibles por modulo:
+
+```text
+ver, crear, editar, eliminar, autorizar, cambiar_estado, exportar, imprimir, administrar
+```
+
+Resumen operativo:
+
+- `superadmin`: todos los permisos.
+- `admin`: permisos amplios, excepto eliminaciones y administracion de usuarios.
+- `recepcion`: clientes, equipos, ordenes, mensajes e inicio de pagos.
+- `tecnico`: ordenes, diagnosticos y reparaciones.
+- `tecnico_senior`: tecnico mas autorizaciones, cotizaciones e inventario.
+- `almacen`: inventario, proveedores y consulta de ordenes.
+- `caja`: pagos, reportes, impresion y consulta de ordenes.
+- `cliente_consulta`: reservado para consulta limitada futura.
+
+## Datos demo incluidos
+
+El seed crea:
+
+- Roles base.
+- Permisos base.
+- Usuarios demo con contrasena `password`.
+- Cliente demo: `Cliente Demo Taller`.
+- Nueve equipos demo, uno por tipo.
+- Proveedor demo.
+- Refaccion demo.
+- Orden demo con folio:
+
+  ```text
+  ST-DEMO-00001
+  ```
+
+- Diagnostico demo.
+- Cotizacion demo.
+- Anticipo demo.
+- Garantia demo.
+- Mensaje demo.
+- Evento de agenda demo.
 
 Clave demo para probar entrega por codigo de barras:
 
-- `ENT-DEMO2468`
-
-## Estructura
-
 ```text
-app/
-  Controllers/     Controladores HTTP y API
-  Services/        Reglas de negocio y transacciones
-  Repositories/    Acceso a base de datos con PDO
-  Core/            Router, Request, Response, Auth, CSRF, Session, View
-  Helpers/         Funciones puras reutilizables
-  Validators/      Validacion por modulo
-  Policies/        Reglas de permisos especiales
-config/            Configuracion de app, DB y permisos
-database/          schema.sql y seed.sql
-public/            Front controller y assets publicos
-resources/views/   Vistas HTML Bootstrap
-storage/           Uploads, logs y backups privados
-tests/             Pruebas de funciones puras
+ENT-DEMO2468
 ```
 
-## Modulos incluidos
+## Flujo principal de operacion
 
-- Autenticacion.
-- Usuarios, roles y permisos.
-- Clientes.
-- Equipos.
-- Ordenes de servicio.
-- Diagnosticos.
-- Cotizaciones y conceptos.
-- Pagos y caja basica.
-- Portal publico.
-- Comunicacion WhatsApp mediante link `wa.me`.
-- Dashboard.
-- Reportes iniciales.
-- Configuracion.
-- Auditoria.
-- API JSON interna.
+1. Recepcion registra o selecciona cliente.
+2. Recepcion registra o selecciona equipo.
+3. Si el equipo existente cambia, el sistema obliga a elegir:
+   - actualizar equipo seleccionado, o
+   - crear nuevo equipo usando esos datos como base.
+4. Se crea la orden.
+5. El sistema genera folio, token publico y clave de entrega.
+6. Se imprime nota o comprobante.
+7. Tecnico registra diagnostico.
+8. Se genera cotizacion.
+9. Cliente acepta o rechaza.
+10. Tecnico repara o marca resultado.
+11. Caja registra anticipo, pago parcial o liquidacion.
+12. Entrega libera el equipo usando la clave/codigo de barras.
+13. El sistema registra quien entrego.
+14. Se genera comprobante y garantia cuando aplica.
+
+## Consulta publica del cliente
+
+Rutas disponibles:
+
+```text
+/consulta.php?folio=FOLIO&token=TOKEN
+/consulta/FOLIO/TOKEN
+```
+
+El cliente puede ver estado, equipo, diagnostico visible, cotizacion visible,
+comentarios visibles, saldo y datos de contacto. No ve notas internas, usuarios
+internos, costos internos ni auditoria privada.
+
+## Entrega por codigo de barras
+
+La entrega se hace desde:
+
+```text
+/entregas
+```
+
+El usuario escanea o teclea la clave de entrega de la nota del cliente. Esa clave
+no es el folio y no se deriva del folio. Esto reduce entregas equivocadas y deja
+registro de quien libero el equipo.
 
 ## API JSON
 
-Todas las respuestas usan:
+Formato exitoso:
 
 ```json
 {
@@ -156,6 +257,22 @@ Todas las respuestas usan:
   "message": "Operacion realizada correctamente",
   "data": {},
   "errors": []
+}
+```
+
+Formato de error:
+
+```json
+{
+  "success": false,
+  "message": "No se pudo completar la operacion",
+  "data": null,
+  "errors": [
+    {
+      "field": "telefono",
+      "message": "El telefono es obligatorio"
+    }
+  ]
 }
 ```
 
@@ -172,33 +289,61 @@ Endpoints iniciales:
 - `GET /api/reportes/dashboard`
 - `GET /api/inventario/stock-bajo`
 
-La API usa la sesion autenticada del panel en esta version. Para app movil futura se recomienda agregar tokens personales o OAuth2 ligero.
+## Estructura de carpetas
 
-## Reglas de negocio aplicadas
+```text
+app/
+  Controllers/     Controladores HTTP/API
+  Services/        Reglas de negocio y transacciones
+  Repositories/    Acceso a base de datos con PDO
+  Core/            Router, Request, Response, Auth, Session, CSRF, View
+  Helpers/         Funciones reutilizables
+  Validators/      Validacion por modulo
+  Policies/        Reglas especiales por modulo
+config/            Configuracion PHP
+database/          schema.sql, seed.sql e instaladores locales
+docs/              Manuales y documentos generados
+public/            Front controller y assets publicos
+resources/views/   Vistas HTML/Bootstrap
+storage/           Uploads, logs y backups privados
+tests/             Pruebas de funciones puras
+```
 
-- Las funciones de calculo son puras y no consultan base de datos.
-- Los repositorios solo ejecutan SQL.
-- Los servicios concentran reglas y transacciones.
-- Los controladores validan acceso, reciben peticiones y devuelven vistas o JSON.
-- Una orden no pasa a reparacion sin autorizacion salvo permiso especial.
-- Una orden no se entrega con saldo pendiente.
-- El estado `entregada` no se cambia manualmente desde la orden; se libera desde `/entregas` usando la clave del codigo de barras de la nota del cliente.
-- La clave de entrega es aleatoria (formato `ENT-XXXXXXXX`), no se deriva del folio y el folio no es valido para liberar; se escanea o teclea desde la nota impresa.
-- Una cotizacion aceptada/rechazada registra auditoria.
-- El portal publico solo muestra datos visibles para cliente.
-- No se borran pagos desde el flujo; se prepara cancelacion con motivo para evolucion.
-
-## Seguridad
+## Seguridad aplicada
 
 - PDO con prepared statements.
 - CSRF en formularios.
 - Escape HTML con `e()`.
 - Sesiones con cookie `HttpOnly` y `SameSite=Lax`.
-- Regeneracion de ID al iniciar sesion.
-- Passwords hasheadas.
-- `.env` fuera del codigo.
-- `storage` protegido por `.htaccess`.
-- Auditoria de acciones criticas.
+- Regeneracion de ID de sesion al iniciar login.
+- Passwords hasheadas con `password_hash`.
+- Validacion de entrada en servicios/controladores.
+- Auditoria para acciones criticas.
+- `storage` protegido con `.htaccess`.
+- `.env` real ignorado por Git.
+- `.env.example` versionado solo como plantilla local/demo.
+
+## Recomendaciones obligatorias para produccion/hosting
+
+Antes de subir a Hostinger o publicar el sistema:
+
+1. Cambia todas las contrasenas demo.
+2. Cambia `DB_PASSWORD`.
+3. Usa un usuario MySQL propio, no `root`.
+4. Configura:
+
+   ```ini
+   APP_ENV=production
+   APP_DEBUG=false
+   APP_URL=https://tudominio.com
+   ```
+
+5. Fuerza HTTPS.
+6. Protege backups y uploads.
+7. Revisa permisos de `storage/`.
+8. Cambia datos del negocio en Configuracion.
+9. Borra o reemplaza datos demo si ya no los necesitas.
+10. Configura respaldos automaticos de base de datos.
 
 ## Pruebas
 
@@ -208,33 +353,43 @@ Ejecuta:
 php tests/run.php
 ```
 
-Las pruebas cubren funciones puras como calculos, folios, telefono, WhatsApp y garantia.
+Pruebas actuales:
 
-## Produccion
-
-- Cambiar `APP_DEBUG=false`.
-- Usar usuario MySQL sin permisos globales.
-- Cambiar contrasena del administrador.
-- En hosting dedicado, puedes apuntar el document root a `public/`. En XAMPP dentro de `htdocs/tecnico`, el `.htaccess` raiz ya enruta hacia `public`.
-- Forzar HTTPS.
-- Revisar permisos de escritura en `storage/`.
-- Configurar backups de base de datos.
-- Reemplazar Bootstrap CDN por assets locales si se requiere operacion sin internet.
+- `calcularSubtotal`
+- `calcularIVA`
+- `calcularTotal`
+- `calcularSaldo`
+- `generarFolio`
+- `normalizarTelefono`
+- `crearMensajeWhatsapp`
+- `validarEmail`
+- `calcularDiasGarantia`
 
 ## Subir a GitHub
 
-```bash
-git init
-git add .
-git commit -m "Initial MVP servicio tecnico"
-git branch -M main
-git remote add origin https://github.com/usuario/servicio-tecnico.git
-git push -u origin main
+Repositorio usado en esta instalacion:
+
+```text
+https://github.com/jetrhopm/tecnicos
 ```
 
-No subas `.env`; usa `.env.example`.
+Comandos manuales:
+
+```bash
+git status
+git add .
+git commit -m "Documenta instalacion y usuarios demo"
+git remote add origin https://github.com/jetrhopm/tecnicos.git
+git push -u origin master
+```
+
+Si el repositorio ya tiene `origin`, usa:
+
+```bash
+git remote -v
+git push -u origin master
+```
 
 ## Licencia
 
 MIT.
-

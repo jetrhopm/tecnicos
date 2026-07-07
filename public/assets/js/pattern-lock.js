@@ -58,6 +58,7 @@
       hidden.value = '';
       readout.textContent = 'Sin patron';
     }
+    hidden.dispatchEvent(new Event('input', { bubbles: true }));
   }
 
   function addDot(n) {
@@ -81,7 +82,9 @@
       dot.setAttribute('aria-pressed', 'false');
     });
     redrawLines();
-    updateValue();
+    hidden.value = '';
+    readout.textContent = 'Sin patron';
+    hidden.dispatchEvent(new Event('input', { bubbles: true }));
   }
 
   // --- Interaccion con la rejilla (arrastre + clic + teclado) ---
@@ -144,6 +147,7 @@
     claveInput.addEventListener('input', () => {
       if (mode === 'clave') {
         hidden.value = claveInput.value.trim();
+        hidden.dispatchEvent(new Event('input', { bubbles: true }));
       }
     });
   }
@@ -166,6 +170,34 @@
 
   // Estado inicial coherente. Si el formulario trae valor guardado (edicion de
   // equipo), se restaura sin obligar al usuario a capturarlo de nuevo.
+  function setExternalValue(value) {
+    const nextValue = String(value || '').trim();
+    clearPattern();
+
+    if (nextValue.startsWith('Patron:')) {
+      nextValue.replace('Patron:', '').split('-').forEach((part) => {
+        const n = Number(part.trim());
+        if (n >= 1 && n <= 9) {
+          addDot(n);
+        }
+      });
+      return;
+    }
+
+    if (nextValue !== '' && claveInput) {
+      setMode('clave');
+      claveInput.value = nextValue;
+      hidden.value = nextValue;
+      return;
+    }
+
+    setMode('patron');
+  }
+
+  root.addEventListener('pattern-lock:set-value', (event) => {
+    setExternalValue(event.detail && event.detail.value ? event.detail.value : '');
+  });
+
   clearPattern();
   if (initialValue.startsWith('Patron:')) {
     initialValue.replace('Patron:', '').split('-').forEach((part) => {

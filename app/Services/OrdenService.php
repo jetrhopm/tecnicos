@@ -105,10 +105,17 @@ final class OrdenService
             $clientePayload = null;
             $equipoId = (int) ($data['equipo_id'] ?? 0);
             $equipoSeleccionado = null;
+            $clientes = new ClienteRepository();
+            $equipos = new EquipoRepository();
+            $clienteAccion = (string) ($data['cliente_accion'] ?? '');
+            $equipoAccion = (string) ($data['equipo_accion'] ?? '');
+            $actualizarCliente = $clienteAccion === 'actualizar' || !empty($data['actualizar_cliente']);
+            $actualizarEquipo = $equipoAccion === 'actualizar';
+            $duplicarEquipo = $equipoAccion === 'duplicar';
 
             if ($equipoId > 0) {
                 // Si llega equipo existente, se valida que exista y se usa su cliente si no se mando cliente_id.
-                $equipoSeleccionado = (new EquipoRepository())->find($equipoId);
+                $equipoSeleccionado = $equipos->find($equipoId);
                 if (!$equipoSeleccionado) {
                     throw new RuntimeException('El equipo seleccionado no existe.');
                 }
@@ -118,10 +125,26 @@ final class OrdenService
             }
 
             if ($clienteId > 0) {
-                // Cliente existente: solo se referencia, no se sobreescriben sus datos desde este formulario.
-                $cliente = (new ClienteRepository())->find($clienteId);
+                // Cliente existente: se referencia. Si el formulario marco cambios,
+                // se actualiza la ficha maestra antes de crear la orden.
+                $cliente = $clientes->find($clienteId);
                 if (!$cliente) {
                     throw new RuntimeException('El cliente seleccionado no existe.');
+                }
+                if ($actualizarCliente) {
+                    $clientePayload = $this->normalizarClienteRapido($data);
+                    $clientePayload['estatus'] = $cliente['estatus'] ?? 'activo';
+                    if ($clientePayload['nombre_completo'] === '' || $clientePayload['telefono'] === '') {
+                        throw new RuntimeException('Nombre y telefono son obligatorios para actualizar el cliente.');
+                    }
+                    if ($clientePayload['email'] && !filter_var($clientePayload['email'], FILTER_VALIDATE_EMAIL)) {
+                        throw new RuntimeException('El email del cliente no es valido.');
+                    }
+                    if ($clientes->findDuplicate($clientePayload['telefono'], $clientePayload['email'], $clienteId)) {
+                        throw new RuntimeException('Ya existe otro cliente con ese telefono o email.');
+                    }
+                    $clientes->update($clienteId, $clientePayload);
+                    $this->auditoria->registrar('actualizar', 'clientes', $clienteId, $cliente, $clientePayload);
                 }
             } else {
                 // Cliente nuevo: se normaliza telefono/email y se bloquea duplicado antes de insertar.
@@ -133,7 +156,6 @@ final class OrdenService
                     throw new RuntimeException('El email del cliente no es valido.');
                 }
 
-                $clientes = new ClienteRepository();
                 if ($clientes->findDuplicate($clientePayload['telefono'], $clientePayload['email'], null)) {
                     throw new RuntimeException('Ya existe un cliente con ese telefono o email. Buscalo y seleccionalo para reutilizarlo.');
                 }
@@ -145,9 +167,27 @@ final class OrdenService
             $equipoPayload = null;
 
             if ($equipoId > 0) {
-                // Evita asociar una orden a un equipo que pertenece a otro cliente.
-                if ((int) $equipoSeleccionado['cliente_id'] !== $clienteId) {
+                // Evita asociar una orden a un equipo que pertenece a otro cliente,
+                // salvo que el usuario haya marcado una actualizacion o duplicado explicito.
+                if ((int) $equipoSeleccionado['cliente_id'] !== $clienteId && !$actualizarEquipo && !$duplicarEquipo) {
                     throw new RuntimeException('El equipo seleccionado no pertenece al cliente de la orden.');
+                }
+                if ($actualizarEquipo) {
+                    $equipoPayload = $this->normalizarEquipoRapido($data, $clienteId);
+                    if ($equipoPayload['tipo'] === '') {
+                        throw new RuntimeException('El tipo de equipo es obligatorio para actualizar el equipo.');
+                    }
+                    $equipos->update($equipoId, $equipoPayload);
+                    $this->auditoria->registrar('actualizar', 'equipos', $equipoId, $equipoSeleccionado, $equipoPayload);
+                } elseif ($duplicarEquipo) {
+                    $equipoPayload = $this->normalizarEquipoRapido($data, $clienteId);
+                    if ($equipoPayload['tipo'] === '') {
+                        throw new RuntimeException('El tipo de equipo es obligatorio para crear el nuevo equipo.');
+                    }
+                    $equipoId = $equipos->create($equipoPayload);
+                    $this->auditoria->registrar('crear', 'equipos', $equipoId, ['origen_equipo_id' => $equipoSeleccionado['id']], $equipoPayload);
+                } elseif (!in_array($equipoAccion, ['reutilizar', ''], true)) {
+                    throw new RuntimeException('La accion del equipo no es valida.');
                 }
             } else {
                 // Equipo nuevo: queda ligado al cliente resuelto arriba.
@@ -156,7 +196,7 @@ final class OrdenService
                     throw new RuntimeException('Selecciona un equipo existente o captura el tipo de equipo nuevo.');
                 }
 
-                $equipoId = (new EquipoRepository())->create($equipoPayload);
+                $equipoId = $equipos->create($equipoPayload);
                 $this->auditoria->registrar('crear', 'equipos', $equipoId, null, $equipoPayload);
             }
 
@@ -261,10 +301,13 @@ final class OrdenService
     private function normalizarClienteRapido(array $data): array
     {
         // Limpia datos del cliente antes de enviarlos al repositorio/MySQL.
+        $telefono = normalizarTelefono((string) ($data['telefono'] ?? ''));
+        $whatsapp = normalizarTelefono((string) ($data['whatsapp'] ?? ''));
+
         return [
             'nombre_completo' => trim((string) ($data['nombre_completo'] ?? '')),
-            'telefono' => normalizarTelefono((string) ($data['telefono'] ?? '')),
-            'whatsapp' => normalizarTelefono((string) ($data['whatsapp'] ?? $data['telefono'] ?? '')),
+            'telefono' => $telefono,
+            'whatsapp' => $whatsapp !== '' ? $whatsapp : $telefono,
             'email' => trim((string) ($data['email'] ?? '')) ?: null,
             'domicilio' => trim((string) ($data['domicilio'] ?? '')) ?: null,
             'ciudad' => trim((string) ($data['ciudad'] ?? '')) ?: null,
