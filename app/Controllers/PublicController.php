@@ -11,6 +11,7 @@ use App\Core\View;
 use App\Services\CotizacionService;
 use App\Services\DiagnosticoService;
 use App\Services\OrdenService;
+use App\Services\OrdenPdfService;
 
 final class PublicController
 {
@@ -60,5 +61,27 @@ final class PublicController
             Session::flash('error', $exception->getMessage());
         }
         Response::redirect('/consulta/' . urlencode($folio) . '/' . urlencode($token));
+    }
+
+    public function pdf(Request $request, string $folio, string $token): void
+    {
+        // PDF publico protegido por folio + token. No requiere login, pero no
+        // expone notas internas ni informacion de otros clientes.
+        $orden = (new OrdenService())->portal($folio, $token);
+        if (!$orden) {
+            Response::status(404);
+            View::render('errors/404', ['title' => 'Orden no encontrada'], 'layouts/public');
+            return;
+        }
+
+        $diagnostico = (new DiagnosticoService())->obtenerPorOrden((int) $orden['id']);
+        $cotizacion = (new CotizacionService())->obtenerPorOrden((int) $orden['id']);
+        $pdf = (new OrdenPdfService())->recepcion($orden, $diagnostico, $cotizacion);
+        $filename = 'orden-' . preg_replace('/[^A-Za-z0-9_-]+/', '-', (string) $orden['folio']) . '.pdf';
+
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="' . $filename . '"');
+        header('Content-Length: ' . strlen($pdf));
+        echo $pdf;
     }
 }

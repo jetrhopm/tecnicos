@@ -1,3 +1,16 @@
+<?php
+/*
+ * La vista puede definir $printSize ('carta'|'80'|'58') para fijar el tamano
+ * de papel del documento; por defecto usa carta.
+ */
+$printSize = $printSize ?? 'carta';
+$pageSize = match ((string) $printSize) {
+    '80' => '80mm auto',
+    '58' => '58mm auto',
+    default => 'letter',
+};
+$pageMargin = (string) $printSize === 'carta' ? '10mm' : '3mm';
+?>
 <!doctype html>
 <html lang="es">
 <head>
@@ -6,6 +19,8 @@
     <title><?= e($title ?? 'Impresion') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= e(asset('css/app.css') . '?v=20260707-print-mobile') ?>" rel="stylesheet">
+    <link href="<?= e(asset('css/print.css') . '?v=20260707') ?>" rel="stylesheet">
+    <style>@page { size: <?= $pageSize ?>; margin: <?= $pageMargin ?>; }</style>
 </head>
 <body>
 <main class="container py-4">

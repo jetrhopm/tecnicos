@@ -1,6 +1,9 @@
 <?php
 $equipoNombre = trim(($orden['equipo_marca'] ?? '') . ' ' . ($orden['equipo_modelo'] ?? '')) ?: $orden['equipo_tipo'];
 $consulta = url('/consulta?folio=' . urlencode($orden['folio']) . '&token=' . urlencode($orden['token_publico']));
+$pdfPublico = absolute_url('/consulta/' . rawurlencode((string) $orden['folio']) . '/' . rawurlencode((string) $orden['token_publico']) . '/pdf');
+$telefonoCliente = (string) (($orden['cliente_whatsapp'] ?? '') ?: ($orden['cliente_telefono'] ?? ''));
+$whatsappPdf = linkWhatsapp($telefonoCliente, 'Hola ' . (string) $orden['cliente_nombre'] . ', te compartimos el PDF de tu orden ' . (string) $orden['folio'] . ': ' . $pdfPublico);
 ?>
 <div class="row g-3">
     <div class="col-xl-8">
@@ -15,7 +18,16 @@ $consulta = url('/consulta?folio=' . urlencode($orden['folio']) . '&token=' . ur
                 <div class="d-flex gap-2 flex-wrap justify-content-end">
                     <a class="btn btn-success btn-sm" data-icon="&#128241;" target="_blank" href="<?= e($whatsapp) ?>">WhatsApp</a>
                     <a class="btn btn-outline-dark btn-sm" data-icon="&#128065;" target="_blank" href="<?= e($consulta) ?>">Portal</a>
-                    <a class="btn btn-outline-dark btn-sm" data-icon="&#128424;" href="<?= e(url('/ordenes/' . $orden['id'] . '/imprimir')) ?>">Imprimir</a>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-dark btn-sm dropdown-toggle" data-icon="&#128424;" type="button" data-bs-toggle="dropdown" aria-expanded="false">Imprimir</button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" target="_blank" href="<?= e(url('/ordenes/' . $orden['id'] . '/imprimir?formato=carta')) ?>">Hoja carta</a></li>
+                            <li><a class="dropdown-item" target="_blank" href="<?= e(url('/ordenes/' . $orden['id'] . '/imprimir?formato=80')) ?>">Ticket 80&nbsp;mm</a></li>
+                            <li><a class="dropdown-item" target="_blank" href="<?= e(url('/ordenes/' . $orden['id'] . '/imprimir?formato=58')) ?>">Ticket 58&nbsp;mm</a></li>
+                        </ul>
+                    </div>
+                    <a class="btn btn-outline-dark btn-sm" data-icon="PDF" target="_blank" href="<?= e(url('/ordenes/' . $orden['id'] . '/pdf')) ?>">PDF</a>
+                    <a class="btn btn-success btn-sm" data-icon="&#128241;" target="_blank" href="<?= e($whatsappPdf) ?>">Enviar PDF</a>
                 </div>
             </div>
             <hr>

@@ -1,0 +1,382 @@
+/* =======================================================================
+   Documentos imprimibles: orden de servicio.
+   Tres formatos por clase en el contenedor .doc:
+     .doc-carta  -> hoja tamano carta (boxes, dos firmas)
+     .doc-80     -> ticket termico 80 mm
+     .doc-58     -> ticket termico 58 mm
+   El @page (tamano de papel) lo fija el layout segun el formato.
+   Se ve igual en pantalla (vista /imprimir) y en papel.
+   ======================================================================= */
+
+.doc,
+.doc * {
+  box-sizing: border-box;
+}
+
+.doc {
+  color: #111;
+  background: #fff;
+  font-family: "Segoe UI", Arial, sans-serif;
+  line-height: 1.32;
+}
+
+/* Encabezado */
+.doc-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.doc-logo {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.doc-logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.doc-logo .doc-logo-mark {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: #14202e;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.doc-biz-name {
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.doc-biz-sub {
+  font-weight: 600;
+  color: #333;
+}
+
+.doc-biz-contact {
+  color: #333;
+}
+
+/* Titulo de la orden */
+.doc-title {
+  text-align: center;
+}
+
+.doc-orden {
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.doc-subtitle {
+  color: #444;
+  font-style: italic;
+}
+
+.doc-rule {
+  border: 0;
+  border-top: 1px solid #111;
+  margin: 6px 0;
+}
+
+.doc-rule-dashed {
+  border: 0;
+  border-top: 1px dashed #444;
+  margin: 6px 0;
+}
+
+/* Campos */
+.field-l {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #222;
+}
+
+.field-v {
+  color: #111;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+.field-v.big {
+  font-size: 1.1em;
+  font-weight: 700;
+}
+
+/* Bloque de patron / clave */
+.patron-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.patron-svg {
+  flex: 0 0 auto;
+}
+
+.patron-meta-strong {
+  font-weight: 800;
+}
+
+.patron-seq {
+  font-family: "Consolas", "Courier New", monospace;
+  letter-spacing: 0.02em;
+  word-break: break-word;
+}
+
+/* Totales */
+.totales {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.totales td {
+  padding: 2px 0;
+  vertical-align: bottom;
+}
+
+.totales .t-label {
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.totales .t-amount {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.totales .t-total .t-label,
+.totales .t-total .t-amount {
+  font-weight: 800;
+}
+
+.saldo-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 2px solid #111;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-weight: 800;
+}
+
+.saldo-box .saldo-amount {
+  font-size: 1.25em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Garantia / condiciones */
+.doc-terms {
+  color: #222;
+}
+
+.doc-terms ol {
+  margin: 4px 0 0;
+  padding-left: 1.1em;
+}
+
+.doc-terms li {
+  margin-bottom: 2px;
+}
+
+/* Checklist de retiro */
+.checklist {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+}
+
+.checklist li {
+  margin-bottom: 3px;
+}
+
+.checklist .box {
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  border: 1.4px solid #111;
+  margin-right: 6px;
+  vertical-align: -1px;
+}
+
+/* Firmas */
+.firmas {
+  display: flex;
+  gap: 20px;
+  margin-top: 26px;
+}
+
+.firma {
+  flex: 1;
+  text-align: center;
+  border-top: 1px solid #111;
+  padding-top: 4px;
+}
+
+.doc-note {
+  color: #333;
+}
+
+/* =====================  Pantalla (vista /imprimir)  ===================== */
+@media screen {
+  .doc {
+    margin: 0 auto;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+  }
+}
+
+/* =====================  Formato CARTA  ===================== */
+.doc-carta {
+  width: 190mm;
+  padding: 4mm 2mm;
+  font-size: 11.5px;
+}
+
+.doc-carta .doc-head {
+  border-bottom: 2px solid #111;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.doc-carta .doc-logo {
+  width: 64px;
+  height: 64px;
+}
+
+.doc-carta .doc-logo .doc-logo-mark {
+  font-size: 22px;
+}
+
+.doc-carta .doc-biz {
+  margin-left: auto;
+  text-align: right;
+}
+
+.doc-carta .doc-biz-name {
+  font-size: 20px;
+}
+
+.doc-carta .doc-title {
+  margin: 6px 0;
+}
+
+.doc-carta .doc-orden {
+  font-size: 18px;
+}
+
+.doc-carta .doc-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  border-top: 1px solid #111;
+  border-left: 1px solid #111;
+}
+
+.doc-carta .cell {
+  grid-column: span 12;
+  border-right: 1px solid #111;
+  border-bottom: 1px solid #111;
+  padding: 4px 8px;
+  min-height: 34px;
+}
+
+.doc-carta .cell-6 { grid-column: span 6; }
+.doc-carta .cell-4 { grid-column: span 4; }
+.doc-carta .cell-3 { grid-column: span 3; }
+.doc-carta .cell-8 { grid-column: span 8; }
+
+.doc-carta .field-l { font-size: 9.5px; margin-bottom: 1px; }
+
+.doc-carta .patron-box { margin-top: 2px; }
+.doc-carta .patron-svg { width: 92px; height: 92px; }
+
+.doc-carta .doc-terms { margin-top: 8px; }
+.doc-carta .totales { margin-top: 2px; }
+
+/* =====================  Formatos TERMICOS (80 / 58 mm)  ===================== */
+.doc-80,
+.doc-58 {
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.doc-80 { width: 74mm; padding: 2mm; font-size: 12px; }
+.doc-58 { width: 54mm; padding: 1.5mm; font-size: 10.5px; }
+
+.doc-80 .doc-head,
+.doc-58 .doc-head {
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.doc-80 .doc-logo { width: 54px; height: 54px; }
+.doc-58 .doc-logo { width: 42px; height: 42px; }
+
+.doc-80 .doc-logo .doc-logo-mark { font-size: 18px; }
+.doc-58 .doc-logo .doc-logo-mark { font-size: 15px; border-radius: 9px; }
+
+.doc-80 .doc-biz-name { font-size: 15px; }
+.doc-58 .doc-biz-name { font-size: 13px; }
+
+.doc-80 .doc-orden { font-size: 17px; }
+.doc-58 .doc-orden { font-size: 15px; }
+
+.doc-80 .doc-title,
+.doc-58 .doc-title { margin: 3px 0; }
+
+/* Campos termicos: apilados, con separadores finos */
+.doc-80 .field,
+.doc-58 .field {
+  padding: 2px 0;
+  border-bottom: 1px dotted #bbb;
+}
+
+.doc-80 .field-l,
+.doc-58 .field-l { font-size: 0.85em; }
+
+.doc-80 .patron-box,
+.doc-58 .patron-box {
+  gap: 8px;
+  padding: 3px 0;
+  border-bottom: 1px dotted #bbb;
+}
+
+.doc-80 .patron-svg { width: 78px; height: 78px; }
+.doc-58 .patron-svg { width: 64px; height: 64px; }
+
+.doc-80 .saldo-box,
+.doc-58 .saldo-box { margin-top: 4px; }
+
+.doc-58 .saldo-box .saldo-amount { font-size: 1.1em; }
+
+.doc-80 .firmas,
+.doc-58 .firmas {
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+/* =====================  Ajustes al imprimir  ===================== */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .doc {
+    margin: 0;
+    box-shadow: none;
+  }
+}

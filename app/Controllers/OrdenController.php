@@ -12,11 +12,13 @@ use App\Core\Session;
 use App\Core\View;
 use App\Repositories\UserRepository;
 use App\Services\ClienteService;
+use App\Services\ConfiguracionService;
 use App\Services\CotizacionService;
 use App\Services\DiagnosticoService;
 use App\Services\EquipoService;
 use App\Services\MensajeService;
 use App\Services\OrdenService;
+use App\Services\OrdenPdfService;
 use App\Services\PagoService;
 use App\Validators\OrdenValidator;
 
@@ -149,10 +151,58 @@ final class OrdenController
     {
         Auth::requirePermission('ordenes', 'imprimir');
 
-        // Salida HTML preparada para impresion. La informacion se obtiene por
-        // id interno y pasa a un layout separado para no mezclar comprobantes
-        // con la navegacion del panel.
+        // Salida HTML preparada para impresion. Formato carta o termico 80/58mm
+        // segun ?formato=; los datos del negocio/logo salen de configuracion.
         $orden = (new OrdenService())->obtener((int) $id);
-        View::render('print/recepcion', ['title' => 'Comprobante', 'orden' => $orden], 'layouts/print');
+        if (!$orden) {
+            Response::status(404);
+            View::render('errors/404', ['title' => 'Orden no encontrada']);
+            return;
+        }
+
+        $formato = (string) $request->input('formato', 'carta');
+        if (!in_array($formato, ['carta', '80', '58'], true)) {
+            $formato = 'carta';
+        }
+
+        $cfg = new ConfiguracionService();
+        $config = [
+            'negocio.nombre' => $cfg->get('negocio.nombre', 'Servicio Tecnico'),
+            'negocio.telefono' => $cfg->get('negocio.telefono', ''),
+            'negocio.whatsapp' => $cfg->get('negocio.whatsapp', ''),
+            'negocio.direccion' => $cfg->get('negocio.direccion', ''),
+            'negocio.logo_url' => $cfg->get('negocio.logo_url', ''),
+            'ticket.garantia' => $cfg->get('ticket.garantia', ''),
+            'legal.politica_garantia' => $cfg->get('legal.politica_garantia', ''),
+        ];
+
+        View::render('print/recepcion', [
+            'title' => 'Orden ' . ($orden['folio'] ?? ''),
+            'orden' => $orden,
+            'formato' => $formato,
+            'config' => $config,
+        ], 'layouts/print');
+    }
+
+    public function pdf(Request $request, string $id): void
+    {
+        Auth::requirePermission('ordenes', 'imprimir');
+
+        $orden = (new OrdenService())->obtener((int) $id);
+        if (!$orden) {
+            Response::status(404);
+            View::render('errors/404', ['title' => 'Orden no encontrada']);
+            return;
+        }
+
+        $diagnostico = (new DiagnosticoService())->obtenerPorOrden((int) $id);
+        $cotizacion = (new CotizacionService())->obtenerPorOrden((int) $id);
+        $pdf = (new OrdenPdfService())->recepcion($orden, $diagnostico, $cotizacion);
+        $filename = 'orden-' . preg_replace('/[^A-Za-z0-9_-]+/', '-', (string) $orden['folio']) . '.pdf';
+
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="' . $filename . '"');
+        header('Content-Length: ' . strlen($pdf));
+        echo $pdf;
     }
 }

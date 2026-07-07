@@ -56,6 +56,7 @@ $router->get('/ordenes/{id}', [OrdenController::class, 'show']);
 $router->post('/ordenes/{id}/estado', [OrdenController::class, 'cambiarEstado']);
 $router->post('/ordenes/{id}/tecnico', [OrdenController::class, 'asignarTecnico']);
 $router->get('/ordenes/{id}/imprimir', [OrdenController::class, 'imprimir']);
+$router->get('/ordenes/{id}/pdf', [OrdenController::class, 'pdf']);
 
 $router->post('/diagnosticos', [DiagnosticoController::class, 'store']);
 $router->post('/cotizaciones', [CotizacionController::class, 'store']);
@@ -79,6 +80,7 @@ $router->post('/usuarios', [UsuarioController::class, 'store']);
 $router->get('/consulta', [PublicController::class, 'consulta']);
 $router->get('/consulta.php', [PublicController::class, 'consulta']);
 $router->get('/consulta/{folio}/{token}', [PublicController::class, 'consulta']);
+$router->get('/consulta/{folio}/{token}/pdf', [PublicController::class, 'pdf']);
 $router->post('/consulta/{folio}/{token}/cotizacion/{id}', [PublicController::class, 'cotizacion']);
 
 $router->get('/api/clientes', [ApiController::class, 'clientes']);

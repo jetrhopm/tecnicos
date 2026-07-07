@@ -55,7 +55,10 @@ final class OrdenRepository extends BaseRepository
     {
         return $this->fetch(
             "SELECT o.*, c.nombre_completo cliente_nombre, c.telefono cliente_telefono, c.whatsapp cliente_whatsapp, c.email cliente_email,
-                    e.tipo equipo_tipo, e.marca equipo_marca, e.modelo equipo_modelo, e.numero_serie, u.name tecnico_nombre
+                    c.domicilio cliente_domicilio,
+                    e.tipo equipo_tipo, e.marca equipo_marca, e.modelo equipo_modelo, e.numero_serie, e.imei,
+                    e.password_equipo, e.color equipo_color, e.accesorios_recibidos, e.estado_fisico equipo_estado_fisico,
+                    e.observaciones equipo_observaciones, u.name tecnico_nombre
              FROM ordenes_servicio o
              JOIN clientes c ON c.id = o.cliente_id
              JOIN equipos e ON e.id = o.equipo_id
