@@ -1,7 +1,7 @@
 <?php
 $isEdit = !empty($equipo);
 $pageScripts = [
-    asset('js/pattern-lock.js') . '?v=20260707-form-ui',
+    asset('js/pattern-lock.js') . '?v=20260707-real-drag',
 ];
 $tiposEquipo = ['celular','laptop','pc','consola','impresora','electrodomestico','herramienta','moto','otro'];
 $tipoIconos = [

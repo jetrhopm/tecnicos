@@ -30,7 +30,12 @@
   let mode = 'patron';
   let sequence = [];
   let dragging = false;
+  let previewPoint = null;
   const initialValue = hidden.value.trim();
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  }
 
   function dotCenter(n) {
     // viewBox 0..300; celdas centradas en 50/150/250.
@@ -44,7 +49,57 @@
       const c = dotCenter(n);
       return c.x + ',' + c.y;
     });
+    if (dragging && previewPoint && sequence.length > 0) {
+      points.push(previewPoint.x + ',' + previewPoint.y);
+    }
     path.setAttribute('points', points.join(' '));
+  }
+
+  function pointerPoint(event) {
+    const rect = grid.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) {
+      return null;
+    }
+
+    return {
+      x: clamp(((event.clientX - rect.left) / rect.width) * 300, 0, 300),
+      y: clamp(((event.clientY - rect.top) / rect.height) * 300, 0, 300)
+    };
+  }
+
+  function dotFromPointer(event) {
+    const point = pointerPoint(event);
+    if (!point) {
+      return null;
+    }
+
+    let closest = null;
+    let closestDistance = Infinity;
+    for (let n = 1; n <= 9; n += 1) {
+      const center = dotCenter(n);
+      const distance = Math.hypot(point.x - center.x, point.y - center.y);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closest = n;
+      }
+    }
+
+    return closestDistance <= 46 ? closest : null;
+  }
+
+  function trackPointer(event) {
+    if (!dragging || mode !== 'patron') {
+      return;
+    }
+
+    event.preventDefault();
+    previewPoint = pointerPoint(event);
+    const n = dotFromPointer(event);
+    if (n) {
+      addDot(n);
+    } else {
+      redrawLines();
+    }
   }
 
   function updateValue() {
@@ -76,6 +131,7 @@
 
   function clearPattern() {
     sequence = [];
+    previewPoint = null;
     dots.forEach((dot) => {
       dot.classList.remove('is-on');
       dot.textContent = '';
@@ -88,28 +144,55 @@
   }
 
   // --- Interaccion con la rejilla (arrastre + clic + teclado) ---
+  grid.addEventListener('pointerdown', (event) => {
+    if (mode !== 'patron') {
+      return;
+    }
+
+    event.preventDefault();
+    dragging = true;
+    previewPoint = pointerPoint(event);
+    if (grid.setPointerCapture && event.pointerId !== undefined) {
+      grid.setPointerCapture(event.pointerId);
+    }
+    const n = dotFromPointer(event);
+    if (n) {
+      addDot(n);
+    } else {
+      redrawLines();
+    }
+  });
+
+  grid.addEventListener('pointermove', trackPointer);
+
+  function stopDragging(event) {
+    if (!dragging) {
+      return;
+    }
+    dragging = false;
+    previewPoint = null;
+    if (event && grid.releasePointerCapture && event.pointerId !== undefined) {
+      try {
+        grid.releasePointerCapture(event.pointerId);
+      } catch (error) {
+        // El navegador puede liberar automaticamente la captura al terminar el gesto.
+      }
+    }
+    redrawLines();
+  }
+
+  grid.addEventListener('pointerup', stopDragging);
+  grid.addEventListener('pointercancel', stopDragging);
+  grid.addEventListener('lostpointercapture', stopDragging);
+
   dots.forEach((dot) => {
     const n = Number(dot.dataset.dot);
-
-    dot.addEventListener('pointerdown', (event) => {
-      event.preventDefault();
-      dragging = true;
-      addDot(n);
-    });
-
-    dot.addEventListener('pointerenter', () => {
-      if (dragging) {
-        addDot(n);
-      }
-    });
 
     // Clic/Enter/Espacio: agrega en orden (cubre teclado y taps sueltos).
     dot.addEventListener('click', () => addDot(n));
   });
 
-  window.addEventListener('pointerup', () => {
-    dragging = false;
-  });
+  window.addEventListener('pointerup', stopDragging);
 
   if (clearBtn) {
     clearBtn.addEventListener('click', clearPattern);

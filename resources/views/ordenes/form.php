@@ -1,7 +1,7 @@
 <?php
 $pageScripts = [
     asset('js/orden-rapida.js') . '?v=20260707-equipment-decision-final',
-    asset('js/pattern-lock.js') . '?v=20260707-clear-hidden',
+    asset('js/pattern-lock.js') . '?v=20260707-real-drag',
 ];
 $tiposEquipo = ['celular','laptop','pc','consola','impresora','electrodomestico','herramienta','moto','otro'];
 $tipoIconos = [
