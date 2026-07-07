@@ -32,11 +32,13 @@ final class EntregaService
          * Destino: pagos opcionales, garantia, estado entregada, tabla entregas y auditoria.
          */
         $codigo = strtoupper(trim((string) ($data['codigo_entrega'] ?? '')));
-        $orden = $this->ordenes->findByDeliveryCode($codigo);
+        $orden = $codigo !== '' ? $this->ordenes->findByDeliveryCode($codigo) : null;
         if (!$orden) {
             throw new RuntimeException('No se encontro una orden con esa clave de entrega.');
         }
-        if ((string) $orden['codigo_entrega'] !== $codigo && (string) $orden['folio'] !== $codigo) {
+        // Solo la clave impresa en la nota del cliente libera el equipo;
+        // el folio (visible y secuencial) no es valido como clave.
+        if ((string) $orden['codigo_entrega'] !== $codigo) {
             throw new RuntimeException('La clave de entrega no corresponde a esta orden.');
         }
         if ($orden['estado'] === 'entregada') {

@@ -63,7 +63,7 @@ final class OrdenService
                 'garantia_ofrecida' => trim((string) ($data['garantia_ofrecida'] ?? '')) ?: null,
                 'observaciones_internas' => trim((string) ($data['observaciones_internas'] ?? '')) ?: null,
                 'observaciones_cliente' => trim((string) ($data['observaciones_cliente'] ?? '')) ?: null,
-                'codigo_entrega' => $this->folios->codigoEntrega($folio),
+                'codigo_entrega' => $this->folios->codigoEntrega(),
                 'ubicacion_actual' => 'Recepcion',
                 'token_publico' => $this->folios->tokenPublico(),
             ];
@@ -330,7 +330,7 @@ final class OrdenService
             'garantia_ofrecida' => trim((string) ($data['garantia_ofrecida'] ?? '')) ?: null,
             'observaciones_internas' => trim((string) ($data['observaciones_internas'] ?? '')) ?: null,
             'observaciones_cliente' => trim((string) ($data['observaciones_cliente'] ?? '')) ?: null,
-            'codigo_entrega' => $this->folios->codigoEntrega($folio),
+            'codigo_entrega' => $this->folios->codigoEntrega(),
             'ubicacion_actual' => 'Recepcion',
             'token_publico' => $this->folios->tokenPublico(),
         ];

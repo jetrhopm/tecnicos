@@ -25,7 +25,7 @@ $consulta = url('/consulta?folio=' . urlencode($orden['folio']) . '&token=' . ur
                 <div class="col-md-4"><strong>Telefono cliente</strong><br><?= e($orden['cliente_telefono'] ?: '-') ?></div>
                 <div class="col-md-4"><strong>WhatsApp cliente</strong><br><?= e($orden['cliente_whatsapp'] ?: '-') ?></div>
                 <div class="col-md-4"><strong>Email cliente</strong><br><?= e($orden['cliente_email'] ?: '-') ?></div>
-                <div class="col-md-4"><strong>Clave entrega</strong><br><?= e($orden['codigo_entrega'] ?: $orden['folio']) ?></div>
+                <div class="col-md-4"><strong>Clave entrega</strong><br><?= e($orden['codigo_entrega'] ?: '-') ?></div>
                 <div class="col-md-4"><strong>Ubicacion</strong><br><?= e($orden['ubicacion_actual'] ?? 'Recepcion') ?></div>
                 <div class="col-md-4"><strong>Recepcion</strong><br><?= e(fechaHumana($orden['fecha_recepcion'])) ?></div>
                 <div class="col-md-4"><strong>Entrega estimada</strong><br><?= e(fechaHumana($orden['fecha_estimada_entrega'])) ?></div>

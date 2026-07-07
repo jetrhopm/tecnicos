@@ -81,7 +81,9 @@ final class OrdenRepository extends BaseRepository
 
     public function findByDeliveryCode(string $code): ?array
     {
-        // Entregas: permite localizar una orden por clave de entrega o folio presentado en mostrador.
+        // Entregas: solo acepta la clave de entrega impresa en la nota del cliente.
+        // El folio queda fuera a proposito: es visible/secuencial y no demuestra
+        // que el cliente presento su nota.
         return $this->fetch(
             "SELECT o.*, c.nombre_completo cliente_nombre, c.telefono cliente_telefono, c.whatsapp cliente_whatsapp, c.email cliente_email,
                     e.tipo equipo_tipo, e.marca equipo_marca, e.modelo equipo_modelo, e.numero_serie, e.imei, u.name tecnico_nombre
@@ -89,10 +91,20 @@ final class OrdenRepository extends BaseRepository
              JOIN clientes c ON c.id = o.cliente_id
              JOIN equipos e ON e.id = o.equipo_id
              LEFT JOIN users u ON u.id = o.tecnico_id
-             WHERE (o.codigo_entrega = :code_delivery OR o.folio = :code_folio) AND o.deleted_at IS NULL
+             WHERE o.codigo_entrega = :code_delivery AND o.deleted_at IS NULL
              LIMIT 1",
-            ['code_delivery' => $code, 'code_folio' => $code]
+            ['code_delivery' => $code]
         );
+    }
+
+    public function deliveryCodeExists(string $code): bool
+    {
+        $row = $this->fetch(
+            'SELECT id FROM ordenes_servicio WHERE codigo_entrega = :codigo LIMIT 1',
+            ['codigo' => $code]
+        );
+
+        return $row !== null;
     }
 
     public function findByLookupCode(string $code): ?array

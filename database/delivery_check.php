@@ -6,7 +6,7 @@ require_once __DIR__ . '/../app/bootstrap.php';
 
 $db = App\Core\Database::connection();
 $folio = 'ST-TEST-ENTREGA-' . date('His');
-$codigo = 'ENT-' . $folio;
+$codigo = (new App\Services\FolioService())->codigoEntrega();
 
 $db->exec("
     DELETE p FROM pagos p

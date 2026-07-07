@@ -107,7 +107,7 @@ El seed tambien crea un cliente demo, nueve equipos demo, una orden con diagnost
 
 Clave demo para probar entrega por codigo de barras:
 
-- `ENT-ST-DEMO-00001`
+- `ENT-DEMO2468`
 
 ## Estructura
 
@@ -183,6 +183,7 @@ La API usa la sesion autenticada del panel en esta version. Para app movil futur
 - Una orden no pasa a reparacion sin autorizacion salvo permiso especial.
 - Una orden no se entrega con saldo pendiente.
 - El estado `entregada` no se cambia manualmente desde la orden; se libera desde `/entregas` usando la clave del codigo de barras de la nota del cliente.
+- La clave de entrega es aleatoria (formato `ENT-XXXXXXXX`), no se deriva del folio y el folio no es valido para liberar; se escanea o teclea desde la nota impresa.
 - Una cotizacion aceptada/rechazada registra auditoria.
 - El portal publico solo muestra datos visibles para cliente.
 - No se borran pagos desde el flujo; se prepara cancelacion con motivo para evolucion.

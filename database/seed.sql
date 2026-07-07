@@ -1,4 +1,4 @@
-USE servicio_tecnico_db;
+﻿USE servicio_tecnico_db;
 
 INSERT INTO roles (name, label) VALUES
 ('superadmin', 'Super administrador'),
@@ -183,7 +183,7 @@ INSERT INTO ordenes_servicio (
 SELECT 'ST-DEMO-00001', c.id, e.id, t.id, r.id, 'Reparacion', 'El cliente reporta que la pantalla no enciende despues de una caida.',
        'Se recibe equipo con pantalla rayada y sin evidencia de humedad.', 'alta', 'esperando_autorizacion',
        DATE_ADD(NOW(), INTERVAL 3 DAY), 300.00, 1450.00, 300.00, 1150.00,
-       '30 dias sobre pantalla instalada', 'Orden demo con datos visibles para pruebas.', 'Diagnostico en proceso de autorizacion.', 'ENT-ST-DEMO-00001', 'Recepcion', 'demo-token-orden-00001'
+       '30 dias sobre pantalla instalada', 'Orden demo con datos visibles para pruebas.', 'Diagnostico en proceso de autorizacion.', 'ENT-DEMO2468', 'Recepcion', 'demo-token-orden-00001'
 FROM clientes c
 JOIN equipos e ON e.cliente_id = c.id AND e.numero_serie = 'DEMO-CELULAR-001'
 JOIN users t ON t.email = 'tecnico@local.test'

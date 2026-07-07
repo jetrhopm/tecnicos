@@ -12,12 +12,13 @@
     <tr><th>Falla reportada</th><td><?= nl2br(e($orden['falla_reportada'] ?? '')) ?></td></tr>
     <tr><th>Fecha recepcion</th><td><?= e(fechaHumana($orden['fecha_recepcion'] ?? null)) ?></td></tr>
     <tr><th>Estado</th><td><?= e($orden['estado'] ?? '') ?></td></tr>
-    <tr><th>Clave de entrega</th><td><?= e($orden['codigo_entrega'] ?? $orden['folio'] ?? '') ?></td></tr>
+    <tr><th>Clave de entrega</th><td><?= e($orden['codigo_entrega'] ?? '') ?></td></tr>
     <tr><th>Costo estimado</th><td><?= e(formatearMoneda((float) ($orden['costo_estimado'] ?? 0))) ?></td></tr>
     <tr><th>Anticipo</th><td><?= e(formatearMoneda((float) ($orden['anticipo'] ?? 0))) ?></td></tr>
 </table>
 <p><strong>Codigo de barras para entrega:</strong></p>
-<?= codigoBarras39Svg((string) ($orden['codigo_entrega'] ?? $orden['folio'] ?? ''), 52, 2) ?>
+<?= codigoBarras39Svg((string) ($orden['codigo_entrega'] ?? ''), 52, 2) ?>
+<p class="small">Presenta esta nota al recoger tu equipo; la clave del codigo de barras es necesaria para la entrega.</p>
 <p class="small">El cliente acepta las condiciones de revision y autoriza la recepcion del equipo en el estado descrito.</p>
 <div class="row mt-5">
     <div class="col-6 text-center">_________________________<br>Recibe</div>
