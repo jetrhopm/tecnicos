@@ -18,6 +18,7 @@ $error = Session::flash('error');
     <link href="<?= e(asset('css/themes/crystal.css')) ?>" rel="stylesheet">
     <link href="<?= e(asset('css/themes/dark.css') . '?v=20260614-selects') ?>" rel="stylesheet">
     <link href="<?= e(asset('css/themes/live.css')) ?>" rel="stylesheet">
+    <link href="<?= e(asset('css/themes/blueprint.css') . '?v=20260706') ?>" rel="stylesheet">
     <script>
         (function () {
             var u = <?= json_encode($user['name'] ?? 'guest') ?>;
@@ -80,6 +81,9 @@ $error = Session::flash('error');
                         </label>
                         <label class="dropdown-item d-flex align-items-center gap-2">
                             <input type="radio" name="theme-choice" value="live" class="form-check-input m-0"> Live
+                        </label>
+                        <label class="dropdown-item d-flex align-items-center gap-2">
+                            <input type="radio" name="theme-choice" value="blueprint" class="form-check-input m-0"> Blueprint neon
                         </label>
                     </div>
                 </div>

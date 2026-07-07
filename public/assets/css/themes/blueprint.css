@@ -1,0 +1,280 @@
+/* =======================================================================
+   TEMA: Blueprint neon
+   Inspirado en tablero tecnico oscuro: fondo azul marino con rejilla de
+   plano, bordes cian con brillo (glow), acentos verde lima para positivo
+   (Recibido / accion principal), naranja para dinero y magenta/cian para
+   el patron de desbloqueo.
+   Se activa con: <html data-theme="blueprint">
+   No modifica la logica: solo redefine variables y superficies.
+   ======================================================================= */
+
+[data-theme="blueprint"] {
+  color-scheme: dark;
+  --ink: #e8f2ff;
+  --muted: #8ba7c9;
+  --panel: rgba(13, 32, 58, 0.74);
+  --panel-strong: rgba(11, 26, 48, 0.94);
+  --line: rgba(74, 162, 232, 0.32);
+  --aqua: #3fb5f0;
+  --mint: #7bd94f;
+  --coral: #f5952b;
+  --violet: #c14fd6;
+  --bp-glow: rgba(63, 181, 240, 0.45);
+  --bp-grid: rgba(88, 168, 232, 0.09);
+}
+
+[data-theme="blueprint"] body {
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 16% 6%, rgba(63, 181, 240, 0.16), transparent 34rem),
+    radial-gradient(circle at 88% 12%, rgba(123, 217, 79, 0.08), transparent 30rem),
+    linear-gradient(var(--bp-grid) 1px, transparent 1px) 0 0 / 34px 34px,
+    linear-gradient(90deg, var(--bp-grid) 1px, transparent 1px) 0 0 / 34px 34px,
+    linear-gradient(150deg, #071224 0%, #0a1a33 46%, #0b1226 100%);
+  background-attachment: fixed;
+}
+
+[data-theme="blueprint"] a {
+  color: #5cc6ff;
+}
+
+[data-theme="blueprint"] .sidebar {
+  background: rgba(7, 17, 33, 0.9);
+  border-right: 1px solid var(--line);
+  box-shadow: inset -1px 0 0 rgba(63, 181, 240, 0.18);
+}
+
+[data-theme="blueprint"] .brand-mark {
+  background: linear-gradient(145deg, var(--aqua), #1c6fb0);
+  box-shadow: 0 0 0 1px rgba(63, 181, 240, 0.5), 0 10px 26px rgba(63, 181, 240, 0.4);
+}
+
+[data-theme="blueprint"] .nav-link {
+  color: rgba(210, 230, 250, 0.78);
+}
+
+[data-theme="blueprint"] .nav-link:hover,
+[data-theme="blueprint"] .nav-link.active {
+  color: #fff;
+  background: rgba(63, 181, 240, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(63, 181, 240, 0.35);
+}
+
+/* Superficies: panel navy con borde cian y halo */
+[data-theme="blueprint"] .glass-card,
+[data-theme="blueprint"] .table-wrap,
+[data-theme="blueprint"] .metric,
+[data-theme="blueprint"] .timeline-item,
+[data-theme="blueprint"] .auth-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: 0 0 0 1px rgba(63, 181, 240, 0.06), 0 18px 44px rgba(2, 8, 20, 0.55),
+    inset 0 1px 0 rgba(120, 190, 250, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+[data-theme="blueprint"] .auth-card {
+  background: var(--panel-strong);
+}
+
+/* Encabezados de seccion con acento cian */
+[data-theme="blueprint"] .glass-card h2 {
+  text-shadow: 0 0 14px rgba(63, 181, 240, 0.35);
+}
+
+/* Tablas */
+[data-theme="blueprint"] .table {
+  --bs-table-color: var(--ink);
+  --bs-table-bg: transparent;
+  --bs-table-border-color: var(--line);
+  color: var(--ink);
+}
+
+[data-theme="blueprint"] .table thead th {
+  color: #9fc4ea;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.82rem;
+  border-bottom-color: var(--line);
+}
+
+/* Formularios: relleno oscuro, borde cian, glow al enfocar */
+[data-theme="blueprint"] .form-control,
+[data-theme="blueprint"] .form-select {
+  background: rgba(8, 22, 43, 0.9);
+  color: var(--ink);
+  border-color: var(--line);
+  box-shadow: inset 0 0 12px rgba(63, 181, 240, 0.08);
+}
+
+[data-theme="blueprint"] .form-select option,
+[data-theme="blueprint"] .form-select optgroup {
+  background-color: #0a1c38;
+  color: var(--ink);
+}
+
+[data-theme="blueprint"] .form-control::placeholder {
+  color: #6f8dae;
+}
+
+[data-theme="blueprint"] .form-control:focus,
+[data-theme="blueprint"] .form-select:focus {
+  background: rgba(10, 28, 54, 0.96);
+  color: #fff;
+  border-color: var(--aqua);
+  box-shadow: 0 0 0 0.18rem rgba(63, 181, 240, 0.28), 0 0 18px rgba(63, 181, 240, 0.35);
+}
+
+[data-theme="blueprint"] .form-select:disabled,
+[data-theme="blueprint"] .form-control:disabled {
+  background: rgba(20, 34, 54, 0.6);
+  color: #5f7690;
+  opacity: 1;
+}
+
+[data-theme="blueprint"] .form-text {
+  color: #7f9cbd;
+}
+
+/* Boton principal: verde lima con glow (accion positiva del tablero) */
+[data-theme="blueprint"] .btn-primary {
+  --bs-btn-bg: #4fb838;
+  --bs-btn-border-color: #5fce45;
+  --bs-btn-hover-bg: #5bce43;
+  --bs-btn-hover-border-color: #6ee053;
+  --bs-btn-color: #04210a;
+  --bs-btn-hover-color: #04210a;
+  --bs-btn-active-bg: #45a831;
+  font-weight: 700;
+  box-shadow: 0 0 18px rgba(95, 206, 69, 0.4);
+}
+
+[data-theme="blueprint"] .btn-success {
+  --bs-btn-bg: #4fb838;
+  --bs-btn-border-color: #5fce45;
+  --bs-btn-hover-bg: #5bce43;
+  --bs-btn-color: #04210a;
+}
+
+[data-theme="blueprint"] .btn-outline-dark {
+  --bs-btn-color: #d4e6fa;
+  --bs-btn-border-color: rgba(120, 180, 240, 0.5);
+  --bs-btn-hover-bg: rgba(63, 181, 240, 0.14);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-border-color: var(--aqua);
+}
+
+[data-theme="blueprint"] .btn-outline-secondary {
+  --bs-btn-color: #b9d1ea;
+  --bs-btn-border-color: rgba(120, 160, 200, 0.4);
+  --bs-btn-hover-bg: rgba(63, 181, 240, 0.12);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-border-color: var(--aqua);
+}
+
+[data-theme="blueprint"] .text-muted {
+  color: var(--muted) !important;
+}
+
+[data-theme="blueprint"] .badge.text-bg-light {
+  background: rgba(63, 181, 240, 0.16) !important;
+  color: #cfe6fb !important;
+  border: 1px solid rgba(63, 181, 240, 0.3);
+}
+
+/* Bloque de captura nueva (cliente/equipo) */
+[data-theme="blueprint"] .quick-order-new {
+  border: 1px dashed rgba(63, 181, 240, 0.35);
+  background: rgba(9, 24, 46, 0.5);
+}
+
+/* Alertas */
+[data-theme="blueprint"] .alert-info {
+  background: rgba(63, 181, 240, 0.12);
+  border-color: rgba(63, 181, 240, 0.35);
+  color: #d6ecff;
+}
+
+/* Pastillas de estado con brillo */
+[data-theme="blueprint"] .badge-state {
+  border: 1px solid transparent;
+  box-shadow: 0 0 14px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="blueprint"] .status-recibida {
+  background: rgba(123, 217, 79, 0.18);
+  color: #b6f08a;
+  border-color: rgba(123, 217, 79, 0.5);
+}
+
+[data-theme="blueprint"] .status-en_revision,
+[data-theme="blueprint"] .status-diagnosticada {
+  background: rgba(126, 140, 255, 0.18);
+  color: #c3caff;
+  border-color: rgba(126, 140, 255, 0.5);
+}
+
+[data-theme="blueprint"] .status-esperando_autorizacion,
+[data-theme="blueprint"] .status-esperando_refaccion {
+  background: rgba(245, 149, 43, 0.16);
+  color: #ffce93;
+  border-color: rgba(245, 149, 43, 0.45);
+}
+
+[data-theme="blueprint"] .status-autorizada,
+[data-theme="blueprint"] .status-reparada,
+[data-theme="blueprint"] .status-lista_para_entrega {
+  background: rgba(63, 181, 240, 0.18);
+  color: #a9def9;
+  border-color: rgba(63, 181, 240, 0.5);
+}
+
+[data-theme="blueprint"] .status-rechazada,
+[data-theme="blueprint"] .status-no_reparable,
+[data-theme="blueprint"] .status-cancelada {
+  background: rgba(240, 90, 90, 0.16);
+  color: #ffb3b3;
+  border-color: rgba(240, 90, 90, 0.45);
+}
+
+[data-theme="blueprint"] .status-en_reparacion {
+  background: rgba(63, 181, 240, 0.2);
+  color: #9fdcff;
+  border-color: rgba(63, 181, 240, 0.55);
+}
+
+[data-theme="blueprint"] .status-entregada {
+  background: rgba(245, 149, 43, 0.2);
+  color: #ffcf99;
+  border-color: rgba(245, 149, 43, 0.55);
+}
+
+[data-theme="blueprint"] .status-garantia {
+  background: rgba(193, 79, 214, 0.18);
+  color: #edb6ff;
+  border-color: rgba(193, 79, 214, 0.5);
+}
+
+/* Menus desplegables (incluye selector de tema) */
+[data-theme="blueprint"] .dropdown-menu {
+  background: #0b1f3b;
+  color: var(--ink);
+  border-color: var(--line);
+  box-shadow: 0 18px 40px rgba(2, 8, 20, 0.6);
+}
+
+[data-theme="blueprint"] .dropdown-item {
+  color: #c6dcf3;
+}
+
+[data-theme="blueprint"] .dropdown-item:hover,
+[data-theme="blueprint"] .dropdown-item:focus {
+  background: rgba(63, 181, 240, 0.14);
+  color: #fff;
+}
+
+/* Camara de escaneo */
+[data-theme="blueprint"] .camera-scanner {
+  border-color: var(--line);
+  background: rgba(8, 22, 43, 0.9);
+}
