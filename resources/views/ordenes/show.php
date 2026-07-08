@@ -16,8 +16,7 @@ $help = static function (string $texto, string $ejemplo = ''): string {
     return '<button type="button" class="help-tip" data-help-popover data-bs-toggle="popover" data-bs-title="Ayuda" data-bs-content="' . e($contenido) . '" aria-label="Ayuda">?</button>';
 };
 ?>
-<div class="row g-3">
-    <div class="col-xl-8">
+<div class="orden-detalle">
         <div class="glass-card mb-3">
             <div class="d-flex justify-content-between align-items-start gap-3">
                 <div>
@@ -238,9 +237,7 @@ $help = static function (string $texto, string $ejemplo = ''): string {
                 </div>
             <?php endif; ?>
         </div>
-    </div>
 
-    <div class="col-xl-4">
         <?php $desbloqueo = patronDesbloqueo($orden['password_equipo'] ?? ''); ?>
         <div class="glass-card mb-3">
             <h2 class="h5" data-icon="&#128274;">Desbloqueo del equipo <?= $help('Patron, PIN o clave recibida para probar el equipo. Debe tratarse como dato sensible.', 'Patron 1 > 2 > 5 > 8') ?></h2>
@@ -546,5 +543,4 @@ $help = static function (string $texto, string $ejemplo = ''): string {
                 </div>
             <?php endif; ?>
         </div>
-    </div>
 </div>

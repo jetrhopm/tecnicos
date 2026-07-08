@@ -1154,3 +1154,19 @@ a {
 .barcode-scan-reader video {
   border-radius: 8px;
 }
+
+/* Ficha de orden en escritorio: las tarjetas se reparten en 2 columnas
+   balanceadas (masonry) para no amontonarlas en una columna angosta.
+   En pantallas < 1200px queda una sola columna (igual que en movil). */
+@media (min-width: 1200px) {
+  .orden-detalle {
+    column-count: 2;
+    column-gap: 1rem;
+  }
+
+  .orden-detalle > .glass-card {
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
