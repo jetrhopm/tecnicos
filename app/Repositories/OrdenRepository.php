@@ -72,11 +72,15 @@ final class OrdenRepository extends BaseRepository
     {
         // Portal publico: requiere folio + token para no mostrar ordenes solo adivinando folios.
         return $this->fetch(
-            "SELECT o.*, c.nombre_completo cliente_nombre, c.telefono cliente_telefono,
-                    e.tipo equipo_tipo, e.marca equipo_marca, e.modelo equipo_modelo
+            "SELECT o.*, c.nombre_completo cliente_nombre, c.telefono cliente_telefono, c.whatsapp cliente_whatsapp, c.email cliente_email,
+                    c.domicilio cliente_domicilio,
+                    e.tipo equipo_tipo, e.marca equipo_marca, e.modelo equipo_modelo, e.numero_serie, e.imei,
+                    e.password_equipo, e.color equipo_color, e.accesorios_recibidos, e.estado_fisico equipo_estado_fisico,
+                    e.observaciones equipo_observaciones, u.name tecnico_nombre
              FROM ordenes_servicio o
              JOIN clientes c ON c.id = o.cliente_id
              JOIN equipos e ON e.id = o.equipo_id
+             LEFT JOIN users u ON u.id = o.tecnico_id
              WHERE o.folio = :folio AND o.token_publico = :token AND o.deleted_at IS NULL",
             ['folio' => $folio, 'token' => $token]
         );

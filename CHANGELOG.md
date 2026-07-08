@@ -8,6 +8,14 @@ responsable del proyecto.
 
 ## 2026-07-07
 
+### PDF de orden para cliente
+
+- Se actualizo el PDF de recepcion/consulta para que use el diseno nuevo de
+  ficha: cabecera del negocio, recuadros de datos, patron o clave de
+  desbloqueo, condiciones, resumen de cobro, codigo de barras y firma.
+- El PDF publico por folio/token ahora carga tambien datos visibles del cliente
+  y equipo necesarios para el comprobante, sin exponer notas internas.
+
 Ronda de trabajo enfocada en seguridad, generacion de URLs, un tema visual
 nuevo, el patron/PIN de desbloqueo y los documentos imprimibles (orden y
 entrega) en tamano carta y ticket termico 80/58 mm, mas evidencia de

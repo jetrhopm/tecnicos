@@ -230,16 +230,7 @@ final class OrdenController
             $formato = 'carta';
         }
 
-        $cfg = new ConfiguracionService();
-        $config = [
-            'negocio.nombre' => $cfg->get('negocio.nombre', 'Servicio Tecnico'),
-            'negocio.telefono' => $cfg->get('negocio.telefono', ''),
-            'negocio.whatsapp' => $cfg->get('negocio.whatsapp', ''),
-            'negocio.direccion' => $cfg->get('negocio.direccion', ''),
-            'negocio.logo_url' => $cfg->get('negocio.logo_url', ''),
-            'ticket.garantia' => $cfg->get('ticket.garantia', ''),
-            'legal.politica_garantia' => $cfg->get('legal.politica_garantia', ''),
-        ];
+        $config = $this->printConfig();
 
         View::render('print/recepcion', [
             'title' => 'Orden ' . ($orden['folio'] ?? ''),
@@ -262,7 +253,7 @@ final class OrdenController
 
         $diagnostico = (new DiagnosticoService())->obtenerPorOrden((int) $id);
         $cotizacion = (new CotizacionService())->obtenerPorOrden((int) $id);
-        $pdf = (new OrdenPdfService())->recepcion($orden, $diagnostico, $cotizacion);
+        $pdf = (new OrdenPdfService())->recepcion($orden, $diagnostico, $cotizacion, $this->printConfig());
         $filename = 'orden-' . preg_replace('/[^A-Za-z0-9_-]+/', '-', (string) $orden['folio']) . '.pdf';
 
         // El PDF no se guarda; solo se deja constancia en la bitacora de que se genero.
@@ -272,5 +263,19 @@ final class OrdenController
         header('Content-Disposition: inline; filename="' . $filename . '"');
         header('Content-Length: ' . strlen($pdf));
         echo $pdf;
+    }
+
+    private function printConfig(): array
+    {
+        $cfg = new ConfiguracionService();
+        return [
+            'negocio.nombre' => $cfg->get('negocio.nombre', 'Servicio Tecnico'),
+            'negocio.telefono' => $cfg->get('negocio.telefono', ''),
+            'negocio.whatsapp' => $cfg->get('negocio.whatsapp', ''),
+            'negocio.direccion' => $cfg->get('negocio.direccion', ''),
+            'negocio.logo_url' => $cfg->get('negocio.logo_url', ''),
+            'ticket.garantia' => $cfg->get('ticket.garantia', ''),
+            'legal.politica_garantia' => $cfg->get('legal.politica_garantia', ''),
+        ];
     }
 }
