@@ -627,6 +627,14 @@ a {
   line-height: 1.1;
 }
 
+.modal-backdrop {
+  z-index: 1060;
+}
+
+.modal {
+  z-index: 1070;
+}
+
 .camera-scanner-wrap {
   max-width: 540px;
 }

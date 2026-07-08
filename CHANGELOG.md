@@ -18,6 +18,8 @@ responsable del proyecto.
 - La pantalla principal del punto de venta queda reducida a buscador, tabla y
   boton Cobrar; metodo de pago, referencia y cliente opcional se capturan en
   una ventana modal de cobro.
+- Se corrigio la capa del modal de cobro para que no quede detras del fondo
+  transparente de Bootstrap.
 - Cada venta genera folio propio, ticket imprimible, metodo de pago,
   referencia, cliente opcional y usuario que cobro.
 - La venta descuenta stock por transaccion y registra salida en

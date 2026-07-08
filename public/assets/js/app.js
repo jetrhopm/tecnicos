@@ -228,10 +228,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const cart = form.querySelector('[data-pos-cart]');
     const emptyRow = form.querySelector('[data-pos-empty]');
     const template = form.querySelector('[data-pos-row-template]');
-    const totalDisplays = form.querySelectorAll('[data-pos-total], [data-pos-modal-total]');
+    const paymentModalElement = document.getElementById('posPaymentModal');
+    const totalDisplays = [
+      ...form.querySelectorAll('[data-pos-total]'),
+      ...(paymentModalElement ? paymentModalElement.querySelectorAll('[data-pos-modal-total]') : []),
+    ];
     const discountInput = form.querySelector('[data-pos-discount]');
     const openPaymentButton = form.querySelector('[data-pos-open-payment]');
-    const paymentModalElement = form.querySelector('#posPaymentModal');
     const searchUrl = form.dataset.posSearchUrl || '';
     let nextIndex = 1;
     let searchTimer = null;
