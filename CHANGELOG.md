@@ -17,6 +17,8 @@ responsable del proyecto.
   y equipo necesarios para el comprobante, sin exponer notas internas.
 - Se separo el codigo de barras de entrega de las ligas de consulta/PDF para
   dejar una zona limpia de lectura.
+- Se corrigio la codificacion del PDF para conservar acentos, tildes y la letra
+  enie en textos del comprobante.
 
 Ronda de trabajo enfocada en seguridad, generacion de URLs, un tema visual
 nuevo, el patron/PIN de desbloqueo y los documentos imprimibles (orden y

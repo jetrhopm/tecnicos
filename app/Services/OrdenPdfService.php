@@ -422,8 +422,8 @@ final class OrdenPdfService
         $objects[] = '<< /Type /Catalog /Pages 2 0 R >>';
         $objects[] = '<< /Type /Pages /Kids [3 0 R] /Count 1 >>';
         $objects[] = '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' . self::PAGE_WIDTH . ' ' . self::PAGE_HEIGHT . '] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>';
-        $objects[] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>';
-        $objects[] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>';
+        $objects[] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>';
+        $objects[] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>';
         $objects[] = '<< /Length ' . strlen($content) . " >>\nstream\n" . $content . "\nendstream";
         $objects[] = '<< /Title (' . $this->escape($title) . ') /Producer (Sistema Servicio Tecnico) >>';
 
@@ -445,7 +445,7 @@ final class OrdenPdfService
 
     private function escape(string $text): string
     {
-        $converted = @iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $text);
+        $converted = @iconv('UTF-8', 'Windows-1252//TRANSLIT', $text);
         $text = $converted !== false ? $converted : $text;
         return str_replace(['\\', '(', ')'], ['\\\\', '\\(', '\\)'], $text);
     }
