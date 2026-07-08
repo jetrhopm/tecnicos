@@ -221,61 +221,149 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  const bindPosPartSelect = (select) => {
-    if (select.dataset.posBound === '1') {
-      return;
-    }
-    select.dataset.posBound = '1';
-    select.addEventListener('change', () => {
-      const row = select.closest('[data-pos-row]');
-      const option = select.selectedOptions[0];
-      const price = row ? row.querySelector('[data-pos-price]') : null;
-      if (option && price) {
-        price.value = option.dataset.price || '0';
-      }
-      select.closest('[data-pos-form]')?.dispatchEvent(new Event('input', { bubbles: true }));
-    });
-  };
-
   document.querySelectorAll('[data-pos-form]').forEach((form) => {
-    const addButton = form.querySelector('[data-pos-add-item]') || document.querySelector('[data-pos-add-item]');
-    const itemsContainer = form.querySelector('[data-pos-items]');
-    const template = form.querySelector('[data-pos-item-template]');
+    const searchInput = form.querySelector('[data-pos-search]');
+    const clearSearch = form.querySelector('[data-pos-clear-search]');
+    const resultsBox = form.querySelector('[data-pos-results]');
+    const cart = form.querySelector('[data-pos-cart]');
+    const emptyRow = form.querySelector('[data-pos-empty]');
+    const template = form.querySelector('[data-pos-row-template]');
     const totalInput = form.querySelector('[data-pos-total]');
     const discountInput = form.querySelector('[data-pos-discount]');
+    const searchUrl = form.dataset.posSearchUrl || '';
     let nextIndex = 1;
+    let searchTimer = null;
 
     const updateTotal = () => {
       let subtotal = 0;
       form.querySelectorAll('[data-pos-row]').forEach((row) => {
         const qty = Number(row.querySelector('[data-pos-qty]')?.value || 0);
         const price = Number(row.querySelector('[data-pos-price]')?.value || 0);
-        subtotal += Math.max(0, qty) * Math.max(0, price);
+        const lineTotal = Math.max(0, qty) * Math.max(0, price);
+        subtotal += lineTotal;
+        const lineTotalCell = row.querySelector('[data-pos-line-total]');
+        if (lineTotalCell) {
+          lineTotalCell.textContent = formatMoney(lineTotal);
+        }
       });
       const discount = Math.max(0, Number(discountInput?.value || 0));
       if (totalInput) {
         totalInput.value = formatMoney(Math.max(0, subtotal - discount));
       }
+      if (emptyRow) {
+        emptyRow.classList.toggle('d-none', form.querySelectorAll('[data-pos-row]').length > 0);
+      }
     };
 
-    form.querySelectorAll('[data-pos-part-select]').forEach(bindPosPartSelect);
-    form.addEventListener('input', updateTotal);
+    const syncNames = () => {
+      form.querySelectorAll('[data-pos-row]').forEach((row, index) => {
+        row.querySelector('[data-pos-field="refaccion_id"]')?.setAttribute('name', `items[${index}][refaccion_id]`);
+        row.querySelector('[data-pos-qty]')?.setAttribute('name', `items[${index}][cantidad]`);
+        row.querySelector('[data-pos-price]')?.setAttribute('name', `items[${index}][precio_unitario]`);
+      });
+    };
 
-    if (addButton && itemsContainer && template) {
-      addButton.addEventListener('click', () => {
-        const html = template.innerHTML.replaceAll('__INDEX__', String(nextIndex));
-        nextIndex += 1;
-        const wrapper = document.createElement('div');
-        wrapper.innerHTML = html.trim();
-        const row = wrapper.firstElementChild;
-        if (!row) {
+    const addProduct = (product) => {
+      if (!product || !template || !cart) {
+        return;
+      }
+
+      const existing = form.querySelector(`[data-pos-row][data-refaccion-id="${product.id}"]`);
+      if (existing) {
+        const qtyInput = existing.querySelector('[data-pos-qty]');
+        if (qtyInput) {
+          qtyInput.value = String(Math.max(1, Number(qtyInput.value || 0) + 1));
+        }
+        updateTotal();
+        syncNames();
+        return;
+      }
+
+      const wrapper = document.createElement('tbody');
+      wrapper.innerHTML = template.innerHTML.trim();
+      const row = wrapper.firstElementChild;
+      if (!row) {
+        return;
+      }
+
+      row.dataset.refaccionId = String(product.id);
+      row.querySelector('[data-pos-name]').textContent = product.nombre || 'Refaccion';
+      row.querySelector('[data-pos-sku]').textContent = product.sku || '';
+      row.querySelector('[data-pos-stock]').textContent = product.stock_actual ?? '0';
+      row.querySelector('[data-pos-field="refaccion_id"]').value = product.id;
+      row.querySelector('[data-pos-price]').value = product.precio_venta || '0';
+      cart.appendChild(row);
+      nextIndex += 1;
+      syncNames();
+      updateTotal();
+    };
+
+    const hideResults = () => {
+      if (resultsBox) {
+        resultsBox.classList.add('d-none');
+        resultsBox.innerHTML = '';
+      }
+    };
+
+    const renderResults = (items) => {
+      if (!resultsBox) {
+        return;
+      }
+      resultsBox.innerHTML = '';
+      if (!items.length) {
+        resultsBox.innerHTML = '<div class="pos-search__empty">Sin coincidencias.</div>';
+        resultsBox.classList.remove('d-none');
+        return;
+      }
+      items.forEach((item) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'pos-search__item';
+        const title = document.createElement('strong');
+        title.textContent = item.nombre || 'Refaccion';
+        const meta = document.createElement('small');
+        meta.textContent = `${item.sku || ''} - Stock ${item.stock_actual ?? 0} - ${formatMoney(Number(item.precio_venta || 0))}`;
+        button.append(title, meta);
+        button.addEventListener('click', () => {
+          addProduct(item);
+          if (searchInput) {
+            searchInput.value = '';
+            searchInput.focus();
+          }
+          hideResults();
+        });
+        resultsBox.appendChild(button);
+      });
+      resultsBox.classList.remove('d-none');
+    };
+
+    const searchProducts = async (immediate = false) => {
+      const query = (searchInput?.value || '').trim();
+      if (!query || query.length < 2 || !searchUrl) {
+        hideResults();
+        return;
+      }
+      try {
+        const response = await fetch(`${searchUrl}?q=${encodeURIComponent(query)}`, {
+          headers: { Accept: 'application/json' },
+        });
+        const payload = await response.json();
+        const data = payload.data || {};
+        const items = Array.isArray(data.items) ? data.items : [];
+        if ((data.exact || immediate) && items.length === 1 && String(items[0].sku || '').toLowerCase() === query.toLowerCase()) {
+          addProduct(items[0]);
+          searchInput.value = '';
+          hideResults();
           return;
         }
-        itemsContainer.appendChild(row);
-        row.querySelectorAll('[data-pos-part-select]').forEach(bindPosPartSelect);
-        updateTotal();
-      });
-    }
+        renderResults(items);
+      } catch (error) {
+        if (resultsBox) {
+          resultsBox.innerHTML = '<div class="pos-search__empty">No se pudo buscar. Intenta de nuevo.</div>';
+          resultsBox.classList.remove('d-none');
+        }
+      }
+    };
 
     form.addEventListener('click', (event) => {
       const button = event.target.closest('[data-pos-remove-item]');
@@ -286,10 +374,48 @@ document.addEventListener('DOMContentLoaded', () => {
       const row = button.closest('[data-pos-row]');
       if (row && rows.length > 1) {
         row.remove();
+      } else if (row) {
+        row.remove();
       }
+      syncNames();
       updateTotal();
     });
 
+    form.addEventListener('input', (event) => {
+      if (event.target.closest('[data-pos-search]')) {
+        window.clearTimeout(searchTimer);
+        searchTimer = window.setTimeout(() => searchProducts(false), 220);
+        return;
+      }
+      updateTotal();
+      syncNames();
+    });
+
+    searchInput?.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        window.clearTimeout(searchTimer);
+        searchProducts(true);
+      }
+      if (event.key === 'Escape') {
+        hideResults();
+      }
+    });
+
+    clearSearch?.addEventListener('click', () => {
+      if (searchInput) {
+        searchInput.value = '';
+        searchInput.focus();
+      }
+      hideResults();
+    });
+
+    form.addEventListener('submit', () => {
+      syncNames();
+    });
+
+    nextIndex += form.querySelectorAll('[data-pos-row]').length;
+    syncNames();
     updateTotal();
   });
 

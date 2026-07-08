@@ -7,72 +7,61 @@ $puedeCrear = \App\Core\Auth::can('punto_venta', 'crear');
             <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-3">
                 <div>
                     <h2 class="h5 mb-1" data-icon="&#128722;">Venta de refacciones</h2>
-                    <div class="text-muted small">Venta de mostrador sin crear orden de reparacion.</div>
+                    <div class="text-muted small">Busca por SKU con lector de barras o por nombre/modelo para elegir coincidencias.</div>
                 </div>
-                <?php if ($puedeCrear): ?>
-                    <button class="btn btn-outline-primary btn-sm" type="button" data-pos-add-item data-icon="&#43;">Agregar renglon</button>
-                <?php endif; ?>
             </div>
 
             <?php if ($puedeCrear): ?>
-                <form method="post" action="<?= e(url('/punto-venta')) ?>" data-pos-form>
+                <form method="post" action="<?= e(url('/punto-venta')) ?>" data-pos-form data-pos-search-url="<?= e(url('/punto-venta/buscar')) ?>">
                     <?= csrf_field() ?>
-                    <div class="vstack gap-2 mb-3" data-pos-items>
-                        <div class="quote-item-row" data-pos-row>
-                            <div class="row g-2 align-items-end">
-                                <div class="col-lg-5">
-                                    <label class="form-label" data-icon="&#128230;">Refaccion</label>
-                                    <select class="form-select" name="items[0][refaccion_id]" data-pos-part-select required>
-                                        <option value="">Selecciona refaccion...</option>
-                                        <?php foreach ($refacciones as $refaccion): ?>
-                                            <option value="<?= e($refaccion['id']) ?>" data-price="<?= e((string) $refaccion['precio_venta']) ?>" data-stock="<?= e((string) $refaccion['stock_actual']) ?>">
-                                                <?= e($refaccion['nombre']) ?> - <?= e($refaccion['sku']) ?> - Stock <?= e($refaccion['stock_actual']) ?> - <?= e(formatearMoneda((float) $refaccion['precio_venta'])) ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <div class="col-lg-2 col-md-4">
-                                    <label class="form-label" data-icon="&#35;">Cantidad</label>
-                                    <input class="form-control" type="number" min="1" step="1" name="items[0][cantidad]" value="1" data-pos-qty required>
-                                </div>
-                                <div class="col-lg-3 col-md-4">
-                                    <label class="form-label" data-icon="&#36;">Precio</label>
-                                    <input class="form-control" type="number" min="0" step="0.01" name="items[0][precio_unitario]" value="0" data-pos-price required>
-                                </div>
-                                <div class="col-lg-2 col-md-4 d-grid">
-                                    <button class="btn btn-outline-danger" type="button" data-pos-remove-item data-icon="&#10005;">Quitar</button>
-                                </div>
-                            </div>
+
+                    <div class="pos-search mb-3">
+                        <label class="form-label" data-icon="&#128269;">Buscar / escanear SKU</label>
+                        <div class="input-group">
+                            <input class="form-control" type="search" autocomplete="off" placeholder="Escanea codigo de barras o escribe nombre, SKU, marca o modelo" data-pos-search>
+                            <button class="btn btn-outline-dark" type="button" data-pos-clear-search>Limpiar</button>
                         </div>
+                        <div class="pos-search__results d-none" data-pos-results></div>
+                        <div class="form-text">Si el SKU coincide exactamente, se agrega automatico. Si hay varias coincidencias, da clic en la refaccion.</div>
                     </div>
 
-                    <template data-pos-item-template>
-                        <div class="quote-item-row" data-pos-row>
-                            <div class="row g-2 align-items-end">
-                                <div class="col-lg-5">
-                                    <label class="form-label" data-icon="&#128230;">Refaccion</label>
-                                    <select class="form-select" name="items[__INDEX__][refaccion_id]" data-pos-part-select required>
-                                        <option value="">Selecciona refaccion...</option>
-                                        <?php foreach ($refacciones as $refaccion): ?>
-                                            <option value="<?= e($refaccion['id']) ?>" data-price="<?= e((string) $refaccion['precio_venta']) ?>" data-stock="<?= e((string) $refaccion['stock_actual']) ?>">
-                                                <?= e($refaccion['nombre']) ?> - <?= e($refaccion['sku']) ?> - Stock <?= e($refaccion['stock_actual']) ?> - <?= e(formatearMoneda((float) $refaccion['precio_venta'])) ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <div class="col-lg-2 col-md-4">
-                                    <label class="form-label" data-icon="&#35;">Cantidad</label>
-                                    <input class="form-control" type="number" min="1" step="1" name="items[__INDEX__][cantidad]" value="1" data-pos-qty required>
-                                </div>
-                                <div class="col-lg-3 col-md-4">
-                                    <label class="form-label" data-icon="&#36;">Precio</label>
-                                    <input class="form-control" type="number" min="0" step="0.01" name="items[__INDEX__][precio_unitario]" value="0" data-pos-price required>
-                                </div>
-                                <div class="col-lg-2 col-md-4 d-grid">
-                                    <button class="btn btn-outline-danger" type="button" data-pos-remove-item data-icon="&#10005;">Quitar</button>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="table-wrap mb-3">
+                        <table class="table align-middle pos-cart-table">
+                            <thead>
+                                <tr>
+                                    <th>Refaccion</th>
+                                    <th style="width:120px;">Cantidad</th>
+                                    <th style="width:150px;">Precio unitario</th>
+                                    <th style="width:140px;">Total</th>
+                                    <th style="width:80px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody data-pos-cart>
+                                <tr data-pos-empty>
+                                    <td colspan="5" class="text-muted text-center py-4">Escanea o busca una refaccion para agregarla.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <template data-pos-row-template>
+                        <tr data-pos-row>
+                            <td>
+                                <strong data-pos-name></strong><br>
+                                <small class="text-muted"><span data-pos-sku></span> - Stock <span data-pos-stock></span></small>
+                                <input type="hidden" data-pos-field="refaccion_id">
+                            </td>
+                            <td>
+                                <input class="form-control" type="number" min="1" step="1" value="1" data-pos-qty>
+                            </td>
+                            <td>
+                                <input class="form-control" type="number" min="0" step="0.01" value="0" data-pos-price>
+                            </td>
+                            <td class="fw-bold" data-pos-line-total>$0.00</td>
+                            <td>
+                                <button class="btn btn-outline-danger btn-sm" type="button" data-pos-remove-item data-icon="&#10005;">Quitar</button>
+                            </td>
+                        </tr>
                     </template>
 
                     <div class="row g-3">

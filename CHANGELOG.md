@@ -12,6 +12,9 @@ responsable del proyecto.
 
 - Se agrego el modulo `/punto-venta` para vender refacciones de mostrador sin
   crear una orden de reparacion.
+- La captura de venta se cambio a buscador asincrono con tabla de compra:
+  SKU exacto agrega automaticamente y busqueda por nombre/marca/modelo muestra
+  coincidencias para elegir.
 - Cada venta genera folio propio, ticket imprimible, metodo de pago, descuento,
   cliente opcional y usuario que cobro.
 - La venta descuenta stock por transaccion y registra salida en

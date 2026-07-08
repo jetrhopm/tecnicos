@@ -58,6 +58,35 @@ final class InventarioRepository extends BaseRepository
         );
     }
 
+    public function buscarParaVenta(string $query, int $limite = 12): array
+    {
+        $query = trim($query);
+        if ($query === '') {
+            return [];
+        }
+
+        $limite = max(1, min(30, $limite));
+        $like = '%' . $query . '%';
+        return $this->fetchAll(
+            "SELECT id, nombre, sku, categoria, marca, modelo_compatible, precio_venta, stock_actual, estatus,
+                    CASE WHEN LOWER(sku) = LOWER(:sku_exact) THEN 1 ELSE 0 END exact_sku
+             FROM refacciones
+             WHERE deleted_at IS NULL
+               AND estatus = 'activo'
+               AND (sku = :sku OR nombre LIKE :q_nombre OR categoria LIKE :q_categoria OR marca LIKE :q_marca OR modelo_compatible LIKE :q_modelo)
+             ORDER BY exact_sku DESC, nombre
+             LIMIT {$limite}",
+            [
+                'sku_exact' => $query,
+                'sku' => $query,
+                'q_nombre' => $like,
+                'q_categoria' => $like,
+                'q_marca' => $like,
+                'q_modelo' => $like,
+            ]
+        );
+    }
+
     public function skuExists(string $sku, ?int $exceptId = null): bool
     {
         // Placeholders independientes: con prepares nativos no se puede reutilizar

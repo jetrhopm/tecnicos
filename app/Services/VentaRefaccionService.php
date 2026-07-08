@@ -57,6 +57,7 @@ final class VentaRefaccionService
         try {
             $normalizados = [];
             $subtotal = 0.0;
+            $stockReservado = [];
 
             foreach ($items as $item) {
                 $refaccionId = (int) ($item['refaccion_id'] ?? 0);
@@ -71,10 +72,12 @@ final class VentaRefaccionService
                 }
 
                 $stockAnterior = (int) $refaccion['stock_actual'];
-                $stockNuevo = $stockAnterior - $cantidad;
+                $reservadoPrevio = (int) ($stockReservado[$refaccionId] ?? 0);
+                $stockNuevo = $stockAnterior - $reservadoPrevio - $cantidad;
                 if ($stockNuevo < 0) {
                     throw new RuntimeException('No hay stock suficiente para: ' . (string) $refaccion['nombre']);
                 }
+                $stockReservado[$refaccionId] = $reservadoPrevio + $cantidad;
 
                 $precioCrudo = $item['precio_unitario'] ?? '';
                 if ($precioCrudo !== '' && !is_numeric($precioCrudo)) {
@@ -95,7 +98,7 @@ final class VentaRefaccionService
                     'cantidad' => $cantidad,
                     'precio_unitario' => $precio,
                     'subtotal' => $lineaSubtotal,
-                    'stock_anterior' => $stockAnterior,
+                    'stock_anterior' => $stockAnterior - $reservadoPrevio,
                     'stock_nuevo' => $stockNuevo,
                 ];
             }

@@ -29,6 +29,11 @@ final class InventarioService
         return $this->refacciones->all($filtros);
     }
 
+    public function buscarParaVenta(string $query): array
+    {
+        return $this->refacciones->buscarParaVenta($query);
+    }
+
     public function obtener(int $id): ?array
     {
         return $this->refacciones->find($id);

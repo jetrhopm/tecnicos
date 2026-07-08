@@ -76,6 +76,7 @@ $router->post('/pagos', [PagoController::class, 'store']);
 $router->post('/pagos/{id}/cancelar', [PagoController::class, 'cancelar']);
 
 $router->get('/punto-venta', [PuntoVentaController::class, 'index']);
+$router->get('/punto-venta/buscar', [PuntoVentaController::class, 'buscar']);
 $router->post('/punto-venta', [PuntoVentaController::class, 'store']);
 $router->get('/punto-venta/{id}/ticket', [PuntoVentaController::class, 'ticket']);
 

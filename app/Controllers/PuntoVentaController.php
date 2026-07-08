@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Core\Auth;
+use App\Core\JsonResponse;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
@@ -46,6 +47,32 @@ final class PuntoVentaController
             Session::flash('error', $exception->getMessage());
             Response::back();
         }
+    }
+
+    public function buscar(Request $request): void
+    {
+        Auth::requirePermission('punto_venta', 'ver');
+        $query = trim((string) $request->input('q', ''));
+        if ($query === '') {
+            JsonResponse::success('Busqueda vacia', ['items' => [], 'exact' => false]);
+        }
+
+        $items = (new InventarioService())->buscarParaVenta($query);
+        $exacto = null;
+        foreach ($items as $item) {
+            if ((int) ($item['exact_sku'] ?? 0) === 1) {
+                $exacto = $item;
+                break;
+            }
+        }
+        if ($exacto !== null) {
+            JsonResponse::success('SKU encontrado', ['items' => [$exacto], 'exact' => true]);
+        }
+
+        JsonResponse::success('Resultados', [
+            'items' => $items,
+            'exact' => false,
+        ]);
     }
 
     public function ticket(Request $request, string $id): void

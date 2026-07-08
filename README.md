@@ -296,6 +296,9 @@ Reglas de refacciones:
   orden.
 - En **Punto de venta**, una venta de mostrador descuenta stock, genera folio
   propio y emite ticket imprimible sin asociarse a una orden de reparacion.
+- El punto de venta usa buscador asincrono: al escanear o escribir un SKU unico
+  agrega el producto directo a la tabla; por nombre, marca o modelo muestra
+  coincidencias para seleccionar.
 - Si se aplico por error, se cancela con motivo y el stock se devuelve.
 - No se permite stock negativo ni aplicar refacciones a ordenes entregadas o
   canceladas.
