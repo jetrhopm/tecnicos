@@ -139,4 +139,14 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('[data-print]').forEach((button) => {
     button.addEventListener('click', () => window.print());
   });
+
+  if (window.bootstrap && window.bootstrap.Popover) {
+    document.querySelectorAll('[data-help-popover]').forEach((element) => {
+      new window.bootstrap.Popover(element, {
+        trigger: 'focus',
+        container: 'body',
+        placement: element.getAttribute('data-help-placement') || 'auto',
+      });
+    });
+  }
 });

@@ -8,6 +8,14 @@ responsable del proyecto.
 
 ## 2026-07-07
 
+### Ayudas contextuales en ficha de orden
+
+- Se agregaron botones pequenos `?` con ventanas informativas en la consulta
+  interna de orden.
+- Las ayudas explican campos clave, formularios y secciones como diagnostico,
+  cotizacion, estados, agenda, refacciones, evidencia, pagos y bitacora.
+- Los popovers usan Bootstrap y no envian formularios ni modifican datos.
+
 ### Permisos de cotizacion para tecnico
 
 - El rol `tecnico` ahora puede ver y crear cotizaciones desde la orden.

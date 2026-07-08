@@ -248,6 +248,42 @@ a {
   line-height: 1;
 }
 
+.help-tip {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  margin-left: 4px;
+  padding: 0;
+  border: 1px solid rgba(19, 184, 200, 0.52);
+  border-radius: 999px;
+  background: rgba(19, 184, 200, 0.12);
+  color: #087f8c;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
+  vertical-align: 1px;
+  cursor: help;
+}
+
+.help-tip:hover,
+.help-tip:focus {
+  border-color: #0f9fab;
+  background: rgba(19, 184, 200, 0.22);
+  outline: 2px solid rgba(19, 184, 200, 0.18);
+}
+
+.popover {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 18px 42px rgba(26, 65, 78, 0.16);
+}
+
+.popover-body {
+  color: #334155;
+  font-size: 0.86rem;
+}
+
 .form-control,
 .form-select {
   border-radius: 8px;

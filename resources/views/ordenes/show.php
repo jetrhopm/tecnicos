@@ -11,13 +11,17 @@ $puedeAutorizarCotizacion = \App\Core\Auth::can('cotizaciones', 'autorizar');
 $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function (float $total, array $uso): float {
     return $uso['estado'] === 'activa' ? $total + ((float) $uso['precio_unitario'] * (int) $uso['cantidad']) : $total;
 }, 0.0);
+$help = static function (string $texto, string $ejemplo = ''): string {
+    $contenido = $texto . ($ejemplo !== '' ? ' Ejemplo: ' . $ejemplo : '');
+    return '<button type="button" class="help-tip" data-help-popover data-bs-toggle="popover" data-bs-title="Ayuda" data-bs-content="' . e($contenido) . '" aria-label="Ayuda">?</button>';
+};
 ?>
 <div class="row g-3">
     <div class="col-xl-8">
         <div class="glass-card mb-3">
             <div class="d-flex justify-content-between align-items-start gap-3">
                 <div>
-                    <h2 class="h4 mb-1" data-icon="&#128203;"><?= e($orden['folio']) ?></h2>
+                    <h2 class="h4 mb-1" data-icon="&#128203;"><?= e($orden['folio']) ?> <?= $help('Folio unico de la orden. Sirve para buscar la reparacion, imprimir comprobantes y consultar historial.', 'ST-2026-00045') ?></h2>
                     <p class="text-muted mb-2"><?= e($orden['cliente_nombre']) ?> · <?= e($equipoNombre) ?></p>
                     <span class="badge-state status-<?= e($orden['estado']) ?>"><?= e($orden['estado']) ?></span>
                     <span class="badge text-bg-light"><?= e($orden['prioridad']) ?></span>
@@ -62,38 +66,38 @@ $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function
             </div>
             <hr>
             <div class="row g-3">
-                <div class="col-md-6"><strong>Falla reportada</strong><p><?= nl2br(e($orden['falla_reportada'])) ?></p></div>
-                <div class="col-md-6"><strong>Diagnostico inicial</strong><p><?= nl2br(e($orden['diagnostico_inicial'] ?: '-')) ?></p></div>
-                <div class="col-md-4"><strong>Telefono cliente</strong><br><?= e($orden['cliente_telefono'] ?: '-') ?></div>
-                <div class="col-md-4"><strong>WhatsApp cliente</strong><br><?= e($orden['cliente_whatsapp'] ?: '-') ?></div>
-                <div class="col-md-4"><strong>Email cliente</strong><br><?= e($orden['cliente_email'] ?: '-') ?></div>
-                <div class="col-md-4"><strong>Clave entrega</strong><br><?= e($orden['codigo_entrega'] ?: '-') ?></div>
-                <div class="col-md-4"><strong>Ubicacion</strong><br><?= e($orden['ubicacion_actual'] ?? 'Recepcion') ?></div>
-                <div class="col-md-4"><strong>Recepcion</strong><br><?= e(fechaHumana($orden['fecha_recepcion'])) ?></div>
-                <div class="col-md-4"><strong>Entrega estimada</strong><br><?= e(fechaHumana($orden['fecha_estimada_entrega'])) ?></div>
-                <div class="col-md-4"><strong>Tecnico</strong><br><?= e($orden['tecnico_nombre'] ?: 'Sin asignar') ?></div>
-                <div class="col-md-4"><strong>Total</strong><br><?= e(formatearMoneda((float) $orden['costo_final'])) ?></div>
-                <div class="col-md-4"><strong>Pagado</strong><br><?= e(formatearMoneda((float) $orden['anticipo'])) ?></div>
-                <div class="col-md-4"><strong>Saldo</strong><br><?= e(formatearMoneda((float) $orden['saldo_pendiente'])) ?></div>
+                <div class="col-md-6"><strong>Falla reportada <?= $help('Lo que el cliente dijo que le pasa al equipo. No es el diagnostico tecnico definitivo.', 'No carga, pantalla rota, se apaga') ?></strong><p><?= nl2br(e($orden['falla_reportada'])) ?></p></div>
+                <div class="col-md-6"><strong>Diagnostico inicial <?= $help('Primera revision al recibir. Puede cambiar cuando el tecnico haga pruebas completas.', 'Posible centro de carga danado') ?></strong><p><?= nl2br(e($orden['diagnostico_inicial'] ?: '-')) ?></p></div>
+                <div class="col-md-4"><strong>Telefono cliente <?= $help('Telefono general del cliente para llamadas o identificacion.', '4491234567') ?></strong><br><?= e($orden['cliente_telefono'] ?: '-') ?></div>
+                <div class="col-md-4"><strong>WhatsApp cliente <?= $help('Numero usado para enviar mensajes prellenados desde el boton WhatsApp.', '524491234567') ?></strong><br><?= e($orden['cliente_whatsapp'] ?: '-') ?></div>
+                <div class="col-md-4"><strong>Email cliente <?= $help('Correo del cliente. Es opcional y sirve para contacto o comprobantes futuros.', 'cliente@correo.com') ?></strong><br><?= e($orden['cliente_email'] ?: '-') ?></div>
+                <div class="col-md-4"><strong>Clave entrega <?= $help('Llave del codigo de barras. Se usa en Entregas para localizar y liberar el equipo correcto.', 'ENT-8K4P2Z') ?></strong><br><?= e($orden['codigo_entrega'] ?: '-') ?></div>
+                <div class="col-md-4"><strong>Ubicacion <?= $help('Lugar fisico donde esta el equipo dentro del taller.', 'Recepcion, Mesa 2, Caja, Entregado') ?></strong><br><?= e($orden['ubicacion_actual'] ?? 'Recepcion') ?></div>
+                <div class="col-md-4"><strong>Recepcion <?= $help('Fecha y hora en que se registro la entrada del equipo.', '08/07/2026 10:30') ?></strong><br><?= e(fechaHumana($orden['fecha_recepcion'])) ?></div>
+                <div class="col-md-4"><strong>Entrega estimada <?= $help('Fecha prometida o aproximada para entregar. Sirve para agenda y seguimiento.', '10/07/2026') ?></strong><br><?= e(fechaHumana($orden['fecha_estimada_entrega'])) ?></div>
+                <div class="col-md-4"><strong>Tecnico <?= $help('Persona asignada para diagnosticar o reparar esta orden.', 'Tecnico Demo') ?></strong><br><?= e($orden['tecnico_nombre'] ?: 'Sin asignar') ?></div>
+                <div class="col-md-4"><strong>Total <?= $help('Importe total actual de la orden. Se actualiza al generar cotizacion o registrar cambios de cobro.', '$1,450.00') ?></strong><br><?= e(formatearMoneda((float) $orden['costo_final'])) ?></div>
+                <div class="col-md-4"><strong>Pagado <?= $help('Suma de pagos activos registrados para esta orden.', '$500.00 de anticipo') ?></strong><br><?= e(formatearMoneda((float) $orden['anticipo'])) ?></div>
+                <div class="col-md-4"><strong>Saldo <?= $help('Cantidad pendiente por cobrar. La entrega bloquea si queda saldo pendiente.', '$950.00') ?></strong><br><?= e(formatearMoneda((float) $orden['saldo_pendiente'])) ?></div>
             </div>
         </div>
 
         <div class="glass-card mb-3">
-            <h2 class="h5" data-icon="&#128269;">Diagnostico tecnico</h2>
+            <h2 class="h5" data-icon="&#128269;">Diagnostico tecnico <?= $help('Resultado de la revision del tecnico. Puede tener version interna y version visible para cliente.', 'Interno: corto en placa. Cliente: requiere revision avanzada') ?></h2>
             <?php if ($diagnostico): ?>
-                <p><strong>Diagnostico:</strong> <?= nl2br(e($diagnostico['diagnostico_tecnico'])) ?></p>
-                <p><strong>Visible al cliente:</strong> <?= nl2br(e($diagnostico['diagnostico_cliente'] ?: '-')) ?></p>
-                <p class="mb-0"><strong>Total sugerido:</strong> <?= e(formatearMoneda((float) $diagnostico['costo_total_sugerido'])) ?></p>
+                <p><strong>Diagnostico <?= $help('Detalle tecnico interno. No debe enviarse al cliente si contiene notas sensibles.', 'Falla por humedad en conector') ?>:</strong> <?= nl2br(e($diagnostico['diagnostico_tecnico'])) ?></p>
+                <p><strong>Visible al cliente <?= $help('Resumen explicado de forma clara para el cliente.', 'Se requiere cambio de centro de carga') ?>:</strong> <?= nl2br(e($diagnostico['diagnostico_cliente'] ?: '-')) ?></p>
+                <p class="mb-0"><strong>Total sugerido <?= $help('Costo recomendado por el tecnico antes de generar cotizacion.', '$850.00') ?>:</strong> <?= e(formatearMoneda((float) $diagnostico['costo_total_sugerido'])) ?></p>
             <?php else: ?>
                 <form method="post" action="<?= e(url('/diagnosticos')) ?>">
                     <?= csrf_field() ?>
                     <input type="hidden" name="orden_id" value="<?= e($orden['id']) ?>">
                     <div class="row g-3">
-                        <div class="col-md-6"><label class="form-label" data-icon="&#9998;">Diagnostico interno</label><textarea class="form-control" name="diagnostico_tecnico" required></textarea></div>
-                        <div class="col-md-6"><label class="form-label" data-icon="&#128065;">Diagnostico visible</label><textarea class="form-control" name="diagnostico_cliente"></textarea></div>
-                        <div class="col-md-4"><label class="form-label" data-icon="&#9888;">Causa probable</label><input class="form-control" name="causa_probable"></div>
-                        <div class="col-md-4"><label class="form-label" data-icon="&#36;">Mano de obra</label><input class="form-control" type="number" step="0.01" name="costo_mano_obra" value="0" data-money></div>
-                        <div class="col-md-4"><label class="form-label" data-icon="&#36;">Refacciones</label><input class="form-control" type="number" step="0.01" name="costo_refacciones" value="0" data-money></div>
+                        <div class="col-md-6"><label class="form-label" data-icon="&#9998;">Diagnostico interno <?= $help('Notas tecnicas para el taller. No aparecen en portal publico.', 'Flex danado, posible humedad') ?></label><textarea class="form-control" name="diagnostico_tecnico" required></textarea></div>
+                        <div class="col-md-6"><label class="form-label" data-icon="&#128065;">Diagnostico visible <?= $help('Texto que si puede entender/ver el cliente.', 'La pantalla requiere reemplazo') ?></label><textarea class="form-control" name="diagnostico_cliente"></textarea></div>
+                        <div class="col-md-4"><label class="form-label" data-icon="&#9888;">Causa probable <?= $help('Origen probable de la falla segun pruebas.', 'Golpe, humedad, desgaste, variacion de voltaje') ?></label><input class="form-control" name="causa_probable"></div>
+                        <div class="col-md-4"><label class="form-label" data-icon="&#36;">Mano de obra <?= $help('Costo del trabajo tecnico sin refacciones.', '350') ?></label><input class="form-control" type="number" step="0.01" name="costo_mano_obra" value="0" data-money></div>
+                        <div class="col-md-4"><label class="form-label" data-icon="&#36;">Refacciones <?= $help('Costo estimado de piezas necesarias.', '500') ?></label><input class="form-control" type="number" step="0.01" name="costo_refacciones" value="0" data-money></div>
                     </div>
                     <button class="btn btn-primary mt-3" data-icon="&#128190;">Guardar diagnostico</button>
                 </form>
@@ -101,7 +105,7 @@ $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function
         </div>
 
         <div class="glass-card mb-3">
-            <h2 class="h5" data-icon="&#128179;">Cotizacion</h2>
+            <h2 class="h5" data-icon="&#128179;">Cotizacion <?= $help('Propuesta economica que el cliente debe aceptar o rechazar antes de reparar, salvo permiso especial.', 'Mano de obra + refaccion + IVA') ?></h2>
             <?php $puedeCrearCotizacion = !$cotizacion || (!in_array($cotizacion['estado'], ['pendiente'], true) && !in_array($orden['estado'], ['entregada', 'cancelada'], true)); ?>
             <?php if ($cotizacion): ?>
                 <div class="table-wrap mb-3">
@@ -115,8 +119,8 @@ $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function
                     </table>
                 </div>
                 <div class="d-flex justify-content-between">
-                    <span>Estado: <strong><?= e($cotizacion['estado']) ?></strong></span>
-                    <strong>Total <?= e(formatearMoneda((float) $cotizacion['total'])) ?></strong>
+                    <span>Estado <?= $help('Indica si la cotizacion sigue pendiente, fue aceptada, rechazada o vencio.', 'pendiente') ?>: <strong><?= e($cotizacion['estado']) ?></strong></span>
+                    <strong>Total <?= $help('Importe total de la version actual de cotizacion.', '$1,450.00') ?> <?= e(formatearMoneda((float) $cotizacion['total'])) ?></strong>
                 </div>
                 <?php if ($cotizacion['estado'] === 'pendiente' && $puedeAutorizarCotizacion): ?>
                     <div class="d-flex gap-2 mt-3">
@@ -144,16 +148,16 @@ $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function
                     <input type="hidden" name="orden_id" value="<?= e($orden['id']) ?>">
                     <div class="row g-3">
                         <div class="col-md-3">
-                            <label class="form-label" data-icon="&#9671;">Tipo</label>
+                            <label class="form-label" data-icon="&#9671;">Tipo <?= $help('Clasifica el concepto para reportes y claridad.', 'mano_obra, refaccion, servicio') ?></label>
                             <select class="form-select" name="tipo"><option value="mano_obra">Mano de obra</option><option value="refaccion">Refaccion</option><option value="servicio">Servicio</option><option value="otro">Otro</option></select>
                         </div>
-                        <div class="col-md-5"><label class="form-label" data-icon="&#9998;">Descripcion</label><input class="form-control" name="descripcion" required></div>
-                        <div class="col-md-2"><label class="form-label" data-icon="&#35;">Cantidad</label><input class="form-control" type="number" step="0.01" name="cantidad" value="1"></div>
-                        <div class="col-md-2"><label class="form-label" data-icon="&#36;">Precio</label><input class="form-control" type="number" step="0.01" name="precio_unitario" value="<?= e($diagnostico['costo_total_sugerido'] ?? 0) ?>" data-money></div>
-                        <div class="col-md-3"><label class="form-label" data-icon="&#37;">Descuento</label><input class="form-control" type="number" step="0.01" name="descuento" value="0" data-money></div>
-                        <div class="col-md-3"><label class="form-label" data-icon="&#37;">IVA</label><input class="form-control" type="number" step="0.01" name="iva" value="0" data-money></div>
-                        <div class="col-md-3"><label class="form-label" data-icon="&#128197;">Vigencia</label><input class="form-control" type="date" name="vigencia"></div>
-                        <div class="col-md-12"><label class="form-label" data-icon="&#9998;">Terminos</label><textarea class="form-control" name="terminos"></textarea></div>
+                        <div class="col-md-5"><label class="form-label" data-icon="&#9998;">Descripcion <?= $help('Texto que explica que se va a cobrar.', 'Cambio de pantalla calidad original') ?></label><input class="form-control" name="descripcion" required></div>
+                        <div class="col-md-2"><label class="form-label" data-icon="&#35;">Cantidad <?= $help('Numero de piezas o servicios iguales.', '1 pantalla, 2 conectores') ?></label><input class="form-control" type="number" step="0.01" name="cantidad" value="1"></div>
+                        <div class="col-md-2"><label class="form-label" data-icon="&#36;">Precio <?= $help('Precio unitario antes de descuento e IVA.', '850') ?></label><input class="form-control" type="number" step="0.01" name="precio_unitario" value="<?= e($diagnostico['costo_total_sugerido'] ?? 0) ?>" data-money></div>
+                        <div class="col-md-3"><label class="form-label" data-icon="&#37;">Descuento <?= $help('Descuento en pesos aplicado al subtotal.', '100') ?></label><input class="form-control" type="number" step="0.01" name="descuento" value="0" data-money></div>
+                        <div class="col-md-3"><label class="form-label" data-icon="&#37;">IVA <?= $help('Impuesto en pesos si lo aplicas. Si no cobras IVA, dejalo en 0.', '232') ?></label><input class="form-control" type="number" step="0.01" name="iva" value="0" data-money></div>
+                        <div class="col-md-3"><label class="form-label" data-icon="&#128197;">Vigencia <?= $help('Fecha hasta la que respetas precio y disponibilidad.', '2026-07-15') ?></label><input class="form-control" type="date" name="vigencia"></div>
+                        <div class="col-md-12"><label class="form-label" data-icon="&#9998;">Terminos <?= $help('Condiciones de la cotizacion para el cliente.', 'Precio sujeto a disponibilidad de refaccion') ?></label><textarea class="form-control" name="terminos"></textarea></div>
                     </div>
                     <button class="btn btn-primary mt-3" data-icon="&#128179;">Generar cotizacion</button>
                 </form>
@@ -168,7 +172,7 @@ $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function
     <div class="col-xl-4">
         <?php $desbloqueo = patronDesbloqueo($orden['password_equipo'] ?? ''); ?>
         <div class="glass-card mb-3">
-            <h2 class="h5" data-icon="&#128274;">Desbloqueo del equipo</h2>
+            <h2 class="h5" data-icon="&#128274;">Desbloqueo del equipo <?= $help('Patron, PIN o clave recibida para probar el equipo. Debe tratarse como dato sensible.', 'Patron 1 > 2 > 5 > 8') ?></h2>
             <?php if ($desbloqueo && $desbloqueo['tipo'] === 'patron'): ?>
                 <div class="unlock-box"><?= patronSvg($desbloqueo['secuencia'], 132) ?></div>
                 <div class="mt-2"><strong>Secuencia:</strong> <span class="patron-seq"><?= e(implode(' → ', $desbloqueo['secuencia'])) ?></span></div>
@@ -182,10 +186,10 @@ $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function
         </div>
 
         <div class="glass-card mb-3">
-            <h2 class="h5" data-icon="&#9889;">Acciones rapidas</h2>
+            <h2 class="h5" data-icon="&#9889;">Acciones rapidas <?= $help('Controles operativos para mover la orden sin salir de la ficha.', 'Cambiar a en_reparacion o asignar tecnico') ?></h2>
             <form class="mb-3" method="post" action="<?= e(url('/ordenes/' . $orden['id'] . '/estado')) ?>">
                 <?= csrf_field() ?>
-                <label class="form-label" data-icon="&#9679;">Cambiar estado</label>
+                <label class="form-label" data-icon="&#9679;">Cambiar estado <?= $help('Actualiza la etapa del proceso. Cada cambio queda en bitacora.', 'recibida -> en_revision -> reparada') ?></label>
                 <div class="input-group">
                     <select class="form-select" name="estado">
                         <?php foreach ($estados as $estado): ?>
@@ -197,7 +201,7 @@ $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function
             </form>
             <form method="post" action="<?= e(url('/ordenes/' . $orden['id'] . '/tecnico')) ?>">
                 <?= csrf_field() ?>
-                <label class="form-label" data-icon="&#128295;">Asignar tecnico</label>
+                <label class="form-label" data-icon="&#128295;">Asignar tecnico <?= $help('Define quien atendera la orden y ayuda a medir carga de trabajo.', 'Tecnico Demo') ?></label>
                 <div class="input-group">
                     <select class="form-select" name="tecnico_id">
                         <option value="">Sin asignar</option>
@@ -212,14 +216,14 @@ $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function
 
         <div class="glass-card mb-3">
             <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
-                <h2 class="h5 mb-0" data-icon="&#128197;">Agenda</h2>
+                <h2 class="h5 mb-0" data-icon="&#128197;">Agenda <?= $help('Seguimientos programados para revision, visita, trabajo o entrega.', 'Revision manana 11:00') ?></h2>
                 <a class="btn btn-outline-dark btn-sm" href="<?= e(url('/agenda?q=' . urlencode((string) $orden['folio']))) ?>">Ver agenda</a>
             </div>
             <form method="post" action="<?= e(url('/agenda')) ?>" class="mb-3">
                 <?= csrf_field() ?>
                 <input type="hidden" name="orden_id" value="<?= e($orden['id']) ?>">
                 <input type="hidden" name="titulo" value="Seguimiento <?= e($orden['folio']) ?>">
-                <label class="form-label" data-icon="&#128197;">Programar seguimiento</label>
+                <label class="form-label" data-icon="&#128197;">Programar seguimiento <?= $help('Crea un evento ligado a esta orden para no olvidar acciones.', 'Llamar al cliente el viernes') ?></label>
                 <div class="row g-2">
                     <div class="col-7"><input class="form-control" type="datetime-local" name="inicio" value="<?= e(date('Y-m-d\TH:i', strtotime('+1 day'))) ?>" required></div>
                     <div class="col-5">
@@ -259,15 +263,15 @@ $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function
 
         <div class="glass-card mb-3">
             <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
-                <h2 class="h5 mb-0" data-icon="&#128230;">Refacciones usadas</h2>
-                <span class="badge text-bg-light"><?= e(formatearMoneda($totalRefaccionesUsadas)) ?></span>
+                <h2 class="h5 mb-0" data-icon="&#128230;">Refacciones usadas <?= $help('Piezas tomadas del inventario para esta reparacion. Al aplicar una refaccion se descuenta stock.', 'Pantalla OLED x1') ?></h2>
+                <span class="badge text-bg-light"><?= e(formatearMoneda($totalRefaccionesUsadas)) ?> <?= $help('Importe total de refacciones activas aplicadas a esta orden.', '$850.00') ?></span>
             </div>
 
             <?php if ($puedeGestionarInventario && !in_array($orden['estado'], ['entregada', 'cancelada'], true)): ?>
                 <form class="row g-2 mb-3" method="post" action="<?= e(url('/ordenes/' . $orden['id'] . '/refacciones')) ?>">
                     <?= csrf_field() ?>
                     <div class="col-12">
-                        <label class="form-label" data-icon="&#128295;">Refaccion</label>
+                        <label class="form-label" data-icon="&#128295;">Refaccion <?= $help('Selecciona la pieza que saldra del inventario.', 'Centro de carga Samsung A12') ?></label>
                         <select class="form-select" name="refaccion_id" required>
                             <option value="">Selecciona refaccion...</option>
                             <?php foreach ($refaccionesDisponibles ?? [] as $refaccion): ?>
@@ -278,11 +282,11 @@ $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function
                         </select>
                     </div>
                     <div class="col-4">
-                        <label class="form-label" data-icon="&#35;">Cant.</label>
+                        <label class="form-label" data-icon="&#35;">Cant. <?= $help('Cantidad que se descuenta del stock.', '1') ?></label>
                         <input class="form-control" type="number" min="1" step="1" name="cantidad" value="1" required>
                     </div>
                     <div class="col-8">
-                        <label class="form-label" data-icon="&#36;">Precio venta</label>
+                        <label class="form-label" data-icon="&#36;">Precio venta <?= $help('Precio que se cobrara por esa pieza. Si lo dejas vacio usa el precio de inventario.', '450') ?></label>
                         <input class="form-control" type="number" min="0" step="0.01" name="precio_unitario" placeholder="Usa precio de inventario" data-money>
                     </div>
                     <div class="col-12">
@@ -331,7 +335,7 @@ $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function
         </div>
 
         <div class="glass-card mb-3">
-            <h2 class="h5" data-icon="&#128247;">Evidencia y aceptacion</h2>
+            <h2 class="h5" data-icon="&#128247;">Evidencia y aceptacion <?= $help('Fotos o comprobantes que prueban estado, autorizacion o entrega. Ayudan ante aclaraciones.', 'Foto del ticket firmado') ?></h2>
             <?php if (!empty($orden['firma_recepcion'])): ?>
                 <div class="alert alert-success py-2 small mb-3"><?= e($orden['firma_recepcion']) ?></div>
             <?php else: ?>
@@ -339,7 +343,7 @@ $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function
             <?php endif; ?>
             <form method="post" enctype="multipart/form-data" action="<?= e(url('/ordenes/' . $orden['id'] . '/evidencia')) ?>">
                 <?= csrf_field() ?>
-                <label class="form-label" data-icon="&#128247;">Foto del ticket firmado</label>
+                <label class="form-label" data-icon="&#128247;">Foto del ticket firmado <?= $help('Sube una foto tomada con camara o archivo. Queda ligada a la orden.', 'Ticket con firma del cliente') ?></label>
                 <input class="form-control mb-2" type="file" name="evidencia" accept="image/*" capture="environment" required>
                 <div class="form-check mb-2">
                     <input class="form-check-input" type="checkbox" id="acepta_terminos" name="acepta_terminos" value="1" checked>
@@ -360,25 +364,25 @@ $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function
         </div>
 
         <div class="glass-card mb-3">
-            <h2 class="h5" data-icon="&#128179;">Registrar pago</h2>
+            <h2 class="h5" data-icon="&#128179;">Registrar pago <?= $help('Agrega anticipo, pago parcial o liquidacion. Los pagos no se borran; se cancelan con motivo.', '$500 efectivo') ?></h2>
             <form method="post" action="<?= e(url('/pagos')) ?>">
                 <?= csrf_field() ?>
                 <input type="hidden" name="orden_id" value="<?= e($orden['id']) ?>">
-                <label class="form-label" data-icon="&#36;">Monto</label>
+                <label class="form-label" data-icon="&#36;">Monto <?= $help('Cantidad que entra a caja. No debe superar el saldo pendiente.', '300') ?></label>
                 <input class="form-control mb-2" type="number" step="0.01" min="0.01" max="<?= e((string) max(0, (float) $orden['saldo_pendiente'])) ?>" name="monto" value="<?= e((string) max(0, (float) $orden['saldo_pendiente'])) ?>" required data-money>
                 <div class="form-text mb-2">No debe superar el saldo pendiente.</div>
-                <label class="form-label" data-icon="&#9679;">Metodo</label>
+                <label class="form-label" data-icon="&#9679;">Metodo <?= $help('Forma en que el cliente pago.', 'efectivo, transferencia, tarjeta') ?></label>
                 <select class="form-select mb-2" name="metodo">
                     <?php foreach (['efectivo','transferencia','tarjeta','otro'] as $metodo): ?><option value="<?= e($metodo) ?>"><?= e($metodo) ?></option><?php endforeach; ?>
                 </select>
-                <label class="form-label" data-icon="&#35;">Referencia</label>
+                <label class="form-label" data-icon="&#35;">Referencia <?= $help('Dato opcional para rastrear el pago.', 'folio transferencia, ultimos 4 tarjeta') ?></label>
                 <input class="form-control mb-2" name="referencia">
                 <button class="btn btn-primary w-100" data-icon="&#128190;">Guardar pago</button>
             </form>
         </div>
 
         <div class="glass-card mb-3">
-            <h2 class="h5" data-icon="&#128179;">Pagos</h2>
+            <h2 class="h5" data-icon="&#128179;">Pagos <?= $help('Historial de cobros activos y cancelados de esta orden.', 'Anticipo + liquidacion') ?></h2>
             <?php foreach ($pagos as $pago): ?>
                 <?php $cancelado = ($pago['estado'] ?? 'activo') === 'cancelado'; ?>
                 <div class="border-bottom py-2">
@@ -413,7 +417,7 @@ $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function
         </div>
 
         <div class="glass-card">
-            <h2 class="h5" data-icon="&#128220;">Bitacora de la orden</h2>
+            <h2 class="h5" data-icon="&#128220;">Bitacora de la orden <?= $help('Registro automatico de cambios importantes. Sirve para saber quien hizo que y cuando.', 'Cambio de estado por Tecnico Demo') ?></h2>
             <?php
             $accionLabel = [
                 'crear' => 'Orden creada',
