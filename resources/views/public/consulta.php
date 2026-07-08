@@ -68,6 +68,16 @@
                     <p class="text-muted mb-0">Aun no hay cotizacion publicada.</p>
                 <?php endif; ?>
             </div>
+            <?php if (!empty($garantia)): ?>
+                <div class="glass-card mt-3">
+                    <h2 class="h5" data-icon="&#128737;">Garantia</h2>
+                    <dl class="mb-2">
+                        <dt>Estado</dt><dd><?= e($garantia['estado']) ?></dd>
+                        <dt>Vigencia</dt><dd><?= e(fechaHumana($garantia['fecha_inicio'])) ?> a <?= e(fechaHumana($garantia['fecha_fin'])) ?></dd>
+                    </dl>
+                    <p class="mb-0"><?= nl2br(e($garantia['condiciones'] ?: 'Garantia sobre la reparacion realizada.')) ?></p>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 <?php endif; ?>

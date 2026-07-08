@@ -8,6 +8,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
 use App\Core\View;
+use App\Core\Database;
 use App\Services\CotizacionService;
 use App\Services\ConfiguracionService;
 use App\Services\DiagnosticoService;
@@ -34,6 +35,7 @@ final class PublicController
             'token' => $token,
             'diagnostico' => $orden ? (new DiagnosticoService())->obtenerPorOrden((int) $orden['id']) : null,
             'cotizacion' => $orden ? (new CotizacionService())->obtenerPorOrden((int) $orden['id']) : null,
+            'garantia' => $orden ? $this->garantiaPublica((int) $orden['id']) : null,
         ], 'layouts/public');
     }
 
@@ -98,5 +100,19 @@ final class PublicController
             'ticket.garantia' => $cfg->get('ticket.garantia', ''),
             'legal.politica_garantia' => $cfg->get('legal.politica_garantia', ''),
         ];
+    }
+
+    private function garantiaPublica(int $ordenId): ?array
+    {
+        $stmt = Database::connection()->prepare(
+            "SELECT fecha_inicio, fecha_fin, condiciones, estado
+             FROM garantias
+             WHERE orden_id = :orden_id
+             ORDER BY id DESC
+             LIMIT 1"
+        );
+        $stmt->execute(['orden_id' => $ordenId]);
+        $row = $stmt->fetch();
+        return $row ?: null;
     }
 }

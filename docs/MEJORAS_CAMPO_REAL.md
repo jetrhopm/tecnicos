@@ -29,13 +29,26 @@ Implementado:
 
 ### 2. Garantia configurable real
 
-Estado: pendiente.
+Estado: implementado.
 
 Objetivo:
 
 - Usar dias de garantia desde configuracion, no un valor fijo.
 - Permitir garantia por orden cuando aplique.
 - Mostrar vigencia y condiciones claramente en entrega y consulta.
+
+Implementado:
+
+- Se agrego la clave `garantia.dias_default` para definir los dias de garantia
+  desde Configuracion.
+- Al entregar una orden, la garantia usa la vigencia configurada; si el valor es
+  `0`, no se genera garantia automatica.
+- Las condiciones usan primero la garantia indicada en la orden y, si esta vacia,
+  la politica legal configurable del taller.
+- El portal publico muestra estado, vigencia y condiciones de la garantia cuando
+  ya existe una garantia generada para la orden.
+- El PDF de orden mantiene dos copias en la primera hoja y agrega una segunda
+  hoja con las condiciones completas para que no se recorten.
 
 ### 3. Administracion completa de usuarios
 

@@ -18,7 +18,7 @@ final class OrdenPdfService
     public function recepcion(array $orden, ?array $diagnostico = null, ?array $cotizacion = null, array $config = []): string
     {
         $this->annotations = [];
-        $lines = [];
+        $pageLines = [];
 
         $folio = (string) ($orden['folio'] ?? '');
         $token = (string) ($orden['token_publico'] ?? '');
@@ -72,11 +72,18 @@ final class OrdenPdfService
             'condiciones' => $condiciones,
         ];
 
-        $this->rect($lines, 10, 10, 592, 772, [255, 255, 255], [219, 234, 254], 0.4);
-        $this->receiptCopy($lines, $data, 16, 410, 580, 362, 'COPIA CLIENTE');
-        $this->receiptCopy($lines, $data, 16, 20, 580, 362, 'COPIA TALLER');
+        $this->rect($pageLines, 10, 10, 592, 772, [255, 255, 255], [219, 234, 254], 0.4);
+        $this->receiptCopy($pageLines, $data, 16, 410, 580, 362, 'COPIA CLIENTE');
+        $this->receiptCopy($pageLines, $data, 16, 20, 580, 362, 'COPIA TALLER');
 
-        return $this->render(implode("\n", $lines), 'Orden ' . $folio);
+        $pages = [implode("\n", $pageLines)];
+        if ($condiciones !== '') {
+            $warrantyLines = [];
+            $this->warrantyPage($warrantyLines, $data);
+            $pages[] = implode("\n", $warrantyLines);
+        }
+
+        return $this->renderPages($pages, 'Orden ' . $folio);
     }
 
     private function receiptCopy(array &$lines, array $data, float $x, float $y, float $w, float $h, string $copyLabel): void
@@ -224,18 +231,56 @@ final class OrdenPdfService
             $items = ['La garantia aplica solo sobre la falla reparada y bajo las condiciones del taller.'];
         }
 
-        $columns = [array_slice($items, 0, 5), array_slice($items, 5)];
-        foreach ($columns as $index => $columnItems) {
-            $cx = $x + 4 + ($index * (($w - 8) / 2));
-            $cy = $y + $h - 16;
-            foreach ($columnItems as $item) {
-                $wrapped = array_slice($this->wrap($item, 58), 0, 2);
-                foreach ($wrapped as $line) {
-                    $this->text($lines, $cx, $cy, 3.6, $line, false, [15, 23, 42]);
-                    $cy -= 4.8;
-                }
+        $summary = array_slice($items, 0, 3);
+        $summary[] = 'Condiciones completas en la pagina 2 de este PDF.';
+        $cy = $y + $h - 16;
+        foreach ($summary as $item) {
+            foreach (array_slice($this->wrap($item, 92), 0, 2) as $line) {
+                $this->text($lines, $x + 4, $cy, 3.9, $line, false, [15, 23, 42]);
+                $cy -= 5.3;
             }
         }
+    }
+
+    private function warrantyPage(array &$lines, array $data): void
+    {
+        $blue = [37, 99, 235];
+        $ink = [15, 23, 42];
+        $muted = [71, 85, 105];
+
+        $this->rect($lines, 28, 28, 556, 736, [255, 255, 255], $blue, 0.8);
+        $this->rect($lines, 40, 712, 532, 38, [239, 246, 255], [147, 197, 253], 0.5);
+        $this->text($lines, 52, 735, 11, (string) $data['negocio'], true, $ink);
+        $this->text($lines, 52, 720, 7, 'Garantia y condiciones completas', false, $muted);
+        $this->text($lines, 452, 735, 8, 'Orden: ' . (string) $data['folio'], true, $ink);
+        $this->text($lines, 452, 722, 6, 'Cliente: ' . (string) $data['cliente'], false, $muted);
+
+        $this->text($lines, 48, 686, 12, 'CONDICIONES DE GARANTIA', true, [30, 64, 175]);
+
+        $items = array_values(array_filter(array_map('trim', preg_split('/\R+/', (string) $data['condiciones']) ?: [])));
+        if ($items === []) {
+            $items = ['La garantia aplica solo sobre la falla reparada y bajo las condiciones del taller.'];
+        }
+
+        $y = 662;
+        foreach ($items as $item) {
+            $wrapped = $this->wrap($item, 112);
+            foreach ($wrapped as $lineIndex => $line) {
+                $this->text($lines, 54, $y, 8, $line, $lineIndex === 0, $ink);
+                $y -= 11;
+            }
+            $y -= 4;
+            if ($y < 120) {
+                $this->text($lines, 54, $y, 8, 'Continua en observaciones internas del taller si se agregan mas condiciones.', false, $muted);
+                break;
+            }
+        }
+
+        $this->rect($lines, 48, 56, 516, 46, [248, 250, 252], [147, 197, 253], 0.5);
+        $this->text($lines, 58, 84, 7, 'ACEPTACION DEL CLIENTE', true, $ink);
+        $this->text($lines, 58, 70, 6, 'El cliente acepta las condiciones de servicio y garantia indicadas en este documento.', false, $muted);
+        $this->line($lines, 392, 70, 548, 70, $muted, 0.4);
+        $this->text($lines, 437, 58, 6, 'Firma cliente', false, $ink);
     }
 
     private function compactAcceptanceBox(array &$lines, float $x, float $y, float $w, float $h): void
@@ -638,9 +683,20 @@ final class OrdenPdfService
 
     private function render(string $content, string $title): string
     {
+        return $this->renderPages([$content], $title);
+    }
+
+    private function renderPages(array $contents, string $title): string
+    {
         $annotationObjects = [];
         $annotationRefs = [];
-        $annotationStart = 7;
+        $pageCount = max(1, count($contents));
+        $pageStart = 3;
+        $fontRegular = $pageStart + $pageCount;
+        $fontBold = $fontRegular + 1;
+        $contentStart = $fontBold + 1;
+        $annotationStart = $contentStart + $pageCount;
+
         foreach ($this->annotations as $index => $annotation) {
             $objectNumber = $annotationStart + $index;
             $annotationRefs[] = $objectNumber . ' 0 R';
@@ -654,16 +710,25 @@ final class OrdenPdfService
             );
         }
 
-        $annots = $annotationRefs !== [] ? ' /Annots [' . implode(' ', $annotationRefs) . ']' : '';
-        $infoObjectNumber = 7 + count($annotationObjects);
+        $infoObjectNumber = $annotationStart + count($annotationObjects);
+        $kids = [];
+        for ($i = 0; $i < $pageCount; $i++) {
+            $kids[] = ($pageStart + $i) . ' 0 R';
+        }
 
         $objects = [];
         $objects[] = '<< /Type /Catalog /Pages 2 0 R >>';
-        $objects[] = '<< /Type /Pages /Kids [3 0 R] /Count 1 >>';
-        $objects[] = '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' . self::PAGE_WIDTH . ' ' . self::PAGE_HEIGHT . '] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R' . $annots . ' >>';
+        $objects[] = '<< /Type /Pages /Kids [' . implode(' ', $kids) . '] /Count ' . $pageCount . ' >>';
+        for ($i = 0; $i < $pageCount; $i++) {
+            $annots = $i === 0 && $annotationRefs !== [] ? ' /Annots [' . implode(' ', $annotationRefs) . ']' : '';
+            $objects[] = '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' . self::PAGE_WIDTH . ' ' . self::PAGE_HEIGHT . '] /Resources << /Font << /F1 ' . $fontRegular . ' 0 R /F2 ' . $fontBold . ' 0 R >> >> /Contents ' . ($contentStart + $i) . ' 0 R' . $annots . ' >>';
+        }
         $objects[] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>';
         $objects[] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>';
-        $objects[] = '<< /Length ' . strlen($content) . " >>\nstream\n" . $content . "\nendstream";
+        foreach ($contents as $content) {
+            $content = (string) $content;
+            $objects[] = '<< /Length ' . strlen($content) . " >>\nstream\n" . $content . "\nendstream";
+        }
         foreach ($annotationObjects as $object) {
             $objects[] = $object;
         }

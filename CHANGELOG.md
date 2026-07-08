@@ -8,6 +8,17 @@ responsable del proyecto.
 
 ## 2026-07-07
 
+### Garantia configurable para campo real
+
+- Se agrego `garantia.dias_default` para definir desde Configuracion cuantos
+  dias dura la garantia creada al entregar un equipo.
+- La entrega ya no usa 30 dias fijos; toma la vigencia configurada y las
+  condiciones desde la orden o desde la politica legal del taller.
+- El PDF de orden conserva las dos copias en la primera hoja y agrega una
+  segunda pagina con la garantia completa para evitar texto recortado.
+- Se agrego `database/upgrade_garantia_config.php` para instalaciones
+  existentes.
+
 ### Mejora de pagos para campo real
 
 - Se documento la hoja de ruta `docs/MEJORAS_CAMPO_REAL.md`.
@@ -53,6 +64,7 @@ php database/upgrade_delivery_codes.php     # claves de entrega aleatorias
 php database/upgrade_ticket_config.php       # config de logo y garantia del ticket
 php database/upgrade_garantia_texto.php      # texto legal actualizado de garantia
 php database/upgrade_branding_config.php     # nombre del sistema y logo del taller
+php database/upgrade_garantia_config.php     # dias configurables de garantia
 php database/upgrade_whatsapp_templates.php  # mensajes de WhatsApp por contexto
 php database/upgrade_notificaciones.php      # tabla de notificaciones in-app
 php database/upgrade_inventario_roles.php    # acceso al almacen para tecnicos y recepcion

@@ -159,10 +159,26 @@ final class EntregaService
             return (int) $existente;
         }
 
-        $condiciones = trim($condiciones) ?: 'Garantia sobre la reparacion realizada.';
+        $configuracion = new ConfiguracionService();
+        $diasGarantia = min(3650, max(0, (int) $configuracion->get('garantia.dias_default', 30)));
+        if ($diasGarantia === 0) {
+            return null;
+        }
+
+        $condiciones = trim($condiciones);
+        if ($condiciones === '') {
+            $condiciones = trim((string) $configuracion->get('legal.politica_garantia', ''));
+        }
+        if ($condiciones === '') {
+            $condiciones = trim((string) $configuracion->get('ticket.garantia', ''));
+        }
+        if ($condiciones === '') {
+            $condiciones = 'Garantia sobre la reparacion realizada.';
+        }
+
         $insert = $db->prepare(
             "INSERT INTO garantias (orden_id, fecha_inicio, fecha_fin, condiciones, estado)
-             VALUES (:orden_id, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 30 DAY), :condiciones, 'activa')"
+             VALUES (:orden_id, CURDATE(), DATE_ADD(CURDATE(), INTERVAL {$diasGarantia} DAY), :condiciones, 'activa')"
         );
         $insert->execute(['orden_id' => $ordenId, 'condiciones' => $condiciones]);
         return (int) $db->lastInsertId();

@@ -255,6 +255,7 @@ php database/upgrade_delivery_codes.php   # claves de entrega aleatorias
 php database/upgrade_ticket_config.php     # config de logo y garantia del ticket
 php database/upgrade_garantia_texto.php    # texto legal actualizado de garantia
 php database/upgrade_branding_config.php   # nombre del sistema y logo del taller
+php database/upgrade_garantia_config.php   # dias configurables de garantia
 ```
 
 Opcional en `.env`:
@@ -270,7 +271,9 @@ SESSION_REMEMBER_DAYS=30
 Tras migrar, en Configuracion puedes cambiar el nombre del sistema
 (`sistema.nombre`), subir el logo del taller (`negocio.logo_url`) y ajustar el
 texto de garantia del ticket (`ticket.garantia`) o la politica legal
-(`legal.politica_garantia`).
+(`legal.politica_garantia`). La duracion de la garantia automatica al entregar
+un equipo se controla con `garantia.dias_default`; usa `0` si no quieres que se
+genere garantia automatica.
 
 ## Entrega por codigo de barras
 
