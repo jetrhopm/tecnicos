@@ -6,6 +6,8 @@ $telefonoCliente = (string) (($orden['cliente_whatsapp'] ?? '') ?: ($orden['clie
 $whatsappPdf = linkWhatsapp($telefonoCliente, 'Hola ' . (string) $orden['cliente_nombre'] . ', te compartimos el PDF de tu orden ' . (string) $orden['folio'] . ': ' . $pdfPublico);
 $puedeCancelarPagos = \App\Core\Auth::can('pagos', 'editar');
 $puedeGestionarInventario = \App\Core\Auth::can('inventario', 'editar');
+$puedeCrearCotizacionRol = \App\Core\Auth::can('cotizaciones', 'crear');
+$puedeAutorizarCotizacion = \App\Core\Auth::can('cotizaciones', 'autorizar');
 $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function (float $total, array $uso): float {
     return $uso['estado'] === 'activa' ? $total + ((float) $uso['precio_unitario'] * (int) $uso['cantidad']) : $total;
 }, 0.0);
@@ -116,10 +118,14 @@ $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function
                     <span>Estado: <strong><?= e($cotizacion['estado']) ?></strong></span>
                     <strong>Total <?= e(formatearMoneda((float) $cotizacion['total'])) ?></strong>
                 </div>
-                <?php if ($cotizacion['estado'] === 'pendiente'): ?>
+                <?php if ($cotizacion['estado'] === 'pendiente' && $puedeAutorizarCotizacion): ?>
                     <div class="d-flex gap-2 mt-3">
                         <form method="post" action="<?= e(url('/cotizaciones/' . $cotizacion['id'] . '/autorizar')) ?>"><?= csrf_field() ?><input type="hidden" name="estado" value="aceptada"><button class="btn btn-success btn-sm" data-icon="&#10003;">Autorizar manual</button></form>
                         <form method="post" action="<?= e(url('/cotizaciones/' . $cotizacion['id'] . '/autorizar')) ?>"><?= csrf_field() ?><input type="hidden" name="estado" value="rechazada"><button class="btn btn-outline-danger btn-sm" data-icon="&#10005;">Rechazar manual</button></form>
+                    </div>
+                <?php elseif ($cotizacion['estado'] === 'pendiente'): ?>
+                    <div class="alert alert-warning mt-3 mb-0">
+                        Cotizacion pendiente de autorizacion. Tu rol puede prepararla, pero no autorizarla manualmente.
                     </div>
                 <?php else: ?>
                     <div class="alert alert-info mt-3 mb-0">
@@ -128,7 +134,7 @@ $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function
                 <?php endif; ?>
             <?php endif; ?>
 
-            <?php if ($puedeCrearCotizacion): ?>
+            <?php if ($puedeCrearCotizacion && $puedeCrearCotizacionRol): ?>
                 <?php if ($cotizacion): ?>
                     <hr>
                     <h3 class="h6" data-icon="&#128221;">Nueva version de cotizacion</h3>
@@ -151,6 +157,10 @@ $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function
                     </div>
                     <button class="btn btn-primary mt-3" data-icon="&#128179;">Generar cotizacion</button>
                 </form>
+            <?php elseif ($puedeCrearCotizacion): ?>
+                <div class="alert alert-warning mb-0">
+                    Tu rol no tiene permiso para generar cotizaciones.
+                </div>
             <?php endif; ?>
         </div>
     </div>

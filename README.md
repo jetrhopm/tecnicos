@@ -177,7 +177,7 @@ Resumen operativo:
 - `superadmin`: todos los permisos.
 - `admin`: permisos amplios, excepto eliminaciones y administracion de usuarios.
 - `recepcion`: clientes, equipos, ordenes, mensajes e inicio de pagos.
-- `tecnico`: ordenes, diagnosticos y reparaciones.
+- `tecnico`: ordenes, diagnosticos, reparaciones y creacion de cotizaciones.
 - `tecnico_senior`: tecnico mas autorizaciones, cotizaciones e inventario.
 - `almacen`: inventario, proveedores y consulta de ordenes.
 - `caja`: pagos, reportes, impresion y consulta de ordenes.

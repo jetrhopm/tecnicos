@@ -8,6 +8,15 @@ responsable del proyecto.
 
 ## 2026-07-07
 
+### Permisos de cotizacion para tecnico
+
+- El rol `tecnico` ahora puede ver y crear cotizaciones desde la orden.
+- La autorizacion manual de cotizaciones sigue reservada a roles con permiso
+  `cotizaciones.autorizar`.
+- La ficha de orden oculta acciones de cotizacion que el rol no puede ejecutar.
+- Se agrego `database/upgrade_tecnico_cotizaciones.php` para instalaciones
+  existentes.
+
 ### Etiqueta de equipo con codigo de barras
 
 - Se agrego impresion de etiqueta de equipo desde la ficha de orden.

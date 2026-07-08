@@ -51,6 +51,14 @@ AND p.module IN ('dashboard','ordenes','diagnosticos','reparaciones','agenda','m
 AND p.action IN ('ver','crear','editar','cambiar_estado','imprimir')
 ON DUPLICATE KEY UPDATE role_id = role_id;
 
+-- El tecnico normal puede preparar cotizaciones, pero no autorizarlas.
+INSERT INTO role_permissions (role_id, permission_id)
+SELECT r.id, p.id FROM roles r CROSS JOIN permissions p
+WHERE r.name = 'tecnico'
+AND p.module = 'cotizaciones'
+AND p.action IN ('ver','crear')
+ON DUPLICATE KEY UPDATE role_id = role_id;
+
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id FROM roles r CROSS JOIN permissions p
 WHERE r.name = 'tecnico_senior'
