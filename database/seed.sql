@@ -129,6 +129,8 @@ INSERT INTO configuraciones (clave, valor, tipo, grupo) VALUES
 ('whatsapp.orden_recibida', 'Hola {cliente}, tu orden {folio} para el equipo {equipo} fue recibida correctamente. Puedes consultar el avance aqui: {link}', 'text', 'plantillas'),
 ('whatsapp.diagnostico_listo', 'Hola {cliente}, tenemos lista la cotizacion de tu orden {folio} ({equipo}). Necesitamos tu validacion para continuar con la reparacion. Revisala y autorizala aqui: {link}', 'text', 'plantillas'),
 ('whatsapp.equipo_listo', 'Hola {cliente}, tu {equipo} de la orden {folio} ya esta listo para entrega. Saldo por pagar: {saldo}. Puedes pasar a recogerlo. Gracias.', 'text', 'plantillas'),
+('whatsapp.no_reparable', 'Hola {cliente}, lamentablemente tu {equipo} de la orden {folio} no pudo ser reparado. Puedes pasar a recogerlo cuando gustes y con gusto te explicamos el diagnostico. Cualquier duda estamos para ayudarte.', 'text', 'plantillas'),
+('whatsapp.demora', 'Hola {cliente}, te avisamos que tu {equipo} de la orden {folio} esta tomando mas tiempo del estimado (por ejemplo, en espera de una refaccion). Te mantendremos al tanto en cuanto tengamos novedades. Gracias por tu paciencia.', 'text', 'plantillas'),
 ('legal.terminos_servicio', 'El cliente autoriza la revision del equipo y acepta las condiciones del servicio.', 'text', 'legal'),
 ('legal.politica_garantia', 'La garantia aplica solo sobre la falla reparada y no cubre humedad, golpes o manipulacion externa.', 'text', 'legal')
 ON DUPLICATE KEY UPDATE valor = VALUES(valor), tipo = VALUES(tipo), grupo = VALUES(grupo);

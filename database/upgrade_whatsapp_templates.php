@@ -27,8 +27,15 @@ $cambios = [
     ],
 ];
 
+// Plantillas nuevas (se agregan si faltan; no se pisan si ya existen).
+$nuevas = [
+    'whatsapp.no_reparable' => 'Hola {cliente}, lamentablemente tu {equipo} de la orden {folio} no pudo ser reparado. Puedes pasar a recogerlo cuando gustes y con gusto te explicamos el diagnostico. Cualquier duda estamos para ayudarte.',
+    'whatsapp.demora' => 'Hola {cliente}, te avisamos que tu {equipo} de la orden {folio} esta tomando mas tiempo del estimado (por ejemplo, en espera de una refaccion). Te mantendremos al tanto en cuanto tengamos novedades. Gracias por tu paciencia.',
+];
+
 $sel = $db->prepare('SELECT valor FROM configuraciones WHERE clave = :clave LIMIT 1');
 $upd = $db->prepare('UPDATE configuraciones SET valor = :valor WHERE clave = :clave');
+$ins = $db->prepare('INSERT INTO configuraciones (clave, valor, tipo, grupo) VALUES (:clave, :valor, :tipo, :grupo)');
 
 $actualizadas = 0;
 foreach ($cambios as $clave => $textos) {
@@ -49,4 +56,16 @@ foreach ($cambios as $clave => $textos) {
     $actualizadas++;
 }
 
-echo "Listo. {$actualizadas} plantilla(s) actualizada(s).\n";
+$agregadas = 0;
+foreach ($nuevas as $clave => $valor) {
+    $sel->execute(['clave' => $clave]);
+    if ($sel->fetchColumn() !== false) {
+        echo "= ya existe: {$clave}\n";
+        continue;
+    }
+    $ins->execute(['clave' => $clave, 'valor' => $valor, 'tipo' => 'text', 'grupo' => 'plantillas']);
+    echo "+ agregada: {$clave}\n";
+    $agregadas++;
+}
+
+echo "Listo. {$actualizadas} plantilla(s) actualizada(s), {$agregadas} agregada(s).\n";

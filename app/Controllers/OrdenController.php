@@ -125,7 +125,9 @@ final class OrdenController
                 return [
                     'recibido' => $m->whatsappOrden($orden, 'whatsapp.orden_recibida'),
                     'cotizacion' => $m->whatsappOrden($orden, 'whatsapp.diagnostico_listo'),
+                    'demora' => $m->whatsappOrden($orden, 'whatsapp.demora'),
                     'listo' => $m->whatsappOrden($orden, 'whatsapp.equipo_listo'),
+                    'no_reparable' => $m->whatsappOrden($orden, 'whatsapp.no_reparable'),
                 ];
             })(),
             'tecnicos' => (new UserRepository())->activeTechnicians(),
