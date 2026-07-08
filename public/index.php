@@ -15,6 +15,7 @@ use App\Controllers\EquipoController;
 use App\Controllers\EntregaController;
 use App\Controllers\GarantiaController;
 use App\Controllers\InventarioController;
+use App\Controllers\NotificacionController;
 use App\Controllers\OrdenController;
 use App\Controllers\PagoController;
 use App\Controllers\PublicController;
@@ -70,6 +71,10 @@ $router->get('/entregas', [EntregaController::class, 'index']);
 $router->post('/entregas/buscar', [EntregaController::class, 'buscar']);
 $router->post('/entregas/entregar', [EntregaController::class, 'entregar']);
 $router->get('/entregas/{id}/comprobante', [EntregaController::class, 'comprobante']);
+
+$router->get('/notificaciones', [NotificacionController::class, 'index']);
+$router->post('/notificaciones/leer-todas', [NotificacionController::class, 'leerTodas']);
+$router->get('/notificaciones/{id}', [NotificacionController::class, 'abrir']);
 
 $router->get('/inventario', [InventarioController::class, 'index']);
 $router->get('/garantias', [GarantiaController::class, 'index']);

@@ -21,6 +21,7 @@ Ejecutar una sola vez, en este orden:
 php database/upgrade_delivery_codes.php     # claves de entrega aleatorias
 php database/upgrade_ticket_config.php       # config de logo y garantia del ticket
 php database/upgrade_whatsapp_templates.php  # mensajes de WhatsApp por contexto
+php database/upgrade_notificaciones.php      # tabla de notificaciones in-app
 ```
 
 Nuevas variables de entorno (opcional) en `.env`:
@@ -238,6 +239,28 @@ tecnico no lo veia en pantalla al revisar la orden.
 - El patron se dibuja sobre fondo claro (`.unlock-box`) para verse bien en
   cualquier tema. Solo visible dentro del panel autenticado; no se expone en el
   portal publico.
+
+### 11. Notificaciones in-app (campana en la barra)
+
+**Por que:** el tecnico necesita enterarse de que hay una orden nueva por atender
+o de que el cliente autorizo la cotizacion, sin depender de que alguien le avise.
+
+- **Campana con contador** en la barra superior (para cualquier usuario del
+  panel); muestra las no leidas, un menu con las recientes y una pagina
+  `/notificaciones` con el historico. Cada tipo tiene su icono.
+- **Avisos automaticos**:
+  - *Orden nueva* -> a todos los tecnicos (roles `tecnico`/`tecnico_senior`)
+    al crear una orden, con enlace directo a la orden
+    ([app/Services/OrdenService.php](app/Services/OrdenService.php)).
+  - *Cotizacion autorizada* -> al tecnico asignado de la orden (o a todos si no
+    hay asignado) cuando el cliente acepta la cotizacion, desde el portal o
+    manualmente ([app/Services/CotizacionService.php](app/Services/CotizacionService.php)).
+- Piezas: tabla `notificaciones` (schema + migracion
+  [database/upgrade_notificaciones.php](database/upgrade_notificaciones.php)),
+  `NotificacionRepository`, `NotificacionService`, `NotificacionController` y
+  rutas `/notificaciones`, `/notificaciones/{id}`, `/notificaciones/leer-todas`.
+- La creacion de notificaciones nunca interrumpe la operacion principal (si algo
+  falla, se ignora en silencio).
 
 ### Otros cambios de la ronda
 

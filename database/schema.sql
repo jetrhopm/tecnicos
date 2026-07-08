@@ -435,6 +435,20 @@ CREATE TABLE auditoria (
     INDEX idx_audit_fecha (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE notificaciones (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    tipo VARCHAR(60) NOT NULL,
+    titulo VARCHAR(160) NOT NULL,
+    mensaje VARCHAR(255) NULL,
+    url VARCHAR(255) NULL,
+    leida TINYINT(1) NOT NULL DEFAULT 0,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_notif_user (user_id, leida),
+    INDEX idx_notif_fecha (created_at),
+    CONSTRAINT fk_notif_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE agenda_eventos (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     orden_id INT UNSIGNED NULL,

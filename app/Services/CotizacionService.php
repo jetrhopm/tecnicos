@@ -100,6 +100,10 @@ final class CotizacionService
         if ($cotizacion) {
             (new DiagnosticoService())->obtenerPorOrden((int) $cotizacion['orden_id']);
             (new OrdenService())->cambiarEstado((int) $cotizacion['orden_id'], $estado === 'aceptada' ? 'autorizada' : 'rechazada', true);
+            if ($estado === 'aceptada') {
+                // Avisa al tecnico que ya puede iniciar la reparacion.
+                (new NotificacionService())->cotizacionAutorizada((int) $cotizacion['orden_id']);
+            }
         }
         $this->auditoria->registrar('autorizar', 'cotizaciones', $cotizacionId, null, ['estado' => $estado, 'motivo' => $motivo]);
     }

@@ -28,6 +28,27 @@ final class UserRepository extends BaseRepository
         );
     }
 
+    public function idsPorRoles(array $slugs): array
+    {
+        // IDs de usuarios activos que tienen alguno de los roles dados (por name).
+        $slugs = array_values(array_filter($slugs));
+        if ($slugs === []) {
+            return [];
+        }
+
+        $placeholders = implode(',', array_fill(0, count($slugs), '?'));
+        $stmt = $this->db->prepare(
+            "SELECT DISTINCT u.id
+             FROM users u
+             JOIN user_roles ur ON ur.user_id = u.id
+             JOIN roles r ON r.id = ur.role_id
+             WHERE u.status = 'activo' AND u.deleted_at IS NULL AND r.name IN ({$placeholders})"
+        );
+        $stmt->execute($slugs);
+
+        return array_map('intval', array_column($stmt->fetchAll(), 'id'));
+    }
+
     public function rolesForUser(int $userId): array
     {
         return $this->fetchAll(

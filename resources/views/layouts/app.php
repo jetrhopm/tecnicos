@@ -1,10 +1,23 @@
 <?php
 use App\Core\Auth;
 use App\Core\Session;
+use App\Services\NotificacionService;
 
 $user = Auth::user();
 $success = Session::flash('success');
 $error = Session::flash('error');
+
+$notifNoLeidas = 0;
+$notifItems = [];
+if ($user) {
+    $notifSvc = new NotificacionService();
+    $notifNoLeidas = $notifSvc->contarNoLeidas((int) $user['id']);
+    $notifItems = $notifSvc->recientes((int) $user['id']);
+}
+$notifIconos = [
+    'orden_nueva' => "\u{1F4CB}",
+    'cotizacion_autorizada' => "\u{2705}",
+];
 ?>
 <!doctype html>
 <html lang="es">
@@ -66,6 +79,37 @@ $error = Session::flash('error');
                     <input class="form-control" name="q" placeholder="Buscar folio, cliente o telefono">
                 </form>
                 <span class="badge text-bg-light"><?= e($user['name'] ?? 'Usuario') ?></span>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary btn-sm notif-bell" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notificaciones">
+                        &#128276;
+                        <?php if ($notifNoLeidas > 0): ?>
+                            <span class="notif-badge"><?= e($notifNoLeidas > 9 ? '9+' : (string) $notifNoLeidas) ?></span>
+                        <?php endif; ?>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end p-2" style="min-width: 300px;">
+                        <div class="d-flex justify-content-between align-items-center px-1 mb-1">
+                            <strong class="small">Notificaciones</strong>
+                            <?php if ($notifNoLeidas > 0): ?>
+                                <form method="post" action="<?= e(url('/notificaciones/leer-todas')) ?>" class="m-0">
+                                    <?= csrf_field() ?>
+                                    <button class="btn btn-link btn-sm p-0" type="submit">Marcar leidas</button>
+                                </form>
+                            <?php endif; ?>
+                        </div>
+                        <?php if (empty($notifItems)): ?>
+                            <div class="text-muted small px-1 py-2">Sin notificaciones.</div>
+                        <?php else: ?>
+                            <?php foreach ($notifItems as $n): ?>
+                                <a class="dropdown-item notif-item<?= $n['leida'] ? '' : ' is-unread' ?>" href="<?= e(url('/notificaciones/' . $n['id'])) ?>">
+                                    <div class="small fw-bold"><?= e(($notifIconos[$n['tipo']] ?? "\u{1F514}") . ' ' . $n['titulo']) ?></div>
+                                    <?php if (!empty($n['mensaje'])): ?><div class="small text-muted"><?= e($n['mensaje']) ?></div><?php endif; ?>
+                                    <div class="small text-muted"><?= e(fechaHumana($n['created_at'])) ?></div>
+                                </a>
+                            <?php endforeach; ?>
+                            <div class="text-center mt-1"><a class="small" href="<?= e(url('/notificaciones')) ?>">Ver todas</a></div>
+                        <?php endif; ?>
+                    </div>
+                </div>
                 <div class="dropdown theme-switcher">
                     <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-icon="&#9681;">Tema</button>
                     <div class="dropdown-menu dropdown-menu-end p-2" style="min-width: 230px;">

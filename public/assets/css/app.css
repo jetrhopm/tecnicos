@@ -898,6 +898,32 @@ a {
   outline-offset: 2px;
 }
 
+/* Notificaciones: campana con contador y elemento no leido. */
+.notif-bell {
+  position: relative;
+}
+
+.notif-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #e5484d;
+  color: #fff;
+  font-size: 0.66rem;
+  font-weight: 800;
+  line-height: 17px;
+  text-align: center;
+}
+
+.notif-item.is-unread {
+  background: rgba(19, 184, 200, 0.1);
+  border-radius: 8px;
+}
+
 /* Desbloqueo del equipo (ficha de orden): el patron se dibuja en negro, asi
    que va sobre fondo claro para verse bien en cualquier tema. */
 .unlock-box {

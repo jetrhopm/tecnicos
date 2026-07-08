@@ -81,6 +81,7 @@ final class OrdenService
 
             $this->auditoria->registrar('crear', 'ordenes', $id, null, $payload);
             $db->commit();
+            (new NotificacionService())->ordenNueva($id, $folio, Auth::id());
             return $id;
         } catch (\Throwable $exception) {
             $db->rollBack();
@@ -221,6 +222,7 @@ final class OrdenService
             ]);
 
             $db->commit();
+            (new NotificacionService())->ordenNueva($ordenId, (string) $ordenPayload['folio'], Auth::id());
             return $ordenId;
         } catch (\Throwable $exception) {
             $db->rollBack();
