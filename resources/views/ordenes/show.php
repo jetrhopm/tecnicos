@@ -24,6 +24,7 @@ $whatsappPdf = linkWhatsapp($telefonoCliente, 'Hola ' . (string) $orden['cliente
                             <li><a class="dropdown-item" target="_blank" href="<?= e($whatsappMensajes['demora']) ?>">Avisar demora / mas tiempo</a></li>
                             <li><a class="dropdown-item" target="_blank" href="<?= e($whatsappMensajes['listo']) ?>">Avisar equipo listo para entrega</a></li>
                             <li><a class="dropdown-item" target="_blank" href="<?= e($whatsappMensajes['no_reparable']) ?>">Avisar equipo no reparable</a></li>
+                            <li><a class="dropdown-item" target="_blank" href="<?= e($whatsappMensajes['entregado']) ?>">Agradecer entrega</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" target="_blank" href="<?= e($whatsappPdf) ?>">Enviar link del PDF</a></li>
                         </ul>

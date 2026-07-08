@@ -215,13 +215,13 @@ autorizacion de la cotizacion o avisar que el equipo esta listo.
   ([resources/views/ordenes/show.php](resources/views/ordenes/show.php)).
 - **WhatsApp por contexto**: el boton se convierte en un menu con los mensajes
   adecuados —aviso de recepcion, solicitar autorizacion de cotizacion, avisar
-  demora / mas tiempo, avisar equipo listo, avisar equipo no reparable y enviar
-  link del PDF— cada uno con su plantilla
+  demora / mas tiempo, avisar equipo listo, avisar equipo no reparable,
+  agradecer entrega y enviar link del PDF— cada uno con su plantilla
   ([app/Controllers/OrdenController.php](app/Controllers/OrdenController.php),
   usando `MensajeService::whatsappOrden($orden, $plantilla)`).
 - Se mejoraron/agregaron plantillas: `whatsapp.diagnostico_listo` (cotizacion
   por validar), `whatsapp.equipo_listo` (equipo listo), y las nuevas
-  `whatsapp.demora` y `whatsapp.no_reparable`. Migracion
+  `whatsapp.demora`, `whatsapp.no_reparable` y `whatsapp.entregado`. Migracion
   [database/upgrade_whatsapp_templates.php](database/upgrade_whatsapp_templates.php):
   actualiza los textos solo si siguen siendo los originales y agrega las nuevas
   plantillas si faltan (no pisa personalizaciones).

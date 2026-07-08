@@ -128,6 +128,7 @@ final class OrdenController
                     'demora' => $m->whatsappOrden($orden, 'whatsapp.demora'),
                     'listo' => $m->whatsappOrden($orden, 'whatsapp.equipo_listo'),
                     'no_reparable' => $m->whatsappOrden($orden, 'whatsapp.no_reparable'),
+                    'entregado' => $m->whatsappOrden($orden, 'whatsapp.entregado'),
                 ];
             })(),
             'tecnicos' => (new UserRepository())->activeTechnicians(),

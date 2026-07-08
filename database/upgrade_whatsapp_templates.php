@@ -31,6 +31,7 @@ $cambios = [
 $nuevas = [
     'whatsapp.no_reparable' => 'Hola {cliente}, lamentablemente tu {equipo} de la orden {folio} no pudo ser reparado. Puedes pasar a recogerlo cuando gustes y con gusto te explicamos el diagnostico. Cualquier duda estamos para ayudarte.',
     'whatsapp.demora' => 'Hola {cliente}, te avisamos que tu {equipo} de la orden {folio} esta tomando mas tiempo del estimado (por ejemplo, en espera de una refaccion). Te mantendremos al tanto en cuanto tengamos novedades. Gracias por tu paciencia.',
+    'whatsapp.entregado' => 'Hola {cliente}, gracias por tu preferencia. Tu {equipo} de la orden {folio} fue entregado. Conserva tu comprobante para hacer valida la garantia. Estamos para servirte, que tengas excelente dia.',
 ];
 
 $sel = $db->prepare('SELECT valor FROM configuraciones WHERE clave = :clave LIMIT 1');
