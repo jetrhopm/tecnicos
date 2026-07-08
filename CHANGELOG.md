@@ -19,6 +19,9 @@ responsable del proyecto.
   dejar una zona limpia de lectura.
 - Se corrigio la codificacion del PDF para conservar acentos, tildes y la letra
   enie en textos del comprobante.
+- Se actualizo el texto legal de garantia y se agrego
+  `database/upgrade_garantia_texto.php` para aplicarlo en instalaciones
+  existentes.
 
 Ronda de trabajo enfocada en seguridad, generacion de URLs, un tema visual
 nuevo, el patron/PIN de desbloqueo y los documentos imprimibles (orden y
@@ -32,6 +35,7 @@ Ejecutar una sola vez, en este orden:
 ```bash
 php database/upgrade_delivery_codes.php     # claves de entrega aleatorias
 php database/upgrade_ticket_config.php       # config de logo y garantia del ticket
+php database/upgrade_garantia_texto.php      # texto legal actualizado de garantia
 php database/upgrade_whatsapp_templates.php  # mensajes de WhatsApp por contexto
 php database/upgrade_notificaciones.php      # tabla de notificaciones in-app
 php database/upgrade_inventario_roles.php    # acceso al almacen para tecnicos y recepcion

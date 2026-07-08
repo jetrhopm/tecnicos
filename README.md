@@ -251,6 +251,7 @@ datos; solo ajustan claves de entrega y agregan configuracion nueva):
 ```bash
 php database/upgrade_delivery_codes.php   # claves de entrega aleatorias
 php database/upgrade_ticket_config.php     # config de logo y garantia del ticket
+php database/upgrade_garantia_texto.php    # texto legal actualizado de garantia
 ```
 
 Opcional en `.env`:
@@ -263,8 +264,9 @@ SESSION_IDLE_MINUTES=120
 SESSION_REMEMBER_DAYS=30
 ```
 
-Tras migrar, en Configuracion puedes fijar el logo (`negocio.logo_url`) y el
-texto de garantia del ticket (`ticket.garantia`).
+Tras migrar, en Configuracion puedes fijar el logo (`negocio.logo_url`) y ajustar
+el texto de garantia del ticket (`ticket.garantia`) o la politica legal
+(`legal.politica_garantia`).
 
 ## Entrega por codigo de barras
 
