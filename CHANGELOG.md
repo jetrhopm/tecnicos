@@ -22,6 +22,7 @@ php database/upgrade_delivery_codes.php     # claves de entrega aleatorias
 php database/upgrade_ticket_config.php       # config de logo y garantia del ticket
 php database/upgrade_whatsapp_templates.php  # mensajes de WhatsApp por contexto
 php database/upgrade_notificaciones.php      # tabla de notificaciones in-app
+php database/upgrade_inventario_roles.php    # acceso al almacen para tecnicos y recepcion
 ```
 
 Nuevas variables de entorno (opcional) en `.env`:
@@ -261,6 +262,27 @@ o de que el cliente autorizo la cotizacion, sin depender de que alguien le avise
   rutas `/notificaciones`, `/notificaciones/{id}`, `/notificaciones/leer-todas`.
 - La creacion de notificaciones nunca interrumpe la operacion principal (si algo
   falla, se ignora en silencio).
+
+### 12. Modulo de almacen (inventario y proveedores) con CRUD
+
+**Por que:** el inventario solo mostraba stock bajo (solo lectura); faltaba
+poder gestionar refacciones, entradas/salidas y proveedores.
+
+- **Refacciones (CRUD)**: listado con busqueda y filtro de stock bajo, alta,
+  edicion y ficha con historial de movimientos
+  ([app/Controllers/InventarioController.php](app/Controllers/InventarioController.php)).
+- **Movimientos de stock**: entrada, salida y ajuste (conteo fisico) en una
+  sola transaccion; el stock inicial se registra como una entrada para dejar
+  rastro; no permite dejar stock negativo
+  ([app/Services/InventarioService.php](app/Services/InventarioService.php)).
+- **Proveedores (CRUD)**: listado con busqueda, alta y edicion
+  ([app/Controllers/ProveedorController.php](app/Controllers/ProveedorController.php)).
+- **Aviso de stock bajo** al rol `almacen` cuando un movimiento deja una
+  refaccion en o por debajo de su minimo (usa las notificaciones in-app).
+- **Acceso** al modulo para los roles `almacen`, `tecnico`, `tecnico_senior` y
+  `recepcion`, ademas de los administradores. Migracion
+  [database/upgrade_inventario_roles.php](database/upgrade_inventario_roles.php).
+- Enlace "Proveedores" en el menu lateral.
 
 ### Otros cambios de la ronda
 

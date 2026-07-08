@@ -17,6 +17,7 @@ use App\Controllers\GarantiaController;
 use App\Controllers\InventarioController;
 use App\Controllers\NotificacionController;
 use App\Controllers\OrdenController;
+use App\Controllers\ProveedorController;
 use App\Controllers\PagoController;
 use App\Controllers\PublicController;
 use App\Controllers\ReporteController;
@@ -77,6 +78,19 @@ $router->post('/notificaciones/leer-todas', [NotificacionController::class, 'lee
 $router->get('/notificaciones/{id}', [NotificacionController::class, 'abrir']);
 
 $router->get('/inventario', [InventarioController::class, 'index']);
+$router->get('/inventario/create', [InventarioController::class, 'create']);
+$router->post('/inventario', [InventarioController::class, 'store']);
+$router->get('/inventario/{id}', [InventarioController::class, 'show']);
+$router->get('/inventario/{id}/edit', [InventarioController::class, 'edit']);
+$router->post('/inventario/{id}', [InventarioController::class, 'update']);
+$router->post('/inventario/{id}/movimiento', [InventarioController::class, 'movimiento']);
+
+$router->get('/proveedores', [ProveedorController::class, 'index']);
+$router->get('/proveedores/create', [ProveedorController::class, 'create']);
+$router->post('/proveedores', [ProveedorController::class, 'store']);
+$router->get('/proveedores/{id}/edit', [ProveedorController::class, 'edit']);
+$router->post('/proveedores/{id}', [ProveedorController::class, 'update']);
+
 $router->get('/garantias', [GarantiaController::class, 'index']);
 $router->get('/reportes', [ReporteController::class, 'index']);
 $router->get('/configuracion', [ConfiguracionController::class, 'index']);

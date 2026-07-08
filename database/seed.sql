@@ -63,6 +63,12 @@ SELECT r.id, p.id FROM roles r CROSS JOIN permissions p
 WHERE r.name = 'almacen' AND p.module IN ('dashboard','inventario','proveedores','ordenes') AND p.action IN ('ver','crear','editar','exportar')
 ON DUPLICATE KEY UPDATE role_id = role_id;
 
+-- Acceso al modulo de almacen (inventario y proveedores) para tecnicos y recepcion.
+INSERT INTO role_permissions (role_id, permission_id)
+SELECT r.id, p.id FROM roles r CROSS JOIN permissions p
+WHERE r.name IN ('tecnico','tecnico_senior','recepcion') AND p.module IN ('inventario','proveedores') AND p.action IN ('ver','crear','editar')
+ON DUPLICATE KEY UPDATE role_id = role_id;
+
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id FROM roles r CROSS JOIN permissions p
 WHERE r.name = 'caja' AND p.module IN ('dashboard','pagos','ordenes','reportes') AND p.action IN ('ver','crear','editar','imprimir','exportar')

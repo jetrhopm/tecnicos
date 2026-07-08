@@ -83,6 +83,18 @@ final class NotificacionService
         $this->notificarRoles(self::ROLES_TECNICOS, 'cotizacion_autorizada', $titulo, $mensaje, $url);
     }
 
+    public function stockBajo(int $refaccionId, string $nombre, int $stock): void
+    {
+        // Aviso al almacen: una refaccion llego a su stock minimo.
+        $this->notificarRoles(
+            ['almacen'],
+            'stock_bajo',
+            'Stock bajo en almacen',
+            $nombre . ' quedo en ' . $stock . ' unidad(es)',
+            '/inventario/' . $refaccionId
+        );
+    }
+
     public function recientes(int $userId): array
     {
         try {

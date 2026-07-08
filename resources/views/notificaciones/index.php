@@ -14,7 +14,7 @@
     <?php else: ?>
         <div class="timeline">
             <?php
-            $iconos = ['orden_nueva' => "\u{1F4CB}", 'cotizacion_autorizada' => "\u{2705}"];
+            $iconos = ['orden_nueva' => "\u{1F4CB}", 'cotizacion_autorizada' => "\u{2705}", 'stock_bajo' => "\u{1F4E6}"];
             ?>
             <?php foreach ($notificaciones as $n): ?>
                 <a class="timeline-item notif-item d-block text-decoration-none<?= $n['leida'] ? '' : ' is-unread' ?>" href="<?= e(url('/notificaciones/' . $n['id'])) ?>">

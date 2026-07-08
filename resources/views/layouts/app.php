@@ -17,6 +17,7 @@ if ($user) {
 $notifIconos = [
     'orden_nueva' => "\u{1F4CB}",
     'cotizacion_autorizada' => "\u{2705}",
+    'stock_bajo' => "\u{1F4E6}",
 ];
 ?>
 <!doctype html>
@@ -61,6 +62,7 @@ $notifIconos = [
             <a class="nav-link <?= e(is_active('/ordenes')) ?>" href="<?= e(url('/ordenes')) ?>">Ordenes</a>
             <a class="nav-link <?= e(is_active('/entregas')) ?>" href="<?= e(url('/entregas')) ?>">Entregas</a>
             <a class="nav-link <?= e(is_active('/inventario')) ?>" href="<?= e(url('/inventario')) ?>">Inventario</a>
+            <a class="nav-link <?= e(is_active('/proveedores')) ?>" href="<?= e(url('/proveedores')) ?>">Proveedores</a>
             <a class="nav-link <?= e(is_active('/garantias')) ?>" href="<?= e(url('/garantias')) ?>">Garantias</a>
             <a class="nav-link <?= e(is_active('/reportes')) ?>" href="<?= e(url('/reportes')) ?>">Reportes</a>
             <a class="nav-link <?= e(is_active('/configuracion')) ?>" href="<?= e(url('/configuracion')) ?>">Configuracion</a>
