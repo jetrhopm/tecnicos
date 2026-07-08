@@ -52,9 +52,19 @@ final class UserRepository extends BaseRepository
     public function rolesForUser(int $userId): array
     {
         return $this->fetchAll(
-            'SELECT r.name, r.label FROM roles r JOIN user_roles ur ON ur.role_id = r.id WHERE ur.user_id = :user_id',
+            'SELECT r.id, r.name, r.label FROM roles r JOIN user_roles ur ON ur.role_id = r.id WHERE ur.user_id = :user_id',
             ['user_id' => $userId]
         );
+    }
+
+    public function emailExists(string $email, ?int $exceptId = null): bool
+    {
+        $row = $this->fetch(
+            'SELECT id FROM users WHERE email = :email AND deleted_at IS NULL AND (:id_a IS NULL OR id <> :id_b) LIMIT 1',
+            ['email' => $email, 'id_a' => $exceptId, 'id_b' => $exceptId]
+        );
+
+        return $row !== null;
     }
 
     public function hasPermission(int $userId, string $module, string $action): bool
@@ -95,6 +105,25 @@ final class UserRepository extends BaseRepository
         );
     }
 
+    public function update(int $id, array $data): void
+    {
+        $data['id'] = $id;
+        $this->execute(
+            'UPDATE users SET name = :name, email = :email, phone = :phone, status = :status WHERE id = :id',
+            $data
+        );
+    }
+
+    public function updatePassword(int $id, string $hash): void
+    {
+        $this->execute('UPDATE users SET password = :password WHERE id = :id', ['id' => $id, 'password' => $hash]);
+    }
+
+    public function updateStatus(int $id, string $status): void
+    {
+        $this->execute('UPDATE users SET status = :status WHERE id = :id', ['id' => $id, 'status' => $status]);
+    }
+
     public function updateRoles(int $userId, array $roleIds): void
     {
         $this->execute('DELETE FROM user_roles WHERE user_id = :user_id', ['user_id' => $userId]);
@@ -107,7 +136,7 @@ final class UserRepository extends BaseRepository
     public function all(): array
     {
         return $this->fetchAll(
-            "SELECT u.id, u.name, u.email, u.status, GROUP_CONCAT(r.label ORDER BY r.label SEPARATOR ', ') roles
+            "SELECT u.id, u.name, u.email, u.phone, u.status, u.last_login_at, GROUP_CONCAT(r.label ORDER BY r.label SEPARATOR ', ') roles
              FROM users u
              LEFT JOIN user_roles ur ON ur.user_id = u.id
              LEFT JOIN roles r ON r.id = ur.role_id
@@ -115,5 +144,18 @@ final class UserRepository extends BaseRepository
              GROUP BY u.id
              ORDER BY u.name"
         );
+    }
+
+    public function countActiveSuperadmins(): int
+    {
+        $row = $this->fetch(
+            "SELECT COUNT(DISTINCT u.id) total
+             FROM users u
+             JOIN user_roles ur ON ur.user_id = u.id
+             JOIN roles r ON r.id = ur.role_id
+             WHERE u.deleted_at IS NULL AND u.status = 'activo' AND r.name = 'superadmin'"
+        );
+
+        return (int) ($row['total'] ?? 0);
     }
 }

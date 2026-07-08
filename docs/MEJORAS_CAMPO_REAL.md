@@ -78,7 +78,7 @@ Implementado:
 
 ### 4. Administracion completa de usuarios
 
-Estado: pendiente.
+Estado: implementado.
 
 Objetivo:
 
@@ -87,6 +87,18 @@ Objetivo:
 - Activar, bloquear o desactivar usuarios.
 - Reasignar roles.
 - Auditar cambios de permisos.
+
+Implementado:
+
+- El modulo `/usuarios` permite crear y editar perfil, telefono, estatus y roles.
+- El formulario de edicion permite restablecer contrasena dejando la actual si el
+  campo queda vacio.
+- La lista de usuarios permite activar, desactivar o bloquear cuentas desde una
+  accion rapida.
+- Se bloquea quitar o desactivar el ultimo superadmin activo y tambien que el
+  usuario actual se quite su propio acceso de superadmin.
+- Los cambios de perfil, roles, estatus y restablecimiento de contrasena quedan
+  registrados en auditoria.
 
 ### 5. Refacciones ligadas a reparacion
 

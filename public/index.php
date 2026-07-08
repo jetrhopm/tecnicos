@@ -106,6 +106,9 @@ $router->post('/configuracion', [ConfiguracionController::class, 'update']);
 $router->get('/usuarios', [UsuarioController::class, 'index']);
 $router->get('/usuarios/create', [UsuarioController::class, 'create']);
 $router->post('/usuarios', [UsuarioController::class, 'store']);
+$router->get('/usuarios/{id}/edit', [UsuarioController::class, 'edit']);
+$router->post('/usuarios/{id}', [UsuarioController::class, 'update']);
+$router->post('/usuarios/{id}/status', [UsuarioController::class, 'status']);
 
 $router->get('/consulta', [PublicController::class, 'consulta']);
 $router->get('/consulta.php', [PublicController::class, 'consulta']);

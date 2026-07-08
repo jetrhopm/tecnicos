@@ -26,6 +26,8 @@ final class UsuarioController
         View::render('usuarios/form', [
             'title' => 'Nuevo usuario',
             'roles' => (new UserService())->roles(),
+            'usuario' => null,
+            'roleIds' => [],
         ]);
     }
 
@@ -41,5 +43,50 @@ final class UsuarioController
             Session::flash('error', $exception->getMessage());
             Response::back();
         }
+    }
+
+    public function edit(Request $request, string $id): void
+    {
+        Auth::requirePermission('usuarios', 'editar');
+        $repo = new UserRepository();
+        $usuario = $repo->find((int) $id);
+        if (!$usuario) {
+            Response::status(404);
+            View::render('errors/404', ['title' => 'Usuario no encontrado']);
+            return;
+        }
+
+        $rolesUsuario = $repo->rolesForUser((int) $id);
+        View::render('usuarios/form', [
+            'title' => 'Editar usuario',
+            'roles' => (new UserService())->roles(),
+            'usuario' => $usuario,
+            'roleIds' => array_map('intval', array_column($rolesUsuario, 'id')),
+        ]);
+    }
+
+    public function update(Request $request, string $id): void
+    {
+        Auth::requirePermission('usuarios', 'editar');
+        try {
+            (new UserService())->actualizar((int) $id, $request->all());
+            Session::flash('success', 'Usuario actualizado correctamente.');
+            Response::redirect('/usuarios');
+        } catch (\Throwable $exception) {
+            Session::flash('error', $exception->getMessage());
+            Response::back();
+        }
+    }
+
+    public function status(Request $request, string $id): void
+    {
+        Auth::requirePermission('usuarios', 'editar');
+        try {
+            (new UserService())->cambiarStatus((int) $id, (string) $request->input('status', 'activo'));
+            Session::flash('success', 'Estatus de usuario actualizado.');
+        } catch (\Throwable $exception) {
+            Session::flash('error', $exception->getMessage());
+        }
+        Response::back();
     }
 }

@@ -183,6 +183,11 @@ Resumen operativo:
 - `caja`: pagos, reportes, impresion y consulta de ordenes.
 - `cliente_consulta`: reservado para consulta limitada futura.
 
+Desde el panel **Usuarios y roles**, un usuario con permiso de administracion
+puede crear cuentas, editar perfil, reasignar roles, activar/desactivar/bloquear
+usuarios y restablecer contrasenas. El sistema impide dejar la instalacion sin
+un `superadmin` activo y registra estos cambios en auditoria.
+
 ## Datos demo incluidos
 
 El seed crea:

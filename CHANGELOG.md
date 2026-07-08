@@ -8,6 +8,18 @@ responsable del proyecto.
 
 ## 2026-07-07
 
+### Administracion completa de usuarios
+
+- El modulo `/usuarios` ahora permite editar usuarios existentes, actualizar
+  telefono, correo, estatus y reasignar roles.
+- Se agrego restablecimiento de contrasena desde el formulario de edicion sin
+  exponer la contrasena anterior.
+- La lista de usuarios muestra telefono, ultimo acceso y accion rapida para
+  activar, desactivar o bloquear cuentas.
+- Se protege al sistema para no dejarlo sin un `superadmin` activo ni permitir
+  que el usuario actual se quite su propio acceso critico.
+- Los cambios de perfil, roles, estatus y contrasena se registran en auditoria.
+
 ### Agenda minima operativa
 
 - Se agrego el modulo `/agenda` con vista diaria/semanal y filtros por tecnico,
