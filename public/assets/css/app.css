@@ -1000,3 +1000,24 @@ a {
     justify-content: center;
   }
 }
+
+/* Panel del escaner de codigo de barras (inventario). */
+.barcode-scan-panel {
+  width: min(360px, 100%);
+  margin-top: 10px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(127, 160, 180, 0.06);
+}
+
+.barcode-scan-reader {
+  overflow: hidden;
+  min-height: 200px;
+  border-radius: 8px;
+  background: #000;
+}
+
+.barcode-scan-reader video {
+  border-radius: 8px;
+}

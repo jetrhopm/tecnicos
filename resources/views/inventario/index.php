@@ -1,3 +1,9 @@
+<?php
+$pageScripts = [
+    asset('vendor/html5-qrcode.min.js') . '?v=20260614',
+    asset('js/barcode-scan.js') . '?v=20260707',
+];
+?>
 <div class="glass-card">
     <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-3">
         <h2 class="h5 mb-0" data-icon="&#128230;">Almacen e inventario</h2>
@@ -8,7 +14,12 @@
     </div>
 
     <form class="row g-2 mb-3" method="get" action="<?= e(url('/inventario')) ?>">
-        <div class="col-md-8"><input class="form-control" name="q" value="<?= e($filtros['q']) ?>" placeholder="Buscar por nombre, SKU, categoria o marca"></div>
+        <div class="col-md-8">
+            <div class="input-group">
+                <input class="form-control" id="inv-q" name="q" value="<?= e($filtros['q']) ?>" placeholder="Buscar por nombre, SKU, categoria o marca">
+                <button class="btn btn-outline-dark" type="button" data-barcode-scan="inv-q" data-barcode-submit data-icon="&#128247;" aria-label="Escanear codigo de barras"></button>
+            </div>
+        </div>
         <div class="col-md-2">
             <div class="form-check mt-2">
                 <input class="form-check-input" type="checkbox" id="solo_bajo" name="solo_bajo" value="1" <?= !empty($filtros['solo_bajo']) ? 'checked' : '' ?>>

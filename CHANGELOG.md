@@ -343,6 +343,13 @@ poder gestionar refacciones, entradas/salidas y proveedores.
   `recepcion`, ademas de los administradores. Migracion
   [database/upgrade_inventario_roles.php](database/upgrade_inventario_roles.php).
 - Enlace "Proveedores" en el menu lateral.
+- **Lector de codigo de barras** en el almacen: boton de escaneo con camara
+  ([public/assets/js/barcode-scan.js](public/assets/js/barcode-scan.js),
+  reutilizable por atributos) junto al **SKU** de la refaccion (el codigo del
+  producto va en el SKU) y en el **buscador** del inventario (escanear para
+  encontrar el producto). Lee EAN/UPC/Code128/Code39/QR; un lector USB tambien
+  funciona tecleando en el campo enfocado. No requiere cambios en la base
+  (usa el campo `sku` existente).
 
 ### Otros cambios de la ronda
 

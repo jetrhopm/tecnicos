@@ -2,6 +2,10 @@
 $isEdit = !empty($refaccion);
 $action = $isEdit ? url('/inventario/' . $refaccion['id']) : url('/inventario');
 $val = fn (string $k, $def = '') => e((string) ($refaccion[$k] ?? $def));
+$pageScripts = [
+    asset('vendor/html5-qrcode.min.js') . '?v=20260614',
+    asset('js/barcode-scan.js') . '?v=20260707',
+];
 ?>
 <form class="glass-card" method="post" action="<?= e($action) ?>">
     <?= csrf_field() ?>
@@ -12,7 +16,14 @@ $val = fn (string $k, $def = '') => e((string) ($refaccion[$k] ?? $def));
 
     <div class="row g-3">
         <div class="col-md-6"><label class="form-label" data-icon="&#9998;">Nombre</label><input class="form-control" name="nombre" value="<?= $val('nombre') ?>" required></div>
-        <div class="col-md-3"><label class="form-label" data-icon="&#35;">SKU</label><input class="form-control" name="sku" value="<?= $val('sku') ?>" required></div>
+        <div class="col-md-3">
+            <label class="form-label" data-icon="&#35;" for="sku">SKU / Codigo de barras</label>
+            <div class="input-group">
+                <input class="form-control" id="sku" name="sku" value="<?= $val('sku') ?>" required>
+                <button class="btn btn-outline-dark" type="button" data-barcode-scan="sku" data-barcode-upper data-icon="&#128247;" aria-label="Escanear codigo de barras"></button>
+            </div>
+            <div class="form-text">Escanea el codigo del producto o usa un lector USB.</div>
+        </div>
         <div class="col-md-3">
             <label class="form-label" data-icon="&#9679;">Estatus</label>
             <select class="form-select" name="estatus">
