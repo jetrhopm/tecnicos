@@ -22,6 +22,8 @@ responsable del proyecto.
 - Se actualizo el texto legal de garantia y se agrego
   `database/upgrade_garantia_texto.php` para aplicarlo en instalaciones
   existentes.
+- El PDF de orden ahora imprime dos tantos en una sola hoja carta: copia para
+  cliente y copia para taller.
 
 Ronda de trabajo enfocada en seguridad, generacion de URLs, un tema visual
 nuevo, el patron/PIN de desbloqueo y los documentos imprimibles (orden y

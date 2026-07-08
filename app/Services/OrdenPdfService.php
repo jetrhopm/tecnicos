@@ -23,11 +23,6 @@ final class OrdenPdfService
         $publicUrl = absolute_url('/consulta/' . rawurlencode($folio) . '/' . rawurlencode($token));
         $pdfUrl = absolute_url('/consulta/' . rawurlencode($folio) . '/' . rawurlencode($token) . '/pdf');
 
-        $tipo = ucfirst((string) ($orden['equipo_tipo'] ?? ''));
-        $equipo = trim($tipo . ' ' . (string) ($orden['equipo_marca'] ?? '') . ' ' . (string) ($orden['equipo_modelo'] ?? '')) ?: 'Equipo';
-        $imeiSerie = trim((string) ($orden['imei'] ?? '') . (($orden['imei'] ?? '') && ($orden['numero_serie'] ?? '') ? ' / ' : '') . (string) ($orden['numero_serie'] ?? ''));
-        $desbloqueo = $this->unlockData((string) ($orden['password_equipo'] ?? ''));
-
         $total = (float) ($orden['costo_final'] ?? $orden['costo_estimado'] ?? 0);
         if ($cotizacion && isset($cotizacion['total']) && $total <= 0) {
             $total = (float) $cotizacion['total'];
@@ -40,50 +35,254 @@ final class OrdenPdfService
         $whatsapp = trim((string) ($config['negocio.whatsapp'] ?? ''));
         $direccion = trim((string) ($config['negocio.direccion'] ?? ''));
         $condiciones = trim((string) ($config['legal.politica_garantia'] ?? $config['ticket.garantia'] ?? ''));
-
-        $this->pageBackground($lines);
-        $this->header($lines, $negocio, $telefono, $whatsapp, $direccion, $folio);
-
-        $this->text($lines, 44, 681, 14, 'COMPROBANTE DE RECEPCION Y RETIRO', true, [14, 55, 88]);
-        $this->text($lines, 44, 664, 8, 'Presenta esta nota para retirar el equipo. La clave de entrega valida la liberacion.', false, [74, 85, 104]);
-
-        $this->fieldBox($lines, 44, 613, 326, 42, 'Cliente', (string) ($orden['cliente_nombre'] ?? '-'));
-        $this->fieldBox($lines, 382, 613, 186, 42, 'Telefono / WhatsApp', $this->firstValue($orden['cliente_whatsapp'] ?? '', $orden['cliente_telefono'] ?? ''));
-        $this->fieldBox($lines, 44, 565, 326, 42, 'Direccion', (string) (($orden['cliente_domicilio'] ?? '') ?: '-'));
-        $this->fieldBox($lines, 382, 565, 186, 42, 'Correo', (string) (($orden['cliente_email'] ?? '') ?: '-'));
-
-        $this->fieldBox($lines, 44, 517, 164, 42, 'Equipo', $tipo ?: '-');
-        $this->fieldBox($lines, 220, 517, 164, 42, 'Marca', (string) (($orden['equipo_marca'] ?? '') ?: '-'));
-        $this->fieldBox($lines, 396, 517, 172, 42, 'Modelo', (string) (($orden['equipo_modelo'] ?? '') ?: '-'));
-
-        $this->fieldBox($lines, 44, 445, 252, 64, 'IMEI / Serie', $imeiSerie ?: '-');
-        $this->patternBox($lines, 308, 445, 260, 64, $desbloqueo);
-
-        $this->fieldBox($lines, 44, 397, 326, 42, 'Servicio rapido / Plantilla', (string) (($orden['tipo_servicio'] ?? '') ?: '-'));
-        $this->fieldBox($lines, 382, 397, 186, 42, 'Accesorios', (string) (($orden['accesorios_recibidos'] ?? '') ?: 'Sin accesorios'));
-
-        $this->multilineBox($lines, 44, 343, 524, 46, 'Falla declarada', (string) (($orden['falla_reportada'] ?? '') ?: '-'), 102, 2);
-        $this->multilineBox($lines, 44, 289, 524, 46, 'Observaciones / Senas', (string) (($orden['observaciones_cliente'] ?? '') ?: '-'), 102, 2);
-        $this->multilineBox($lines, 44, 235, 524, 46, 'Estado fisico al recibir', (string) (($orden['equipo_estado_fisico'] ?? '') ?: '-'), 102, 2);
-
         $trabajo = trim((string) ($diagnostico['diagnostico_cliente'] ?? $orden['diagnostico_inicial'] ?? $orden['tipo_servicio'] ?? ''));
-        $this->multilineBox($lines, 44, 181, 524, 46, 'Reparacion / Trabajo', $trabajo !== '' ? $trabajo : '-', 102, 2);
 
-        $this->fieldBox($lines, 44, 133, 124, 40, 'Fecha entrada', fechaHumana($orden['fecha_recepcion'] ?? null));
-        $this->fieldBox($lines, 178, 133, 124, 40, 'Fecha entrega', fechaHumana($orden['fecha_estimada_entrega'] ?? null));
-        $this->fieldBox($lines, 312, 133, 122, 40, 'Estado', (string) (($orden['estado'] ?? '') ?: '-'));
-        $this->fieldBox($lines, 444, 133, 124, 40, 'Clave entrega', (string) (($orden['codigo_entrega'] ?? '') ?: '-'));
+        $data = [
+            'folio' => $folio,
+            'publicUrl' => $publicUrl,
+            'pdfUrl' => $pdfUrl,
+            'negocio' => $negocio,
+            'telefono' => $telefono,
+            'whatsapp' => $whatsapp,
+            'direccion' => $direccion,
+            'cliente' => (string) (($orden['cliente_nombre'] ?? '') ?: '-'),
+            'clienteTelefono' => $this->firstValue($orden['cliente_whatsapp'] ?? '', $orden['cliente_telefono'] ?? ''),
+            'clienteEmail' => (string) (($orden['cliente_email'] ?? '') ?: '-'),
+            'clienteDomicilio' => (string) (($orden['cliente_domicilio'] ?? '') ?: '-'),
+            'equipoTipo' => ucfirst((string) (($orden['equipo_tipo'] ?? '') ?: '-')),
+            'marca' => (string) (($orden['equipo_marca'] ?? '') ?: '-'),
+            'modelo' => (string) (($orden['equipo_modelo'] ?? '') ?: '-'),
+            'imeiSerie' => trim((string) ($orden['imei'] ?? '') . (($orden['imei'] ?? '') && ($orden['numero_serie'] ?? '') ? ' / ' : '') . (string) ($orden['numero_serie'] ?? '')) ?: '-',
+            'desbloqueo' => $this->unlockData((string) ($orden['password_equipo'] ?? '')),
+            'servicio' => (string) (($orden['tipo_servicio'] ?? '') ?: '-'),
+            'accesorios' => (string) (($orden['accesorios_recibidos'] ?? '') ?: 'Sin accesorios'),
+            'estadoFisico' => (string) (($orden['equipo_estado_fisico'] ?? '') ?: '-'),
+            'falla' => (string) (($orden['falla_reportada'] ?? '') ?: '-'),
+            'observaciones' => (string) (($orden['observaciones_cliente'] ?? '') ?: '-'),
+            'trabajo' => $trabajo !== '' ? $trabajo : '-',
+            'fechaEntrada' => fechaHumana($orden['fecha_recepcion'] ?? null),
+            'fechaEntrega' => fechaHumana($orden['fecha_estimada_entrega'] ?? null),
+            'estado' => (string) (($orden['estado'] ?? '') ?: '-'),
+            'codigoEntrega' => (string) (($orden['codigo_entrega'] ?? '') ?: '-'),
+            'total' => $total,
+            'anticipo' => $anticipo,
+            'saldo' => $saldo,
+            'condiciones' => $condiciones,
+        ];
 
-        $this->termsBox($lines, 44, 71, 312, 54, $condiciones);
-        $this->totalsBox($lines, 370, 71, 198, 54, $total, $anticipo, $saldo);
-
-        $this->barcodeBlock($lines, (string) ($orden['codigo_entrega'] ?? ''), 44, 31);
-        $this->consultaBox($lines, 224, 31, 188, 36, $publicUrl, $pdfUrl);
-
-        $this->line($lines, 438, 38, 558, 38, [74, 85, 104], 0.6);
-        $this->text($lines, 474, 24, 8, 'Firma cliente', false, [74, 85, 104]);
+        $this->rect($lines, 10, 10, 592, 772, [255, 255, 255], [219, 234, 254], 0.4);
+        $this->receiptCopy($lines, $data, 16, 410, 580, 362, 'COPIA CLIENTE');
+        $this->receiptCopy($lines, $data, 16, 20, 580, 362, 'COPIA TALLER');
 
         return $this->render(implode("\n", $lines), 'Orden ' . $folio);
+    }
+
+    private function receiptCopy(array &$lines, array $data, float $x, float $y, float $w, float $h, string $copyLabel): void
+    {
+        $blue = [37, 99, 235];
+        $softBlue = [219, 234, 254];
+        $ink = [15, 23, 42];
+        $muted = [71, 85, 105];
+        $top = $y + $h;
+        $ix = $x + 8;
+        $iw = $w - 16;
+
+        $this->rect($lines, $x, $y, $w, $h, [248, 251, 255], $blue, 0.8);
+        $this->rect($lines, $ix, $top - 50, 46, 42, [15, 23, 42], [96, 165, 250], 0.6);
+        $this->text($lines, $ix + 11, $top - 28, 15, 'ST', true, [255, 255, 255]);
+
+        $this->text($lines, $ix + 55, $top - 18, 10, (string) $data['negocio'], true, $ink);
+        $this->text($lines, $ix + 55, $top - 29, 6, 'Servicio tecnico', true, $ink);
+        $contacto = trim('Tel: ' . (string) $data['telefono'] . '   WhatsApp: ' . (string) $data['whatsapp']);
+        $this->text($lines, $ix + 55, $top - 39, 6, trim($contacto) !== 'Tel:    WhatsApp:' ? $contacto : 'Comprobante de recepcion y entrega', false, $ink);
+        $this->text($lines, $ix + 55, $top - 48, 5, $this->firstValue($data['direccion'] ?? '', $data['clienteEmail'] ?? ''), false, $muted);
+
+        $this->text($lines, $x + $w - 84, $top - 16, 8, 'Orden N. ' . (string) $data['folio'], true, $ink);
+        $this->text($lines, $x + $w - 84, $top - 28, 8, $copyLabel, true, [30, 64, 175]);
+        $this->text($lines, $x + $w - 84, $top - 39, 6, 'Fecha: ' . (string) $data['fechaEntrada'], false, $ink);
+        $this->line($lines, $ix, $top - 56, $x + $w - 8, $top - 56, $blue, 0.7);
+
+        $row = $top - 80;
+        $fh = 20;
+        $gap = 3;
+        $this->compactField($lines, $ix, $row, 210, $fh, 'Cliente', (string) $data['cliente']);
+        $this->compactField($lines, $ix + 213, $row, 110, $fh, 'Telefono', (string) $data['clienteTelefono']);
+        $this->compactField($lines, $ix + 326, $row, 142, $fh, 'Correo', (string) $data['clienteEmail']);
+        $this->compactField($lines, $ix + 471, $row, $iw - 471, $fh, 'Estado', (string) $data['estado']);
+
+        $row -= $fh + $gap;
+        $this->compactField($lines, $ix, $row, $iw, $fh, 'Direccion / correo', (string) $data['clienteDomicilio']);
+
+        $row -= $fh + $gap;
+        $this->compactField($lines, $ix, $row, 76, $fh, 'Equipo', (string) $data['equipoTipo']);
+        $this->compactField($lines, $ix + 79, $row, 110, $fh, 'Marca', (string) $data['marca']);
+        $this->compactField($lines, $ix + 192, $row, 136, $fh, 'Modelo', (string) $data['modelo']);
+        $this->compactField($lines, $ix + 331, $row, 148, $fh, 'IMEI / Serie', (string) $data['imeiSerie']);
+        $this->compactUnlockField($lines, $ix + 482, $row, $iw - 482, $fh, $data['desbloqueo']);
+
+        $row -= $fh + $gap;
+        $this->compactField($lines, $ix, $row, 180, $fh, 'Servicio rapido / plantilla', (string) $data['servicio']);
+        $this->compactField($lines, $ix + 183, $row, 172, $fh, 'Accesorios', (string) $data['accesorios']);
+        $this->compactField($lines, $ix + 358, $row, $iw - 358, $fh, 'Estado fisico al recibir', (string) $data['estadoFisico']);
+
+        $row -= 27;
+        $this->compactMultiline($lines, $ix, $row, $iw, 24, 'Falla reportada', (string) $data['falla'], 118, 2);
+
+        $row -= 31;
+        $this->compactMultiline($lines, $ix, $row, 278, 28, 'Observaciones / notas', (string) $data['observaciones'], 58, 2);
+        $this->compactMultiline($lines, $ix + 281, $row, $iw - 281, 28, 'Reparacion / trabajo', (string) $data['trabajo'], 58, 2);
+
+        $row -= 25;
+        $this->compactField($lines, $ix, $row, 92, $fh, 'Fecha entrada', (string) $data['fechaEntrada']);
+        $this->compactField($lines, $ix + 95, $row, 92, $fh, 'Fecha entrega', (string) $data['fechaEntrega']);
+        $this->compactField($lines, $ix + 190, $row, 92, $fh, 'Forma de pago', '-');
+        $this->compactField($lines, $ix + 285, $row, 92, $fh, 'Cotizacion', formatearMoneda((float) $data['total']));
+        $this->compactField($lines, $ix + 380, $row, 72, $fh, 'Recargo', formatearMoneda(0));
+        $this->compactField($lines, $ix + 455, $row, $iw - 455, $fh, 'Total del servicio', formatearMoneda((float) $data['total']));
+
+        $row -= $fh + $gap;
+        $this->compactField($lines, $ix, $row, 186, $fh, 'Cobrado / anticipo', formatearMoneda((float) $data['anticipo']));
+        $this->compactField($lines, $ix + 189, $row, 186, $fh, 'Saldo pendiente', formatearMoneda((float) $data['saldo']));
+        $this->compactField($lines, $ix + 378, $row, $iw - 378, $fh, 'Clave de entrega', (string) $data['codigoEntrega']);
+
+        $bottom = $y + 11;
+        $this->compactPatternBox($lines, $ix, $bottom, 88, 92, $data['desbloqueo']);
+        $this->compactTermsBox($lines, $ix + 92, $bottom + 38, 314, 54, (string) $data['condiciones']);
+        $this->compactAcceptanceBox($lines, $ix + 92, $bottom, 314, 35);
+        $this->compactDeliveryBox($lines, $ix + 410, $bottom, $iw - 410, 92, (string) $data['codigoEntrega'], (string) $data['publicUrl'], (string) $data['pdfUrl']);
+
+        $this->rect($lines, $x + 1, $y + 1, $w - 2, $h - 2, null, $softBlue, 0.35);
+    }
+
+    private function compactField(array &$lines, float $x, float $y, float $w, float $h, string $label, string $value): void
+    {
+        $this->rect($lines, $x, $y, $w, $h, [255, 255, 255], [96, 165, 250], 0.45);
+        $this->text($lines, $x + 3, $y + $h - 7, 4, strtoupper($label), true, [15, 23, 42]);
+        $wrapped = array_slice($this->wrap($value !== '' ? $value : '-', max(10, (int) floor($w / 4.2))), 0, 2);
+        $lineY = $y + $h - 15;
+        foreach ($wrapped as $line) {
+            $this->text($lines, $x + 3, $lineY, 5.5, $line, false, [15, 23, 42]);
+            $lineY -= 7;
+        }
+    }
+
+    private function compactMultiline(array &$lines, float $x, float $y, float $w, float $h, string $label, string $value, int $chars, int $maxLines): void
+    {
+        $this->rect($lines, $x, $y, $w, $h, [255, 255, 255], [96, 165, 250], 0.45);
+        $this->text($lines, $x + 3, $y + $h - 7, 4, strtoupper($label), true, [15, 23, 42]);
+        $wrapped = array_slice($this->wrap($value !== '' ? $value : '-', $chars), 0, $maxLines);
+        $lineY = $y + $h - 15;
+        foreach ($wrapped as $line) {
+            $this->text($lines, $x + 3, $lineY, 5.2, $line, false, [15, 23, 42]);
+            $lineY -= 7;
+        }
+    }
+
+    private function compactUnlockField(array &$lines, float $x, float $y, float $w, float $h, array $desbloqueo): void
+    {
+        $value = '-';
+        if (($desbloqueo['tipo'] ?? null) === 'patron') {
+            $value = implode('-', $desbloqueo['secuencia']);
+        } elseif (($desbloqueo['tipo'] ?? null) === 'clave') {
+            $value = (string) $desbloqueo['valor'];
+        }
+
+        $this->compactField($lines, $x, $y, $w, $h, 'Clave / PIN', $value);
+    }
+
+    private function compactPatternBox(array &$lines, float $x, float $y, float $w, float $h, array $desbloqueo): void
+    {
+        $this->rect($lines, $x, $y, $w, $h, [255, 255, 255], [96, 165, 250], 0.45);
+        $this->text($lines, $x + 4, $y + $h - 8, 5, 'PATRON', true, [15, 23, 42]);
+
+        if (($desbloqueo['tipo'] ?? null) === 'patron') {
+            $this->drawPattern($lines, $x + 19, $y + 25, 46, $desbloqueo['secuencia']);
+            $this->text($lines, $x + 4, $y + 12, 4.5, 'Inicio: ' . $desbloqueo['secuencia'][0] . '  Fin: ' . end($desbloqueo['secuencia']), true, [15, 23, 42]);
+            $this->text($lines, $x + 4, $y + 5, 4.2, 'Secuencia: ' . implode(' > ', $desbloqueo['secuencia']), false, [15, 23, 42]);
+            return;
+        }
+
+        if (($desbloqueo['tipo'] ?? null) === 'clave') {
+            $this->text($lines, $x + 4, $y + 52, 5, 'CLAVE / PIN', true, [15, 23, 42]);
+            $this->text($lines, $x + 4, $y + 40, 8, (string) $desbloqueo['valor'], true, [15, 23, 42]);
+            return;
+        }
+
+        $this->text($lines, $x + 4, $y + 45, 7, 'Sin clave registrada', false, [71, 85, 105]);
+    }
+
+    private function compactTermsBox(array &$lines, float $x, float $y, float $w, float $h, string $terms): void
+    {
+        $this->rect($lines, $x, $y, $w, $h, [255, 255, 255], [96, 165, 250], 0.45);
+        $this->text($lines, $x + 4, $y + $h - 8, 5, 'GARANTIA Y CONDICIONES', true, [15, 23, 42]);
+
+        $items = array_values(array_filter(array_map('trim', preg_split('/\R+/', $terms) ?: [])));
+        if ($items === []) {
+            $items = ['La garantia aplica solo sobre la falla reparada y bajo las condiciones del taller.'];
+        }
+
+        $columns = [array_slice($items, 0, 5), array_slice($items, 5)];
+        foreach ($columns as $index => $columnItems) {
+            $cx = $x + 4 + ($index * (($w - 8) / 2));
+            $cy = $y + $h - 16;
+            foreach ($columnItems as $item) {
+                $wrapped = array_slice($this->wrap($item, 58), 0, 2);
+                foreach ($wrapped as $line) {
+                    $this->text($lines, $cx, $cy, 3.6, $line, false, [15, 23, 42]);
+                    $cy -= 4.8;
+                }
+            }
+        }
+    }
+
+    private function compactAcceptanceBox(array &$lines, float $x, float $y, float $w, float $h): void
+    {
+        $this->rect($lines, $x, $y, $w, $h, [255, 255, 255], [96, 165, 250], 0.45);
+        $this->text($lines, $x + 4, $y + $h - 8, 5, 'ACEPTACION DEL CLIENTE', true, [15, 23, 42]);
+        $this->text($lines, $x + 4, $y + $h - 16, 4.2, 'El cliente acepta el ingreso del equipo al servicio tecnico y las condiciones del servicio.', false, [15, 23, 42]);
+        $this->line($lines, $x + $w - 104, $y + 8, $x + $w - 16, $y + 8, [71, 85, 105], 0.35);
+        $this->text($lines, $x + $w - 76, $y + 2, 4.2, 'Firma cliente', false, [15, 23, 42]);
+    }
+
+    private function compactDeliveryBox(array &$lines, float $x, float $y, float $w, float $h, string $code, string $publicUrl, string $pdfUrl): void
+    {
+        $this->rect($lines, $x, $y, $w, $h, [255, 255, 255], [96, 165, 250], 0.45);
+        $this->text($lines, $x + 4, $y + $h - 8, 5, 'ENTREGA / CONSULTA', true, [15, 23, 42]);
+        $this->text($lines, $x + 4, $y + $h - 17, 4.4, 'Clave: ' . $code, true, [15, 23, 42]);
+        $this->compactBarcode($lines, $code, $x + 5, $y + $h - 43, 16, 0.45);
+        $this->text($lines, $x + 4, $y + 31, 4.2, 'Consulta:', true, [71, 85, 105]);
+        $this->text($lines, $x + 4, $y + 24, 3.8, $this->shortUrl($publicUrl, 42), false, [30, 64, 175]);
+        $this->text($lines, $x + 4, $y + 17, 3.8, 'PDF: ' . $this->shortUrl($pdfUrl, 37), false, [71, 85, 105]);
+        $this->text($lines, $x + 4, $y + 7, 4.2, 'Presentar esta orden para retirar.', true, [15, 23, 42]);
+    }
+
+    private function compactBarcode(array &$lines, string $text, float $x, float $y, float $height, float $module): void
+    {
+        $text = strtoupper(trim($text));
+        $text = preg_replace('/[^A-Z0-9 \-\.\$\/\+%]/', '', $text) ?? '';
+        if ($text === '') {
+            return;
+        }
+
+        $this->rect($lines, $x - 2, $y - 2, 132, $height + 4, [255, 255, 255], [226, 232, 240], 0.25);
+        $encoded = '*' . $text . '*';
+        $patterns = $this->barcodePatterns();
+        $commands = ['0 g'];
+        $cursor = $x;
+
+        foreach (str_split($encoded) as $char) {
+            $pattern = $patterns[$char] ?? $patterns['-'];
+            foreach (str_split($pattern) as $index => $part) {
+                $width = $part === 'w' ? $module * 3 : $module;
+                if ($index % 2 === 0) {
+                    $commands[] = sprintf('%.2F %.2F %.2F %.2F re f', $cursor, $y, $width, $height);
+                }
+                $cursor += $width;
+            }
+            $cursor += $module;
+        }
+
+        $lines[] = implode("\n", $commands);
     }
 
     private function pageBackground(array &$lines): void
@@ -295,11 +494,11 @@ final class OrdenPdfService
         return explode("\n", wordwrap($text, $chars, "\n", true));
     }
 
-    private function text(array &$lines, float $x, float $y, int $size, string $text, bool $bold = false, array $color = [0, 0, 0]): void
+    private function text(array &$lines, float $x, float $y, float $size, string $text, bool $bold = false, array $color = [0, 0, 0]): void
     {
         $font = $bold ? 'F2' : 'F1';
         $lines[] = sprintf(
-            '%.3F %.3F %.3F rg BT /%s %d Tf 1 0 0 1 %.2F %.2F Tm (%s) Tj ET',
+            '%.3F %.3F %.3F rg BT /%s %.2F Tf 1 0 0 1 %.2F %.2F Tm (%s) Tj ET',
             $color[0] / 255,
             $color[1] / 255,
             $color[2] / 255,
