@@ -1,4 +1,4 @@
-<form method="post" action="<?= e(url('/configuracion')) ?>">
+<form method="post" action="<?= e(url('/configuracion')) ?>" enctype="multipart/form-data">
     <?= csrf_field() ?>
     <div class="d-flex justify-content-end mb-3">
         <button class="btn btn-primary" data-icon="&#128190;">Guardar configuracion</button>
@@ -31,6 +31,18 @@
                                 </div>
                             <?php else: ?>
                                 <input class="form-control" id="<?= e($id) ?>" name="config[<?= e($clave) ?>]" value="<?= e($valor) ?>">
+                            <?php endif; ?>
+
+                            <?php if ($clave === 'negocio.logo_url'): ?>
+                                <?php $logoPreview = config_asset_src($valor); ?>
+                                <?php if ($logoPreview !== ''): ?>
+                                    <div class="mt-2 d-flex align-items-center gap-2">
+                                        <img src="<?= e($logoPreview) ?>" alt="Logo actual" style="width:64px;height:64px;object-fit:contain;border:1px solid rgba(0,0,0,.15);border-radius:8px;background:#fff;">
+                                        <span class="small text-muted">Logo actual del taller</span>
+                                    </div>
+                                <?php endif; ?>
+                                <input class="form-control mt-2" type="file" name="logo_taller" accept="image/jpeg,image/png,image/webp">
+                                <div class="form-text">Puedes pegar una URL/ruta o subir un JPG, PNG o WEBP.</div>
                             <?php endif; ?>
 
                             <div class="form-text">Tipo: <?= e($tipo) ?></div>

@@ -24,6 +24,10 @@ responsable del proyecto.
   existentes.
 - El PDF de orden ahora imprime dos tantos en una sola hoja carta: copia para
   cliente y copia para taller.
+- Configuracion permite editar el nombre del sistema y subir el logo del
+  taller; se agrego `database/upgrade_branding_config.php`.
+- En el PDF se corrigio la posicion del folio y los enlaces de consulta/PDF
+  ahora son anotaciones clicables con la URL completa.
 
 Ronda de trabajo enfocada en seguridad, generacion de URLs, un tema visual
 nuevo, el patron/PIN de desbloqueo y los documentos imprimibles (orden y
@@ -38,6 +42,7 @@ Ejecutar una sola vez, en este orden:
 php database/upgrade_delivery_codes.php     # claves de entrega aleatorias
 php database/upgrade_ticket_config.php       # config de logo y garantia del ticket
 php database/upgrade_garantia_texto.php      # texto legal actualizado de garantia
+php database/upgrade_branding_config.php     # nombre del sistema y logo del taller
 php database/upgrade_whatsapp_templates.php  # mensajes de WhatsApp por contexto
 php database/upgrade_notificaciones.php      # tabla de notificaciones in-app
 php database/upgrade_inventario_roles.php    # acceso al almacen para tecnicos y recepcion

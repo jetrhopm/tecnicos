@@ -27,7 +27,7 @@ final class ConfiguracionController
         Auth::requirePermission('configuracion', 'editar');
 
         try {
-            (new ConfiguracionService())->actualizar((array) $request->input('config', []));
+            (new ConfiguracionService())->actualizar((array) $request->input('config', []), $request->file('logo_taller'));
             Session::flash('success', 'Configuracion actualizada.');
         } catch (\Throwable $exception) {
             Session::flash('error', $exception->getMessage());

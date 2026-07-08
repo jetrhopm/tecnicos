@@ -8,6 +8,7 @@ final class OrdenPdfService
 {
     private const PAGE_WIDTH = 612;
     private const PAGE_HEIGHT = 792;
+    private array $annotations = [];
 
     /**
      * Genera el PDF de recepcion con el mismo enfoque visual del comprobante nuevo:
@@ -16,6 +17,7 @@ final class OrdenPdfService
      */
     public function recepcion(array $orden, ?array $diagnostico = null, ?array $cotizacion = null, array $config = []): string
     {
+        $this->annotations = [];
         $lines = [];
 
         $folio = (string) ($orden['folio'] ?? '');
@@ -97,9 +99,10 @@ final class OrdenPdfService
         $this->text($lines, $ix + 55, $top - 39, 6, trim($contacto) !== 'Tel:    WhatsApp:' ? $contacto : 'Comprobante de recepcion y entrega', false, $ink);
         $this->text($lines, $ix + 55, $top - 48, 5, $this->firstValue($data['direccion'] ?? '', $data['clienteEmail'] ?? ''), false, $muted);
 
-        $this->text($lines, $x + $w - 84, $top - 16, 8, 'Orden N. ' . (string) $data['folio'], true, $ink);
-        $this->text($lines, $x + $w - 84, $top - 28, 8, $copyLabel, true, [30, 64, 175]);
-        $this->text($lines, $x + $w - 84, $top - 39, 6, 'Fecha: ' . (string) $data['fechaEntrada'], false, $ink);
+        $folioX = $x + $w - 128;
+        $this->text($lines, $folioX, $top - 16, 8, 'Orden: ' . (string) $data['folio'], true, $ink);
+        $this->text($lines, $folioX, $top - 28, 8, $copyLabel, true, [30, 64, 175]);
+        $this->text($lines, $folioX, $top - 39, 6, 'Fecha: ' . (string) $data['fechaEntrada'], false, $ink);
         $this->line($lines, $ix, $top - 56, $x + $w - 8, $top - 56, $blue, 0.7);
 
         $row = $top - 80;
@@ -250,9 +253,11 @@ final class OrdenPdfService
         $this->text($lines, $x + 4, $y + $h - 8, 5, 'ENTREGA / CONSULTA', true, [15, 23, 42]);
         $this->text($lines, $x + 4, $y + $h - 17, 4.4, 'Clave: ' . $code, true, [15, 23, 42]);
         $this->compactBarcode($lines, $code, $x + 5, $y + $h - 43, 16, 0.45);
-        $this->text($lines, $x + 4, $y + 31, 4.2, 'Consulta:', true, [71, 85, 105]);
-        $this->text($lines, $x + 4, $y + 24, 3.8, $this->shortUrl($publicUrl, 42), false, [30, 64, 175]);
-        $this->text($lines, $x + 4, $y + 17, 3.8, 'PDF: ' . $this->shortUrl($pdfUrl, 37), false, [71, 85, 105]);
+        $this->text($lines, $x + 4, $y + 31, 4.2, 'Links clicables:', true, [71, 85, 105]);
+        $this->text($lines, $x + 4, $y + 24, 4.2, 'Abrir consulta de estado', false, [30, 64, 175]);
+        $this->text($lines, $x + 4, $y + 17, 4.2, 'Abrir PDF del comprobante', false, [30, 64, 175]);
+        $this->addLink($x + 3, $y + 21, $w - 8, 8, $publicUrl);
+        $this->addLink($x + 3, $y + 14, $w - 8, 8, $pdfUrl);
         $this->text($lines, $x + 4, $y + 7, 4.2, 'Presentar esta orden para retirar.', true, [15, 23, 42]);
     }
 
@@ -615,15 +620,53 @@ final class OrdenPdfService
         ];
     }
 
+    private function addLink(float $x, float $y, float $w, float $h, string $url): void
+    {
+        $url = trim($url);
+        if ($url === '') {
+            return;
+        }
+
+        $this->annotations[] = [
+            'x1' => $x,
+            'y1' => $y,
+            'x2' => $x + $w,
+            'y2' => $y + $h,
+            'url' => $url,
+        ];
+    }
+
     private function render(string $content, string $title): string
     {
+        $annotationObjects = [];
+        $annotationRefs = [];
+        $annotationStart = 7;
+        foreach ($this->annotations as $index => $annotation) {
+            $objectNumber = $annotationStart + $index;
+            $annotationRefs[] = $objectNumber . ' 0 R';
+            $annotationObjects[] = sprintf(
+                '<< /Type /Annot /Subtype /Link /Rect [%.2F %.2F %.2F %.2F] /Border [0 0 0] /A << /S /URI /URI (%s) >> >>',
+                $annotation['x1'],
+                $annotation['y1'],
+                $annotation['x2'],
+                $annotation['y2'],
+                $this->escape((string) $annotation['url'])
+            );
+        }
+
+        $annots = $annotationRefs !== [] ? ' /Annots [' . implode(' ', $annotationRefs) . ']' : '';
+        $infoObjectNumber = 7 + count($annotationObjects);
+
         $objects = [];
         $objects[] = '<< /Type /Catalog /Pages 2 0 R >>';
         $objects[] = '<< /Type /Pages /Kids [3 0 R] /Count 1 >>';
-        $objects[] = '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' . self::PAGE_WIDTH . ' ' . self::PAGE_HEIGHT . '] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>';
+        $objects[] = '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' . self::PAGE_WIDTH . ' ' . self::PAGE_HEIGHT . '] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R' . $annots . ' >>';
         $objects[] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>';
         $objects[] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>';
         $objects[] = '<< /Length ' . strlen($content) . " >>\nstream\n" . $content . "\nendstream";
+        foreach ($annotationObjects as $object) {
+            $objects[] = $object;
+        }
         $objects[] = '<< /Title (' . $this->escape($title) . ') /Producer (Sistema Servicio Tecnico) >>';
 
         $pdf = "%PDF-1.4\n%\xE2\xE3\xCF\xD3\n";
@@ -637,7 +680,7 @@ final class OrdenPdfService
         foreach ($offsets as $offset) {
             $pdf .= sprintf("%010d 00000 n \n", $offset);
         }
-        $pdf .= 'trailer << /Size ' . (count($objects) + 1) . " /Root 1 0 R /Info 7 0 R >>\nstartxref\n" . $xref . "\n%%EOF\n";
+        $pdf .= 'trailer << /Size ' . (count($objects) + 1) . " /Root 1 0 R /Info {$infoObjectNumber} 0 R >>\nstartxref\n" . $xref . "\n%%EOF\n";
 
         return $pdf;
     }

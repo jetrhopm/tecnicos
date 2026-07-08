@@ -125,6 +125,7 @@ INSERT INTO configuraciones (clave, valor, tipo, grupo) VALUES
 ('negocio.email', '', 'string', 'negocio'),
 ('negocio.direccion', '', 'string', 'negocio'),
 ('negocio.logo_url', '', 'string', 'negocio'),
+('sistema.nombre', 'Sistema Web de Gestión de Servicios Técnicos', 'string', 'sistema'),
 ('sistema.moneda', 'MXN', 'string', 'sistema'),
 ('sistema.iva_activo', '0', 'bool', 'sistema'),
 ('sistema.iva_porcentaje', '16', 'number', 'sistema'),

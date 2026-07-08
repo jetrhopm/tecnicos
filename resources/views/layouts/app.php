@@ -1,11 +1,22 @@
 <?php
 use App\Core\Auth;
 use App\Core\Session;
+use App\Services\ConfiguracionService;
 use App\Services\NotificacionService;
 
 $user = Auth::user();
 $success = Session::flash('success');
 $error = Session::flash('error');
+$appConfig = require BASE_PATH . '/config/app.php';
+$systemName = (string) ($appConfig['name'] ?? 'Servicio Tecnico');
+$businessLogo = '';
+try {
+    $cfg = new ConfiguracionService();
+    $systemName = trim((string) $cfg->get('sistema.nombre', $systemName)) ?: $systemName;
+    $businessLogo = config_asset_src((string) $cfg->get('negocio.logo_url', ''));
+} catch (Throwable) {
+    $businessLogo = '';
+}
 
 $notifNoLeidas = 0;
 $notifItems = [];
@@ -26,7 +37,7 @@ $notifIconos = [
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="<?= e(\App\Core\Csrf::token()) ?>">
-    <title><?= e($title ?? 'Servicio Tecnico') ?></title>
+    <title><?= e(($title ?? '') !== '' ? ($title . ' | ' . $systemName) : $systemName) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= e(asset('css/app.css') . '?v=20260707-btns') ?>" rel="stylesheet">
     <link href="<?= e(asset('css/themes/crystal.css')) ?>" rel="stylesheet">
@@ -48,9 +59,13 @@ $notifIconos = [
 <div class="app-shell">
     <aside class="sidebar" id="app-sidebar">
         <div class="brand">
-            <div class="brand-mark"></div>
+            <?php if ($businessLogo !== ''): ?>
+                <img class="brand-logo" src="<?= e($businessLogo) ?>" alt="<?= e($systemName) ?>">
+            <?php else: ?>
+                <div class="brand-mark"></div>
+            <?php endif; ?>
             <div>
-                <div>Servicio Tecnico</div>
+                <div><?= e($systemName) ?></div>
                 <small class="text-white-50">Gestion de reparaciones</small>
             </div>
             <button class="sidebar-close" type="button" aria-label="Cerrar menu" data-sidebar-close>&times;</button>

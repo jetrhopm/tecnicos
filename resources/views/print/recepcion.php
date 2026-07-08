@@ -29,7 +29,7 @@ $negNombre = trim((string) ($config['negocio.nombre'] ?? '')) ?: 'Servicio Tecni
 $negTel = trim((string) ($config['negocio.telefono'] ?? ''));
 $negWa = trim((string) ($config['negocio.whatsapp'] ?? ''));
 $negDir = trim((string) ($config['negocio.direccion'] ?? ''));
-$logo = trim((string) ($config['negocio.logo_url'] ?? ''));
+$logo = config_asset_src((string) ($config['negocio.logo_url'] ?? ''));
 $garantia = trim((string) ($config['ticket.garantia'] ?? $config['legal.politica_garantia'] ?? ''));
 $condiciones = trim((string) ($config['legal.politica_garantia'] ?? ''));
 
