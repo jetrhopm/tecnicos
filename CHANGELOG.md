@@ -8,6 +8,17 @@ responsable del proyecto.
 
 ## 2026-07-07
 
+### Reportes exportables y checklist de produccion
+
+- El modulo `/reportes` agrega exportaciones CSV para corte de caja, saldos
+  pendientes, refacciones mas usadas y utilidad estimada.
+- El corte de caja se resume por fecha, usuario y metodo de pago.
+- Los reportes en pantalla muestran saldos pendientes, refacciones usadas y
+  utilidad estimada por orden.
+- Configuracion ahora muestra un checklist de produccion/seguridad con alertas
+  de `APP_DEBUG`, `APP_ENV`, dominio/HTTPS, usuarios demo activos, permisos de
+  `storage`, `.htaccess` y respaldos recientes.
+
 ### Administracion completa de usuarios
 
 - El modulo `/usuarios` ahora permite editar usuarios existentes, actualizar

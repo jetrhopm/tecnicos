@@ -10,6 +10,7 @@ use App\Core\Response;
 use App\Core\Session;
 use App\Core\View;
 use App\Services\ConfiguracionService;
+use App\Services\ProductionChecklistService;
 
 final class ConfiguracionController
 {
@@ -19,6 +20,7 @@ final class ConfiguracionController
         View::render('configuracion/index', [
             'title' => 'Configuracion',
             'grupos' => (new ConfiguracionService())->allGrouped(),
+            'checklist' => (new ProductionChecklistService())->items(),
         ]);
     }
 

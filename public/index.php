@@ -101,6 +101,7 @@ $router->post('/proveedores/{id}', [ProveedorController::class, 'update']);
 
 $router->get('/garantias', [GarantiaController::class, 'index']);
 $router->get('/reportes', [ReporteController::class, 'index']);
+$router->get('/reportes/exportar', [ReporteController::class, 'exportar']);
 $router->get('/configuracion', [ConfiguracionController::class, 'index']);
 $router->post('/configuracion', [ConfiguracionController::class, 'update']);
 $router->get('/usuarios', [UsuarioController::class, 'index']);

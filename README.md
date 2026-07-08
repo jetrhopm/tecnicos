@@ -205,6 +205,26 @@ El seed crea:
   ST-DEMO-00001
   ```
 
+## Reportes y exportaciones
+
+El modulo **Reportes** permite filtrar por fecha y exportar CSV de:
+
+- Corte de caja por fecha, usuario y metodo de pago.
+- Saldos pendientes.
+- Refacciones mas usadas.
+- Utilidad estimada por orden.
+
+Los CSV se generan al momento desde la base de datos; no se guardan en el
+servidor.
+
+## Checklist de produccion
+
+En **Configuracion** aparece un checklist de seguridad para revisar antes de
+subir a hosting: `APP_DEBUG`, `APP_ENV`, dominio/HTTPS, usuarios demo activos,
+permisos de `storage`, proteccion `.htaccess` y respaldos recientes en
+`storage/backups`. Las credenciales demo y locales deben cambiarse o bloquearse
+antes de usar el sistema con clientes reales.
+
 - Diagnostico demo.
 - Cotizacion demo.
 - Anticipo demo.

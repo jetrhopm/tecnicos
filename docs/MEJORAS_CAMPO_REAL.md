@@ -154,7 +154,7 @@ Implementado:
 
 ### 7. Reportes exportables
 
-Estado: pendiente.
+Estado: implementado.
 
 Objetivo:
 
@@ -163,6 +163,16 @@ Objetivo:
 - Saldos pendientes.
 - Refacciones mas usadas.
 - Utilidad estimada.
+
+Implementado:
+
+- El modulo `/reportes` incluye filtros por fecha y botones de exportacion CSV.
+- Se agrego corte de caja agrupado por fecha, usuario y metodo de pago.
+- Se agrego reporte de saldos pendientes con cliente, telefono, estado y saldo.
+- Se agrego reporte de refacciones mas usadas con venta, costo y utilidad
+  estimada.
+- Se agrego reporte de utilidad estimada por orden, separando mano de obra
+  aproximada y margen de refacciones activas.
 
 ### 8. Pruebas reales de impresion
 
@@ -177,7 +187,7 @@ Objetivo:
 
 ### 9. Checklist de produccion/seguridad
 
-Estado: pendiente.
+Estado: implementado.
 
 Objetivo:
 
@@ -186,3 +196,16 @@ Objetivo:
 - Verificacion de permisos de `storage`.
 - Respaldo de base de datos.
 - Configuracion de dominio/HTTPS.
+
+Implementado:
+
+- Configuracion muestra un checklist de produccion con estado `ok`, `warning` o
+  `danger`.
+- El checklist alerta si `APP_DEBUG` esta activo, si `APP_ENV` no es
+  `production`, si `APP_URL` sigue en `auto`/local o si la peticion no usa
+  HTTPS.
+- Se detectan usuarios demo activos para recordar bloquearlos o cambiar
+  contrasenas antes de produccion.
+- Se verifican permisos de escritura en `storage`, `storage/uploads` y
+  `storage/logs`, ademas de `.htaccess` raiz y de `storage`.
+- Se alerta si no existe un respaldo reciente en `storage/backups`.

@@ -32,4 +32,73 @@ final class ReporteService
             'recientes' => $ordenes->all([]),
         ];
     }
+
+    public function resumen(?string $inicio, ?string $fin): array
+    {
+        $repo = new ReporteRepository();
+
+        return [
+            'caja_resumen' => $repo->corteCajaResumen($inicio, $fin),
+            'saldos_pendientes' => $repo->saldosPendientes($inicio, $fin),
+            'refacciones_usadas' => $repo->refaccionesMasUsadas($inicio, $fin),
+            'utilidad_estimada' => $repo->utilidadEstimada($inicio, $fin),
+        ];
+    }
+
+    public function csv(string $tipo, ?string $inicio, ?string $fin): array
+    {
+        $repo = new ReporteRepository();
+        $reportes = [
+            'caja' => [
+                'archivo' => 'corte-caja.csv',
+                'columnas' => ['fecha', 'usuario', 'metodo', 'operaciones', 'total'],
+                'filas' => $repo->corteCajaResumen($inicio, $fin),
+            ],
+            'saldos' => [
+                'archivo' => 'saldos-pendientes.csv',
+                'columnas' => ['folio', 'cliente', 'telefono', 'estado', 'fecha_recepcion', 'costo_final', 'anticipo', 'saldo_pendiente'],
+                'filas' => $repo->saldosPendientes($inicio, $fin),
+            ],
+            'refacciones' => [
+                'archivo' => 'refacciones-mas-usadas.csv',
+                'columnas' => ['sku', 'nombre', 'categoria', 'cantidad_usada', 'venta_total', 'costo_total', 'utilidad_estimada'],
+                'filas' => $repo->refaccionesMasUsadas($inicio, $fin),
+            ],
+            'utilidad' => [
+                'archivo' => 'utilidad-estimada.csv',
+                'columnas' => ['folio', 'cliente', 'estado', 'fecha_recepcion', 'total_orden', 'venta_refacciones', 'costo_refacciones', 'mano_obra_estimada', 'utilidad_estimada'],
+                'filas' => $repo->utilidadEstimada($inicio, $fin),
+            ],
+        ];
+
+        if (!isset($reportes[$tipo])) {
+            throw new \RuntimeException('Reporte no valido.');
+        }
+
+        $reporte = $reportes[$tipo];
+        $csv = $this->crearCsv($reporte['columnas'], $reporte['filas']);
+
+        return ['archivo' => $reporte['archivo'], 'contenido' => $csv];
+    }
+
+    private function crearCsv(array $columnas, array $filas): string
+    {
+        $handle = fopen('php://temp', 'r+');
+        fwrite($handle, "\xEF\xBB\xBF");
+        fputcsv($handle, $columnas);
+
+        foreach ($filas as $fila) {
+            $linea = [];
+            foreach ($columnas as $columna) {
+                $linea[] = $fila[$columna] ?? '';
+            }
+            fputcsv($handle, $linea);
+        }
+
+        rewind($handle);
+        $contenido = stream_get_contents($handle) ?: '';
+        fclose($handle);
+
+        return $contenido;
+    }
 }

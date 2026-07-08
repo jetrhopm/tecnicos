@@ -1,7 +1,31 @@
 <form method="post" action="<?= e(url('/configuracion')) ?>" enctype="multipart/form-data">
     <?= csrf_field() ?>
-    <div class="d-flex justify-content-end mb-3">
+    <div class="d-flex justify-content-between align-items-start gap-3 mb-3 flex-wrap">
+        <div>
+            <h2 class="h5 mb-1" data-icon="&#128737;">Checklist de produccion</h2>
+            <p class="text-muted mb-0">Revisa puntos criticos antes de subir o abrir el sistema en hosting.</p>
+        </div>
         <button class="btn btn-primary" data-icon="&#128190;">Guardar configuracion</button>
+    </div>
+
+    <div class="glass-card mb-3">
+        <div class="row g-2">
+            <?php foreach (($checklist ?? []) as $item): ?>
+                <?php
+                $estado = (string) $item['estado'];
+                $badge = $estado === 'ok' ? 'text-bg-success' : ($estado === 'danger' ? 'text-bg-danger' : 'text-bg-warning');
+                ?>
+                <div class="col-md-6 col-xl-4">
+                    <div class="border rounded-3 p-3 h-100">
+                        <div class="d-flex justify-content-between gap-2 mb-2">
+                            <strong><?= e($item['titulo']) ?></strong>
+                            <span class="badge <?= e($badge) ?>"><?= e($estado) ?></span>
+                        </div>
+                        <p class="small text-muted mb-0"><?= e($item['detalle']) ?></p>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
     </div>
 
     <div class="row g-3">
