@@ -43,6 +43,8 @@ MVP funcional con arquitectura modular propia tipo MVC ligero:
 - Seed con usuarios, roles, cliente demo, equipos demo, orden demo y pagos demo.
 
 > El historial detallado de cambios esta en [CHANGELOG.md](CHANGELOG.md).
+> La arquitectura del sistema (capas, ciclo de peticion, convenciones y como
+> extenderlo) esta en [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md).
 
 ## Requisitos
 
