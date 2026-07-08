@@ -18,8 +18,9 @@ aceptacion del cliente y bitacora por orden.
 Ejecutar una sola vez, en este orden:
 
 ```bash
-php database/upgrade_delivery_codes.php   # claves de entrega aleatorias
-php database/upgrade_ticket_config.php     # config de logo y garantia del ticket
+php database/upgrade_delivery_codes.php     # claves de entrega aleatorias
+php database/upgrade_ticket_config.php       # config de logo y garantia del ticket
+php database/upgrade_whatsapp_templates.php  # mensajes de WhatsApp por contexto
 ```
 
 Nuevas variables de entorno (opcional) en `.env`:
@@ -202,6 +203,27 @@ control.
 
 > Nota: al cambiar la carpeta de sesiones, las sesiones abiertas antes de
 > actualizar se invalidan una vez (todos vuelven a iniciar sesion).
+
+### 9. Bitacora con detalle de estado y WhatsApp por contexto
+
+**Por que:** la bitacora decia "Cambio de estado" sin indicar a cual, y el boton
+de WhatsApp enviaba siempre el mensaje de bienvenida aunque se quisiera pedir la
+autorizacion de la cotizacion o avisar que el equipo esta listo.
+
+- **Bitacora**: el evento de cambio de estado ahora muestra el estado anterior y
+  el nuevo (por ejemplo "recibida -> en reparacion"), leidos de la auditoria
+  ([resources/views/ordenes/show.php](resources/views/ordenes/show.php)).
+- **WhatsApp por contexto**: el boton se convierte en un menu con los mensajes
+  adecuados —aviso de recepcion, solicitar autorizacion de cotizacion, avisar
+  equipo listo y enviar link del PDF— cada uno con su plantilla
+  ([app/Controllers/OrdenController.php](app/Controllers/OrdenController.php),
+  usando `MensajeService::whatsappOrden($orden, $plantilla)`).
+- Se mejoraron los textos de las plantillas `whatsapp.diagnostico_listo`
+  (cotizacion por validar) y `whatsapp.equipo_listo` (equipo listo para
+  entrega). Migracion
+  [database/upgrade_whatsapp_templates.php](database/upgrade_whatsapp_templates.php)
+  que solo cambia el texto si sigue siendo el original (no pisa
+  personalizaciones).
 
 ### Otros cambios de la ronda
 

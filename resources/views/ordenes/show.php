@@ -16,7 +16,16 @@ $whatsappPdf = linkWhatsapp($telefonoCliente, 'Hola ' . (string) $orden['cliente
                     <span class="badge text-bg-light"><?= e($orden['prioridad']) ?></span>
                 </div>
                 <div class="d-flex gap-2 flex-wrap justify-content-end order-actions">
-                    <a class="btn btn-success btn-sm" data-icon="&#128241;" target="_blank" href="<?= e($whatsapp) ?>">WhatsApp</a>
+                    <div class="dropdown">
+                        <button class="btn btn-success btn-sm dropdown-toggle" data-icon="&#128241;" type="button" data-bs-toggle="dropdown" aria-expanded="false">WhatsApp</button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" target="_blank" href="<?= e($whatsappMensajes['recibido']) ?>">Aviso de recepcion</a></li>
+                            <li><a class="dropdown-item" target="_blank" href="<?= e($whatsappMensajes['cotizacion']) ?>">Solicitar autorizacion de cotizacion</a></li>
+                            <li><a class="dropdown-item" target="_blank" href="<?= e($whatsappMensajes['listo']) ?>">Avisar equipo listo para entrega</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" target="_blank" href="<?= e($whatsappPdf) ?>">Enviar link del PDF</a></li>
+                        </ul>
+                    </div>
                     <a class="btn btn-outline-dark btn-sm" data-icon="&#128065;" target="_blank" href="<?= e($consulta) ?>">Portal</a>
                     <div class="dropdown">
                         <button class="btn btn-outline-dark btn-sm dropdown-toggle" data-icon="&#128424;" type="button" data-bs-toggle="dropdown" aria-expanded="false">Imprimir</button>
@@ -37,7 +46,6 @@ $whatsappPdf = linkWhatsapp($telefonoCliente, 'Hola ' . (string) $orden['cliente
                             </ul>
                         </div>
                     <?php endif; ?>
-                    <a class="btn btn-success btn-sm" data-icon="&#128241;" target="_blank" href="<?= e($whatsappPdf) ?>">Enviar PDF</a>
                 </div>
             </div>
             <hr>
@@ -231,8 +239,25 @@ $whatsappPdf = linkWhatsapp($telefonoCliente, 'Hola ' . (string) $orden['cliente
             <?php else: ?>
                 <div class="timeline">
                     <?php foreach ($bitacora as $evento): ?>
+                        <?php
+                        // Detalle segun la accion: para cambio de estado se muestra
+                        // el estado anterior y el nuevo tomados de la auditoria.
+                        $detalle = '';
+                        $antes = json_decode((string) ($evento['datos_anteriores'] ?? ''), true) ?: [];
+                        $nuevos = json_decode((string) ($evento['datos_nuevos'] ?? ''), true) ?: [];
+                        if ($evento['accion'] === 'cambiar_estado' && !empty($nuevos['estado'])) {
+                            $de = str_replace('_', ' ', (string) ($antes['estado'] ?? ''));
+                            $a = str_replace('_', ' ', (string) $nuevos['estado']);
+                            $detalle = ($de !== '' ? $de . ' → ' : '') . $a;
+                        } elseif ($evento['accion'] === 'terminos_aceptados') {
+                            $detalle = 'Presupuesto y terminos';
+                        }
+                        ?>
                         <div class="timeline-item">
                             <strong><?= e($accionLabel[$evento['accion']] ?? ucfirst(str_replace('_', ' ', (string) $evento['accion']))) ?></strong>
+                            <?php if ($detalle !== ''): ?>
+                                <div class="small"><?= e($detalle) ?></div>
+                            <?php endif; ?>
                             <div class="small text-muted"><?= e(fechaHumana($evento['created_at'])) ?> &middot; <?= e($evento['usuario'] ?: 'sistema') ?></div>
                         </div>
                     <?php endforeach; ?>

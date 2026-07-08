@@ -127,8 +127,8 @@ INSERT INTO configuraciones (clave, valor, tipo, grupo) VALUES
 ('ticket.garantia', 'Garantia del ticket: 30 dias por el trabajo realizado. No cubre golpes, humedad, manipulacion de terceros ni fallas ajenas al servicio.', 'text', 'ticket'),
 ('archivos.max_mb', '8', 'number', 'archivos'),
 ('whatsapp.orden_recibida', 'Hola {cliente}, tu orden {folio} para el equipo {equipo} fue recibida correctamente. Puedes consultar el avance aqui: {link}', 'text', 'plantillas'),
-('whatsapp.diagnostico_listo', 'Hola {cliente}, tu diagnostico de la orden {folio} esta listo. Requiere autorizacion. Consulta aqui: {link}', 'text', 'plantillas'),
-('whatsapp.equipo_listo', 'Hola {cliente}, tu equipo de la orden {folio} ya esta listo para entrega. Saldo pendiente: {saldo}. Gracias.', 'text', 'plantillas'),
+('whatsapp.diagnostico_listo', 'Hola {cliente}, tenemos lista la cotizacion de tu orden {folio} ({equipo}). Necesitamos tu validacion para continuar con la reparacion. Revisala y autorizala aqui: {link}', 'text', 'plantillas'),
+('whatsapp.equipo_listo', 'Hola {cliente}, tu {equipo} de la orden {folio} ya esta listo para entrega. Saldo por pagar: {saldo}. Puedes pasar a recogerlo. Gracias.', 'text', 'plantillas'),
 ('legal.terminos_servicio', 'El cliente autoriza la revision del equipo y acepta las condiciones del servicio.', 'text', 'legal'),
 ('legal.politica_garantia', 'La garantia aplica solo sobre la falla reparada y no cubre humedad, golpes o manipulacion externa.', 'text', 'legal')
 ON DUPLICATE KEY UPDATE valor = VALUES(valor), tipo = VALUES(tipo), grupo = VALUES(grupo);

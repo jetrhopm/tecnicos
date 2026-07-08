@@ -118,7 +118,16 @@ final class OrdenController
             'diagnostico' => (new DiagnosticoService())->obtenerPorOrden((int) $id),
             'cotizacion' => (new CotizacionService())->obtenerPorOrden((int) $id),
             'pagos' => (new PagoService())->listarOrden((int) $id),
-            'whatsapp' => (new MensajeService())->whatsappOrden($orden),
+            'whatsappMensajes' => (function () use ($orden) {
+                // Mensajes de WhatsApp segun el momento de la orden; el usuario
+                // elige cual enviar desde el menu de la ficha.
+                $m = new MensajeService();
+                return [
+                    'recibido' => $m->whatsappOrden($orden, 'whatsapp.orden_recibida'),
+                    'cotizacion' => $m->whatsappOrden($orden, 'whatsapp.diagnostico_listo'),
+                    'listo' => $m->whatsappOrden($orden, 'whatsapp.equipo_listo'),
+                ];
+            })(),
             'tecnicos' => (new UserRepository())->activeTechnicians(),
             'evidencias' => (new EvidenciaService())->listar((int) $id),
             'bitacora' => (new AuditoriaService())->historial('ordenes', (int) $id),
