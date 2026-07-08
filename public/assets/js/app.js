@@ -140,17 +140,16 @@ document.addEventListener('DOMContentLoaded', () => {
     button.addEventListener('click', () => window.print());
   });
 
-  document.querySelectorAll('[data-quote-part-select]').forEach((select) => {
-    const form = select.closest('form');
-    if (!form) {
+  const bindQuotePartSelect = (select) => {
+    if (select.dataset.quoteBound === '1') {
       return;
     }
-
-    const description = form.querySelector('[data-quote-description]');
-    const price = form.querySelector('[data-quote-price]');
-    const type = form.querySelector('[data-quote-type]');
-
+    select.dataset.quoteBound = '1';
     select.addEventListener('change', () => {
+      const scope = select.closest('[data-quote-row]') || select.closest('[data-quote-form]') || document;
+      const description = scope.querySelector('[data-quote-description]');
+      const price = scope.querySelector('[data-quote-price]');
+      const type = scope.querySelector('[data-quote-type]');
       const option = select.selectedOptions[0];
       if (!option || !select.value) {
         return;
@@ -166,6 +165,52 @@ document.addEventListener('DOMContentLoaded', () => {
         type.value = 'refaccion';
       }
     });
+  };
+
+  document.querySelectorAll('[data-quote-part-select]').forEach(bindQuotePartSelect);
+
+  document.querySelectorAll('[data-quote-form]').forEach((form) => {
+    const addButton = form.querySelector('[data-add-quote-item]');
+    const itemsContainer = form.querySelector('[data-quote-items]');
+    const template = form.querySelector('[data-quote-item-template]');
+    let nextIndex = 1;
+
+    const refreshRemoveButtons = () => {
+      form.querySelectorAll('[data-remove-quote-item]').forEach((button) => {
+        const row = button.closest('[data-quote-row]');
+        button.disabled = !row;
+      });
+    };
+
+    if (addButton && itemsContainer && template) {
+      addButton.addEventListener('click', () => {
+        const html = template.innerHTML.replaceAll('__INDEX__', String(nextIndex));
+        nextIndex += 1;
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = html.trim();
+        const row = wrapper.firstElementChild;
+        if (!row) {
+          return;
+        }
+        itemsContainer.appendChild(row);
+        row.querySelectorAll('[data-quote-part-select]').forEach(bindQuotePartSelect);
+        refreshRemoveButtons();
+      });
+    }
+
+    form.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-remove-quote-item]');
+      if (!button) {
+        return;
+      }
+      const row = button.closest('[data-quote-row]');
+      if (row) {
+        row.remove();
+      }
+      refreshRemoveButtons();
+    });
+
+    refreshRemoveButtons();
   });
 
   if (window.bootstrap && window.bootstrap.Popover) {

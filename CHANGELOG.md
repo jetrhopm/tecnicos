@@ -11,6 +11,8 @@ responsable del proyecto.
 ### Cotizaciones conectadas con inventario
 
 - La cotizacion ahora puede seleccionar refacciones existentes del inventario.
+- Una cotizacion puede contener varios conceptos, por ejemplo mano de obra,
+  modulo de carga, bateria y display en la misma version.
 - Al seleccionar una refaccion se precargan descripcion y precio de venta, y se
   guarda una referencia al item de inventario con costo snapshot.
 - Las refacciones de una cotizacion aceptada pueden aplicarse desde la ficha de

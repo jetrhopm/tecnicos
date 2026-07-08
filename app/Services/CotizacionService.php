@@ -53,7 +53,9 @@ final class CotizacionService
                 throw new RuntimeException('Ya existe una cotizacion pendiente. Debe aceptarse, rechazarse o vencerse antes de crear otra version.');
             }
 
-            $items = $data['items'] ?? [];
+            $items = isset($data['items']) && is_array($data['items'])
+                ? array_values(array_filter($data['items'], 'is_array'))
+                : [];
             if ($items === []) {
                 $items = [[
                     'tipo' => $data['tipo'] ?? 'servicio',
@@ -62,6 +64,16 @@ final class CotizacionService
                     'cantidad' => $data['cantidad'] ?? 1,
                     'precio_unitario' => $data['precio_unitario'] ?? 0,
                 ]];
+            }
+            $items = array_values(array_filter($items, static function (array $item): bool {
+                $descripcion = trim((string) ($item['descripcion'] ?? ''));
+                $refaccionId = trim((string) ($item['refaccion_id'] ?? ''));
+                $precio = $item['precio_unitario'] ?? '';
+
+                return $refaccionId !== '' || $descripcion !== '' || ((string) $precio !== '' && (float) $precio > 0);
+            }));
+            if ($items === []) {
+                throw new RuntimeException('Agrega al menos un concepto a la cotizacion.');
             }
 
             $subtotal = 0.0;

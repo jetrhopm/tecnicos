@@ -159,13 +159,17 @@ $help = static function (string $texto, string $ejemplo = ''): string {
                     <hr>
                     <h3 class="h6" data-icon="&#128221;">Nueva version de cotizacion</h3>
                 <?php endif; ?>
-                <form method="post" action="<?= e(url('/cotizaciones')) ?>">
+                <form method="post" action="<?= e(url('/cotizaciones')) ?>" data-quote-form>
                     <?= csrf_field() ?>
                     <input type="hidden" name="orden_id" value="<?= e($orden['id']) ?>">
                     <div class="row g-3">
+                        <div class="col-12 d-flex justify-content-between align-items-center gap-2 flex-wrap">
+                            <label class="form-label mb-0" data-icon="&#128221;">Conceptos de cotizacion <?= $help('Agrega todos los cargos de una misma cotizacion: mano de obra, servicios y varias refacciones.', 'Display + bateria + mano de obra') ?></label>
+                            <button class="btn btn-outline-primary btn-sm" type="button" data-add-quote-item data-icon="&#43;">Agregar concepto</button>
+                        </div>
                         <div class="col-md-5">
                             <label class="form-label" data-icon="&#128230;">Refaccion inventario <?= $help('Opcional. Si eliges una pieza, se cargan descripcion y precio de venta desde inventario.', 'Pantalla OLED · Stock 2 · $850') ?></label>
-                            <select class="form-select" name="refaccion_id" data-quote-part-select>
+                            <select class="form-select" name="items[0][refaccion_id]" data-quote-part-select>
                                 <option value="">Concepto manual sin inventario</option>
                                 <?php foreach ($refaccionesDisponibles ?? [] as $refaccion): ?>
                                     <option
@@ -181,11 +185,46 @@ $help = static function (string $texto, string $ejemplo = ''): string {
                         </div>
                         <div class="col-md-3">
                             <label class="form-label" data-icon="&#9671;">Tipo <?= $help('Clasifica el concepto para reportes y claridad.', 'mano_obra, refaccion, servicio') ?></label>
-                            <select class="form-select" name="tipo" data-quote-type><option value="mano_obra">Mano de obra</option><option value="refaccion">Refaccion</option><option value="servicio">Servicio</option><option value="otro">Otro</option></select>
+                            <select class="form-select" name="items[0][tipo]" data-quote-type><option value="mano_obra">Mano de obra</option><option value="refaccion">Refaccion</option><option value="servicio">Servicio</option><option value="otro">Otro</option></select>
                         </div>
-                        <div class="col-md-4"><label class="form-label" data-icon="&#9998;">Descripcion <?= $help('Texto que explica que se va a cobrar. Si eliges inventario, se llena con la refaccion.', 'Cambio de pantalla calidad original') ?></label><input class="form-control" name="descripcion" data-quote-description></div>
-                        <div class="col-md-2"><label class="form-label" data-icon="&#35;">Cantidad <?= $help('Numero de piezas o servicios iguales.', '1 pantalla, 2 conectores') ?></label><input class="form-control" type="number" step="0.01" name="cantidad" value="1"></div>
-                        <div class="col-md-2"><label class="form-label" data-icon="&#36;">Precio venta <?= $help('Precio unitario que se cobrara al cliente. En refacciones se toma de inventario y puedes ajustarlo si tu rol lo permite.', '850') ?></label><input class="form-control" type="number" step="0.01" name="precio_unitario" value="<?= e($diagnostico['costo_total_sugerido'] ?? 0) ?>" data-money data-quote-price></div>
+                        <div class="col-md-4"><label class="form-label" data-icon="&#9998;">Descripcion <?= $help('Texto que explica que se va a cobrar. Si eliges inventario, se llena con la refaccion.', 'Cambio de pantalla calidad original') ?></label><input class="form-control" name="items[0][descripcion]" data-quote-description></div>
+                        <div class="col-md-2"><label class="form-label" data-icon="&#35;">Cantidad <?= $help('Numero de piezas o servicios iguales.', '1 pantalla, 2 conectores') ?></label><input class="form-control" type="number" step="0.01" name="items[0][cantidad]" value="1"></div>
+                        <div class="col-md-2"><label class="form-label" data-icon="&#36;">Precio venta <?= $help('Precio unitario que se cobrara al cliente. En refacciones se toma de inventario y puedes ajustarlo si tu rol lo permite.', '850') ?></label><input class="form-control" type="number" step="0.01" name="items[0][precio_unitario]" value="<?= e($diagnostico['costo_total_sugerido'] ?? 0) ?>" data-money data-quote-price></div>
+                        <div class="col-12 vstack gap-2" data-quote-items></div>
+                        <template data-quote-item-template>
+                            <div class="quote-item-row" data-quote-row>
+                                <div class="row g-2 align-items-end">
+                                    <div class="col-lg-4">
+                                        <label class="form-label" data-icon="&#128230;">Refaccion inventario</label>
+                                        <select class="form-select" name="items[__INDEX__][refaccion_id]" data-quote-part-select>
+                                            <option value="">Concepto manual sin inventario</option>
+                                            <?php foreach ($refaccionesDisponibles ?? [] as $refaccion): ?>
+                                                <option value="<?= e($refaccion['id']) ?>" data-description="<?= e(trim((string) $refaccion['nombre'] . ' ' . (string) $refaccion['sku'])) ?>" data-price="<?= e((string) $refaccion['precio_venta']) ?>" data-stock="<?= e((string) $refaccion['stock_actual']) ?>"><?= e($refaccion['nombre']) ?> - <?= e($refaccion['sku']) ?> - Stock <?= e($refaccion['stock_actual']) ?> - <?= e(formatearMoneda((float) $refaccion['precio_venta'])) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4">
+                                        <label class="form-label" data-icon="&#9671;">Tipo</label>
+                                        <select class="form-select" name="items[__INDEX__][tipo]" data-quote-type><option value="mano_obra">Mano de obra</option><option value="refaccion">Refaccion</option><option value="servicio">Servicio</option><option value="otro">Otro</option></select>
+                                    </div>
+                                    <div class="col-lg-3 col-md-8">
+                                        <label class="form-label" data-icon="&#9998;">Descripcion</label>
+                                        <input class="form-control" name="items[__INDEX__][descripcion]" data-quote-description>
+                                    </div>
+                                    <div class="col-lg-1 col-md-3">
+                                        <label class="form-label" data-icon="&#35;">Cant.</label>
+                                        <input class="form-control" type="number" step="0.01" name="items[__INDEX__][cantidad]" value="1">
+                                    </div>
+                                    <div class="col-lg-2 col-md-4">
+                                        <label class="form-label" data-icon="&#36;">Precio venta</label>
+                                        <input class="form-control" type="number" step="0.01" name="items[__INDEX__][precio_unitario]" value="0" data-money data-quote-price>
+                                    </div>
+                                    <div class="col-12 d-flex justify-content-end">
+                                        <button class="btn btn-outline-danger btn-sm" type="button" data-remove-quote-item data-icon="&#10005;">Quitar concepto</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
                         <div class="col-md-3"><label class="form-label" data-icon="&#37;">Descuento <?= $help('Descuento en pesos aplicado al subtotal.', '100') ?></label><input class="form-control" type="number" step="0.01" name="descuento" value="0" data-money></div>
                         <div class="col-md-3"><label class="form-label" data-icon="&#37;">IVA <?= $help('Impuesto en pesos si lo aplicas. Si no cobras IVA, dejalo en 0.', '232') ?></label><input class="form-control" type="number" step="0.01" name="iva" value="0" data-money></div>
                         <div class="col-md-3"><label class="form-label" data-icon="&#128197;">Vigencia <?= $help('Fecha hasta la que respetas precio y disponibilidad.', '2026-07-15') ?></label><input class="form-control" type="date" name="vigencia"></div>

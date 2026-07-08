@@ -29,8 +29,9 @@ MVP funcional con arquitectura modular propia tipo MVC ligero:
 - Selector de tipo de servicio con busqueda.
 - Patron/PIN del equipo en registro de orden (rejilla 3x3 o clave).
 - Diagnosticos, cotizaciones y pagos.
-- Cotizaciones conectadas con inventario: una refaccion cotizada puede descontar
-  stock cuando la cotizacion ya fue aceptada.
+- Cotizaciones conectadas con inventario: una cotizacion puede llevar varios
+  conceptos y cada refaccion cotizada puede descontar stock cuando ya fue
+  aceptada.
 - Entrega de equipos por clave/codigo de barras aleatoria.
 - Registro de quien entrega el equipo.
 - Documentos imprimibles de orden y de entrega en tamano carta y ticket
@@ -279,7 +280,9 @@ Reglas de cotizacion:
 - Las cotizaciones vencidas no se pueden autorizar y quedan marcadas como
   `vencida`.
 - El diagnostico describe la falla, pruebas y piezas necesarias; los precios de
-  mano de obra y refacciones se capturan en Cotizacion.
+  mano de obra, servicios y refacciones se capturan en Cotizacion.
+- Una misma cotizacion puede incluir varios renglones, por ejemplo bateria,
+  display y mano de obra en una sola autorizacion.
 - Si se selecciona una refaccion de inventario en la cotizacion, el sistema toma
   su precio de venta como base y guarda el costo de inventario como snapshot.
 

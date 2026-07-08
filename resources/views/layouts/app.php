@@ -39,7 +39,7 @@ $notifIconos = [
     <meta name="csrf-token" content="<?= e(\App\Core\Csrf::token()) ?>">
     <title><?= e(($title ?? '') !== '' ? ($title . ' | ' . $systemName) : $systemName) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= e(asset('css/app.css') . '?v=20260708-help') ?>" rel="stylesheet">
+    <link href="<?= e(asset('css/app.css') . '?v=20260708-quote-multi-items') ?>" rel="stylesheet">
     <link href="<?= e(asset('css/themes/crystal.css')) ?>" rel="stylesheet">
     <link href="<?= e(asset('css/themes/dark.css') . '?v=20260614-selects') ?>" rel="stylesheet">
     <link href="<?= e(asset('css/themes/live.css')) ?>" rel="stylesheet">
@@ -167,7 +167,7 @@ $notifIconos = [
     </main>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="<?= e(asset('js/app.js') . '?v=20260708-quote-inventory') ?>"></script>
+<script src="<?= e(asset('js/app.js') . '?v=20260708-quote-multi-items') ?>"></script>
 <script src="<?= e(asset('js/theme-switcher.js') . '?v=20260707-theme-sync') ?>"></script>
 <?php foreach (($pageScripts ?? []) as $script): ?>
     <script src="<?= e($script) ?>"></script>
