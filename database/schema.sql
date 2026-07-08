@@ -325,9 +325,15 @@ CREATE TABLE refacciones_ordenes (
     refaccion_id INT UNSIGNED NOT NULL,
     cantidad INT NOT NULL DEFAULT 1,
     precio_unitario DECIMAL(12,2) NOT NULL DEFAULT 0,
+    estado ENUM('activa','cancelada') NOT NULL DEFAULT 'activa',
+    motivo_cancelacion TEXT NULL,
+    cancelado_por INT UNSIGNED NULL,
+    cancelado_at DATETIME NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_ro_orden FOREIGN KEY (orden_id) REFERENCES ordenes_servicio(id) ON DELETE CASCADE,
-    CONSTRAINT fk_ro_ref FOREIGN KEY (refaccion_id) REFERENCES refacciones(id)
+    CONSTRAINT fk_ro_ref FOREIGN KEY (refaccion_id) REFERENCES refacciones(id),
+    CONSTRAINT fk_ro_cancel_user FOREIGN KEY (cancelado_por) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_ro_estado (estado)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE inventario_movimientos (

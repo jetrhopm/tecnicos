@@ -8,6 +8,20 @@ responsable del proyecto.
 
 ## 2026-07-07
 
+### Inventario conectado al flujo de reparacion
+
+- La ficha de orden permite aplicar refacciones del inventario a una reparacion.
+- Al aplicar una refaccion se descuenta stock, se registra uso en
+  `refacciones_ordenes`, se crea movimiento `salida` ligado a la orden y queda
+  auditoria.
+- Se impide dejar stock negativo y se bloquea aplicar refacciones en ordenes
+  entregadas o canceladas.
+- Se agrego cancelacion de refacciones aplicadas con motivo, devolucion de stock
+  y movimiento `cancelacion`.
+- Se actualizo el esquema y se agrego
+  `database/upgrade_refacciones_ordenes_estado.php` para instalaciones
+  existentes.
+
 ### Bloqueo estricto de cotizaciones
 
 - Se impide crear una nueva cotizacion si la ultima version de la orden sigue
@@ -83,6 +97,7 @@ php database/upgrade_garantia_config.php     # dias configurables de garantia
 php database/upgrade_whatsapp_templates.php  # mensajes de WhatsApp por contexto
 php database/upgrade_notificaciones.php      # tabla de notificaciones in-app
 php database/upgrade_inventario_roles.php    # acceso al almacen para tecnicos y recepcion
+php database/upgrade_refacciones_ordenes_estado.php # cancelacion de refacciones aplicadas
 ```
 
 Nuevas variables de entorno (opcional) en `.env`:

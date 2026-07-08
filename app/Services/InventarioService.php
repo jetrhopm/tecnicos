@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Core\Auth;
 use App\Core\Database;
 use App\Repositories\InventarioRepository;
+use App\Repositories\OrdenRepository;
 use RuntimeException;
 
 final class InventarioService
@@ -35,6 +36,11 @@ final class InventarioService
     public function movimientos(int $refaccionId): array
     {
         return $this->refacciones->movimientos($refaccionId);
+    }
+
+    public function usosPorOrden(int $ordenId): array
+    {
+        return $this->refacciones->usosPorOrden($ordenId);
     }
 
     public function guardar(array $data, ?int $id = null): int
@@ -141,14 +147,162 @@ final class InventarioService
             ]);
             $this->auditoria->registrar('movimiento', 'inventario', $refaccionId, ['stock' => $stockAnterior], ['tipo' => $tipo, 'cantidad' => $cantidad, 'stock' => $stockNuevo]);
 
+            $notificarStockBajo = $stockNuevo <= (int) $refaccion['stock_minimo'] && (int) $refaccion['stock_minimo'] > 0;
+            $nombreRefaccion = (string) $refaccion['nombre'];
+
             $db->commit();
 
             // Aviso al almacen si el movimiento dejo la refaccion en o por debajo del minimo.
-            if ($stockNuevo <= (int) $refaccion['stock_minimo'] && (int) $refaccion['stock_minimo'] > 0) {
-                (new NotificacionService())->stockBajo($refaccionId, (string) $refaccion['nombre'], $stockNuevo);
+            if ($notificarStockBajo) {
+                try {
+                    (new NotificacionService())->stockBajo($refaccionId, $nombreRefaccion, $stockNuevo);
+                } catch (\Throwable) {
+                    // La salida de inventario ya quedo registrada; la notificacion no debe revertirla.
+                }
             }
         } catch (\Throwable $exception) {
-            $db->rollBack();
+            if ($db->inTransaction()) {
+                $db->rollBack();
+            }
+            throw $exception;
+        }
+    }
+
+    public function aplicarAOrden(int $ordenId, int $refaccionId, int $cantidad, ?float $precioUnitario = null, string $motivo = ''): int
+    {
+        if ($cantidad <= 0) {
+            throw new RuntimeException('La cantidad debe ser mayor a cero.');
+        }
+
+        $db = Database::connection();
+        $db->beginTransaction();
+        try {
+            $orden = (new OrdenRepository())->find($ordenId);
+            if (!$orden) {
+                throw new RuntimeException('Orden no encontrada.');
+            }
+            if (in_array((string) $orden['estado'], ['entregada', 'cancelada'], true)) {
+                throw new RuntimeException('No se pueden aplicar refacciones a una orden entregada o cancelada.');
+            }
+
+            $refaccion = $this->refacciones->findForUpdate($refaccionId);
+            if (!$refaccion || $refaccion['estatus'] !== 'activo') {
+                throw new RuntimeException('Refaccion no encontrada o inactiva.');
+            }
+
+            $stockAnterior = (int) $refaccion['stock_actual'];
+            $stockNuevo = $stockAnterior - $cantidad;
+            if ($stockNuevo < 0) {
+                throw new RuntimeException('No hay stock suficiente para aplicar esa refaccion.');
+            }
+
+            $precioUnitario = $precioUnitario !== null ? max(0, $precioUnitario) : (float) $refaccion['precio_venta'];
+            $motivo = trim($motivo) ?: 'Salida por reparacion de orden ' . (string) $orden['folio'];
+
+            $this->refacciones->setStock($refaccionId, $stockNuevo);
+            $usoId = $this->refacciones->registrarUsoOrden([
+                'orden_id' => $ordenId,
+                'refaccion_id' => $refaccionId,
+                'cantidad' => $cantidad,
+                'precio_unitario' => $precioUnitario,
+            ]);
+            $this->refacciones->registrarMovimiento([
+                'refaccion_id' => $refaccionId,
+                'orden_id' => $ordenId,
+                'usuario_id' => Auth::id() ?? 1,
+                'tipo' => 'salida',
+                'cantidad' => $cantidad,
+                'motivo' => mb_substr($motivo, 0, 255),
+                'costo_unitario' => (float) $refaccion['costo'],
+                'stock_anterior' => $stockAnterior,
+                'stock_nuevo' => $stockNuevo,
+            ]);
+
+            $this->auditoria->registrar('aplicar_refaccion', 'ordenes', $ordenId, null, [
+                'uso_id' => $usoId,
+                'refaccion_id' => $refaccionId,
+                'cantidad' => $cantidad,
+                'stock' => $stockNuevo,
+            ]);
+
+            $notificarStockBajo = $stockNuevo <= (int) $refaccion['stock_minimo'] && (int) $refaccion['stock_minimo'] > 0;
+            $nombreRefaccion = (string) $refaccion['nombre'];
+
+            $db->commit();
+
+            if ($notificarStockBajo) {
+                try {
+                    (new NotificacionService())->stockBajo($refaccionId, $nombreRefaccion, $stockNuevo);
+                } catch (\Throwable) {
+                    // La salida de inventario ya quedo registrada; la notificacion no debe revertirla.
+                }
+            }
+
+            return $usoId;
+        } catch (\Throwable $exception) {
+            if ($db->inTransaction()) {
+                $db->rollBack();
+            }
+            throw $exception;
+        }
+    }
+
+    public function cancelarUsoOrden(int $ordenId, int $usoId, string $motivo): void
+    {
+        $motivo = trim($motivo);
+        if ($motivo === '') {
+            throw new RuntimeException('Indica el motivo de cancelacion de la refaccion.');
+        }
+
+        $db = Database::connection();
+        $db->beginTransaction();
+        try {
+            $uso = $this->refacciones->usoOrdenForUpdate($usoId);
+            if (!$uso || (int) $uso['orden_id'] !== $ordenId) {
+                throw new RuntimeException('La refaccion aplicada no pertenece a esta orden.');
+            }
+            if ($uso['estado'] !== 'activa') {
+                throw new RuntimeException('Esta refaccion aplicada ya fue cancelada.');
+            }
+
+            $refaccion = $this->refacciones->findForUpdate((int) $uso['refaccion_id']);
+            if (!$refaccion) {
+                throw new RuntimeException('Refaccion no encontrada.');
+            }
+
+            $cantidad = (int) $uso['cantidad'];
+            $stockAnterior = (int) $refaccion['stock_actual'];
+            $stockNuevo = $stockAnterior + $cantidad;
+
+            $this->refacciones->setStock((int) $uso['refaccion_id'], $stockNuevo);
+            $this->refacciones->cancelarUsoOrden($usoId, $motivo, Auth::id() ?? 1);
+            $this->refacciones->registrarMovimiento([
+                'refaccion_id' => (int) $uso['refaccion_id'],
+                'orden_id' => $ordenId,
+                'usuario_id' => Auth::id() ?? 1,
+                'tipo' => 'cancelacion',
+                'cantidad' => $cantidad,
+                'motivo' => mb_substr('Cancelacion de refaccion en orden: ' . $motivo, 0, 255),
+                'costo_unitario' => (float) $uso['costo'],
+                'stock_anterior' => $stockAnterior,
+                'stock_nuevo' => $stockNuevo,
+            ]);
+
+            $this->auditoria->registrar('cancelar_refaccion', 'ordenes', $ordenId, [
+                'uso_id' => $usoId,
+                'estado' => 'activa',
+            ], [
+                'uso_id' => $usoId,
+                'estado' => 'cancelada',
+                'motivo' => $motivo,
+                'stock' => $stockNuevo,
+            ]);
+
+            $db->commit();
+        } catch (\Throwable $exception) {
+            if ($db->inTransaction()) {
+                $db->rollBack();
+            }
             throw $exception;
         }
     }

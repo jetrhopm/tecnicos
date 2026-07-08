@@ -226,7 +226,7 @@ ENT-DEMO2468
 7. Tecnico registra diagnostico.
 8. Se genera cotizacion.
 9. Cliente acepta o rechaza.
-10. Tecnico repara o marca resultado.
+10. Tecnico repara, aplica refacciones si hacen falta y marca resultado.
 11. Caja registra anticipo, pago parcial o liquidacion.
 12. Entrega libera el equipo usando la clave/codigo de barras.
 13. El sistema registra quien entrego.
@@ -239,6 +239,15 @@ Reglas de cotizacion:
   nueva version.
 - Las cotizaciones vencidas no se pueden autorizar y quedan marcadas como
   `vencida`.
+
+Reglas de refacciones:
+
+- Las refacciones se aplican desde la ficha de la orden.
+- Al aplicar una refaccion se descuenta stock y queda movimiento ligado a la
+  orden.
+- Si se aplico por error, se cancela con motivo y el stock se devuelve.
+- No se permite stock negativo ni aplicar refacciones a ordenes entregadas o
+  canceladas.
 
 ## Consulta publica del cliente
 
@@ -264,6 +273,7 @@ php database/upgrade_ticket_config.php     # config de logo y garantia del ticke
 php database/upgrade_garantia_texto.php    # texto legal actualizado de garantia
 php database/upgrade_branding_config.php   # nombre del sistema y logo del taller
 php database/upgrade_garantia_config.php   # dias configurables de garantia
+php database/upgrade_refacciones_ordenes_estado.php # cancelacion de refacciones aplicadas
 ```
 
 Opcional en `.env`:

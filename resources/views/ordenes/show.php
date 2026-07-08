@@ -5,6 +5,10 @@ $pdfPublico = absolute_url('/consulta/' . rawurlencode((string) $orden['folio'])
 $telefonoCliente = (string) (($orden['cliente_whatsapp'] ?? '') ?: ($orden['cliente_telefono'] ?? ''));
 $whatsappPdf = linkWhatsapp($telefonoCliente, 'Hola ' . (string) $orden['cliente_nombre'] . ', te compartimos el PDF de tu orden ' . (string) $orden['folio'] . ': ' . $pdfPublico);
 $puedeCancelarPagos = \App\Core\Auth::can('pagos', 'editar');
+$puedeGestionarInventario = \App\Core\Auth::can('inventario', 'editar');
+$totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function (float $total, array $uso): float {
+    return $uso['estado'] === 'activa' ? $total + ((float) $uso['precio_unitario'] * (int) $uso['cantidad']) : $total;
+}, 0.0);
 ?>
 <div class="row g-3">
     <div class="col-xl-8">
@@ -192,6 +196,79 @@ $puedeCancelarPagos = \App\Core\Auth::can('pagos', 'editar');
                     <button class="btn btn-outline-dark" data-icon="&#10003;">Asignar</button>
                 </div>
             </form>
+        </div>
+
+        <div class="glass-card mb-3">
+            <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+                <h2 class="h5 mb-0" data-icon="&#128230;">Refacciones usadas</h2>
+                <span class="badge text-bg-light"><?= e(formatearMoneda($totalRefaccionesUsadas)) ?></span>
+            </div>
+
+            <?php if ($puedeGestionarInventario && !in_array($orden['estado'], ['entregada', 'cancelada'], true)): ?>
+                <form class="row g-2 mb-3" method="post" action="<?= e(url('/ordenes/' . $orden['id'] . '/refacciones')) ?>">
+                    <?= csrf_field() ?>
+                    <div class="col-12">
+                        <label class="form-label" data-icon="&#128295;">Refaccion</label>
+                        <select class="form-select" name="refaccion_id" required>
+                            <option value="">Selecciona refaccion...</option>
+                            <?php foreach ($refaccionesDisponibles ?? [] as $refaccion): ?>
+                                <option value="<?= e($refaccion['id']) ?>">
+                                    <?= e($refaccion['nombre']) ?> · <?= e($refaccion['sku']) ?> · Stock <?= e($refaccion['stock_actual']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" data-icon="&#35;">Cant.</label>
+                        <input class="form-control" type="number" min="1" step="1" name="cantidad" value="1" required>
+                    </div>
+                    <div class="col-8">
+                        <label class="form-label" data-icon="&#36;">Precio venta</label>
+                        <input class="form-control" type="number" min="0" step="0.01" name="precio_unitario" placeholder="Usa precio de inventario" data-money>
+                    </div>
+                    <div class="col-12">
+                        <input class="form-control" name="motivo" placeholder="Motivo / trabajo donde se instalo">
+                    </div>
+                    <div class="col-12 d-grid">
+                        <button class="btn btn-primary" data-icon="&#8722;">Aplicar y descontar stock</button>
+                    </div>
+                </form>
+            <?php endif; ?>
+
+            <?php if (!empty($refaccionesUsadas)): ?>
+                <div class="table-wrap">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead><tr><th>Refaccion</th><th>Cant.</th><th>Importe</th><th>Estado</th></tr></thead>
+                        <tbody>
+                        <?php foreach ($refaccionesUsadas as $uso): ?>
+                            <tr>
+                                <td>
+                                    <strong><?= e($uso['nombre']) ?></strong><br>
+                                    <small class="text-muted"><?= e($uso['sku']) ?></small>
+                                    <?php if ($uso['estado'] === 'cancelada' && $uso['motivo_cancelacion']): ?>
+                                        <div class="small text-danger"><?= e($uso['motivo_cancelacion']) ?></div>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?= e($uso['cantidad']) ?></td>
+                                <td><?= e(formatearMoneda((float) $uso['precio_unitario'] * (int) $uso['cantidad'])) ?></td>
+                                <td>
+                                    <span class="badge <?= $uso['estado'] === 'activa' ? 'text-bg-success' : 'text-bg-secondary' ?>"><?= e($uso['estado']) ?></span>
+                                    <?php if ($puedeGestionarInventario && $uso['estado'] === 'activa'): ?>
+                                        <form class="mt-2" method="post" action="<?= e(url('/ordenes/' . $orden['id'] . '/refacciones/' . $uso['id'] . '/cancelar')) ?>" data-confirm="Cancelar esta refaccion y devolver el stock">
+                                            <?= csrf_field() ?>
+                                            <input class="form-control form-control-sm mb-1" name="motivo_cancelacion" placeholder="Motivo" required>
+                                            <button class="btn btn-outline-danger btn-sm w-100" data-icon="&#8634;">Cancelar</button>
+                                        </form>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php else: ?>
+                <p class="text-muted small mb-0">Aun no se han aplicado refacciones a esta orden.</p>
+            <?php endif; ?>
         </div>
 
         <div class="glass-card mb-3">

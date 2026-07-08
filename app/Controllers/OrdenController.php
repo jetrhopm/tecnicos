@@ -19,6 +19,7 @@ use App\Services\EntregaService;
 use App\Services\EvidenciaService;
 use App\Services\DiagnosticoService;
 use App\Services\EquipoService;
+use App\Services\InventarioService;
 use App\Services\MensajeService;
 use App\Services\OrdenService;
 use App\Services\OrdenPdfService;
@@ -135,7 +136,44 @@ final class OrdenController
             'evidencias' => (new EvidenciaService())->listar((int) $id),
             'bitacora' => (new AuditoriaService())->historial('ordenes', (int) $id),
             'entrega' => (new EntregaService())->ultimaPorOrden((int) $id),
+            'refaccionesDisponibles' => array_values(array_filter(
+                (new InventarioService())->listar(),
+                static fn (array $refaccion): bool => $refaccion['estatus'] === 'activo'
+            )),
+            'refaccionesUsadas' => (new InventarioService())->usosPorOrden((int) $id),
         ]);
+    }
+
+    public function aplicarRefaccion(Request $request, string $id): void
+    {
+        Auth::requirePermission('inventario', 'editar');
+        try {
+            (new InventarioService())->aplicarAOrden(
+                (int) $id,
+                (int) $request->input('refaccion_id', 0),
+                (int) $request->input('cantidad', 0),
+                $request->input('precio_unitario') !== null && $request->input('precio_unitario') !== ''
+                    ? (float) $request->input('precio_unitario')
+                    : null,
+                (string) $request->input('motivo', '')
+            );
+            Session::flash('success', 'Refaccion aplicada y stock descontado.');
+        } catch (\Throwable $exception) {
+            Session::flash('error', $exception->getMessage());
+        }
+        Response::redirect('/ordenes/' . $id);
+    }
+
+    public function cancelarRefaccion(Request $request, string $id, string $uso): void
+    {
+        Auth::requirePermission('inventario', 'editar');
+        try {
+            (new InventarioService())->cancelarUsoOrden((int) $id, (int) $uso, (string) $request->input('motivo_cancelacion', ''));
+            Session::flash('success', 'Refaccion cancelada y stock devuelto.');
+        } catch (\Throwable $exception) {
+            Session::flash('error', $exception->getMessage());
+        }
+        Response::redirect('/ordenes/' . $id);
     }
 
     public function subirEvidencia(Request $request, string $id): void

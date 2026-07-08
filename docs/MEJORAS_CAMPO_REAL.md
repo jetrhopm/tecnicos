@@ -90,7 +90,7 @@ Objetivo:
 
 ### 5. Refacciones ligadas a reparacion
 
-Estado: pendiente.
+Estado: implementado.
 
 Objetivo:
 
@@ -98,6 +98,20 @@ Objetivo:
 - Descontar stock automaticamente.
 - Registrar utilidad estimada.
 - Revertir movimientos si se cancela una aplicacion.
+
+Implementado:
+
+- La ficha de orden permite aplicar refacciones directamente desde inventario.
+- Al aplicar una refaccion se descuenta stock, se registra `refacciones_ordenes`
+  y se crea movimiento de inventario tipo `salida` ligado a la orden.
+- Se bloquea stock negativo y no se permite aplicar refacciones en ordenes
+  entregadas o canceladas.
+- Se puede cancelar una refaccion aplicada con motivo; el sistema devuelve el
+  stock y registra movimiento tipo `cancelacion`.
+- La orden muestra refacciones activas/canceladas, importe estimado y motivo de
+  cancelacion.
+- Se agrego `database/upgrade_refacciones_ordenes_estado.php` para instalaciones
+  existentes.
 
 ### 6. Agenda minima operativa
 

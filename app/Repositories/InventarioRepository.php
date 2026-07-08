@@ -46,6 +46,18 @@ final class InventarioRepository extends BaseRepository
         );
     }
 
+    public function findForUpdate(int $id): ?array
+    {
+        return $this->fetch(
+            "SELECT r.*, p.nombre proveedor_nombre
+             FROM refacciones r
+             LEFT JOIN proveedores p ON p.id = r.proveedor_id
+             WHERE r.id = :id AND r.deleted_at IS NULL
+             FOR UPDATE",
+            ['id' => $id]
+        );
+    }
+
     public function skuExists(string $sku, ?int $exceptId = null): bool
     {
         // Placeholders independientes: con prepares nativos no se puede reutilizar
@@ -84,6 +96,50 @@ final class InventarioRepository extends BaseRepository
     public function setStock(int $id, int $stock): void
     {
         $this->execute('UPDATE refacciones SET stock_actual = :stock WHERE id = :id', ['stock' => $stock, 'id' => $id]);
+    }
+
+    public function registrarUsoOrden(array $data): int
+    {
+        return $this->insert(
+            "INSERT INTO refacciones_ordenes (orden_id, refaccion_id, cantidad, precio_unitario)
+             VALUES (:orden_id, :refaccion_id, :cantidad, :precio_unitario)",
+            $data
+        );
+    }
+
+    public function usosPorOrden(int $ordenId): array
+    {
+        return $this->fetchAll(
+            "SELECT ro.*, r.nombre, r.sku, r.costo, r.precio_venta, r.stock_actual, u.name cancelado_por_nombre
+             FROM refacciones_ordenes ro
+             JOIN refacciones r ON r.id = ro.refaccion_id
+             LEFT JOIN users u ON u.id = ro.cancelado_por
+             WHERE ro.orden_id = :orden_id
+             ORDER BY ro.id DESC",
+            ['orden_id' => $ordenId]
+        );
+    }
+
+    public function usoOrdenForUpdate(int $id): ?array
+    {
+        return $this->fetch(
+            "SELECT ro.*, r.nombre, r.sku, r.costo, r.precio_venta
+             FROM refacciones_ordenes ro
+             JOIN refacciones r ON r.id = ro.refaccion_id
+             WHERE ro.id = :id
+             FOR UPDATE",
+            ['id' => $id]
+        );
+    }
+
+    public function cancelarUsoOrden(int $id, string $motivo, int $usuarioId): void
+    {
+        $this->execute(
+            "UPDATE refacciones_ordenes
+             SET estado = 'cancelada', motivo_cancelacion = :motivo, cancelado_por = :usuario_id, cancelado_at = NOW()
+             WHERE id = :id AND estado = 'activa'",
+            ['id' => $id, 'motivo' => $motivo, 'usuario_id' => $usuarioId]
+        );
     }
 
     public function registrarMovimiento(array $data): int
