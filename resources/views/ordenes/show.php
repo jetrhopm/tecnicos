@@ -94,6 +94,7 @@ $puedeCancelarPagos = \App\Core\Auth::can('pagos', 'editar');
 
         <div class="glass-card mb-3">
             <h2 class="h5" data-icon="&#128179;">Cotizacion</h2>
+            <?php $puedeCrearCotizacion = !$cotizacion || (!in_array($cotizacion['estado'], ['pendiente'], true) && !in_array($orden['estado'], ['entregada', 'cancelada'], true)); ?>
             <?php if ($cotizacion): ?>
                 <div class="table-wrap mb-3">
                     <table class="table">
@@ -114,8 +115,18 @@ $puedeCancelarPagos = \App\Core\Auth::can('pagos', 'editar');
                         <form method="post" action="<?= e(url('/cotizaciones/' . $cotizacion['id'] . '/autorizar')) ?>"><?= csrf_field() ?><input type="hidden" name="estado" value="aceptada"><button class="btn btn-success btn-sm" data-icon="&#10003;">Autorizar manual</button></form>
                         <form method="post" action="<?= e(url('/cotizaciones/' . $cotizacion['id'] . '/autorizar')) ?>"><?= csrf_field() ?><input type="hidden" name="estado" value="rechazada"><button class="btn btn-outline-danger btn-sm" data-icon="&#10005;">Rechazar manual</button></form>
                     </div>
+                <?php else: ?>
+                    <div class="alert alert-info mt-3 mb-0">
+                        Esta cotizacion ya esta cerrada. Si necesitas cambiar importes o conceptos, genera una nueva version.
+                    </div>
                 <?php endif; ?>
-            <?php else: ?>
+            <?php endif; ?>
+
+            <?php if ($puedeCrearCotizacion): ?>
+                <?php if ($cotizacion): ?>
+                    <hr>
+                    <h3 class="h6" data-icon="&#128221;">Nueva version de cotizacion</h3>
+                <?php endif; ?>
                 <form method="post" action="<?= e(url('/cotizaciones')) ?>">
                     <?= csrf_field() ?>
                     <input type="hidden" name="orden_id" value="<?= e($orden['id']) ?>">

@@ -232,6 +232,14 @@ ENT-DEMO2468
 13. El sistema registra quien entrego.
 14. Se genera comprobante y garantia cuando aplica.
 
+Reglas de cotizacion:
+
+- Solo puede existir una cotizacion pendiente por orden.
+- Una cotizacion aceptada, rechazada o vencida no se modifica; se genera una
+  nueva version.
+- Las cotizaciones vencidas no se pueden autorizar y quedan marcadas como
+  `vencida`.
+
 ## Consulta publica del cliente
 
 Rutas disponibles:

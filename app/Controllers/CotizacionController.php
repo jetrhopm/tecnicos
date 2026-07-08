@@ -34,8 +34,12 @@ final class CotizacionController
     public function autorizar(Request $request, string $id): void
     {
         Auth::requirePermission('cotizaciones', 'autorizar');
-        (new CotizacionService())->autorizar((int) $id, (string) $request->input('estado'), (string) $request->input('motivo'));
-        Session::flash('success', 'Respuesta de cotizacion registrada.');
+        try {
+            (new CotizacionService())->autorizar((int) $id, (string) $request->input('estado'), (string) $request->input('motivo'));
+            Session::flash('success', 'Respuesta de cotizacion registrada.');
+        } catch (\Throwable $exception) {
+            Session::flash('error', $exception->getMessage());
+        }
         Response::back();
     }
 }

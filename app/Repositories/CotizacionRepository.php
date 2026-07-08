@@ -11,6 +11,16 @@ final class CotizacionRepository extends BaseRepository
         return $this->fetch('SELECT * FROM cotizaciones WHERE orden_id = :orden_id ORDER BY version DESC, id DESC LIMIT 1', ['orden_id' => $ordenId]);
     }
 
+    public function latestForOrderForUpdate(int $ordenId): ?array
+    {
+        return $this->fetch('SELECT * FROM cotizaciones WHERE orden_id = :orden_id ORDER BY version DESC, id DESC LIMIT 1 FOR UPDATE', ['orden_id' => $ordenId]);
+    }
+
+    public function findForUpdate(int $id): ?array
+    {
+        return $this->fetch('SELECT * FROM cotizaciones WHERE id = :id FOR UPDATE', ['id' => $id]);
+    }
+
     public function items(int $cotizacionId): array
     {
         return $this->fetchAll('SELECT * FROM cotizacion_items WHERE cotizacion_id = :id ORDER BY id', ['id' => $cotizacionId]);
@@ -40,7 +50,14 @@ final class CotizacionRepository extends BaseRepository
         );
     }
 
-    public function changeStatus(int $id, string $estado, ?string $motivo = null): void
+    public function expirePending(int $id): bool
+    {
+        $stmt = $this->db->prepare("UPDATE cotizaciones SET estado = 'vencida' WHERE id = :id AND estado = 'pendiente'");
+        $stmt->execute(['id' => $id]);
+        return $stmt->rowCount() === 1;
+    }
+
+    public function changePendingStatus(int $id, string $estado, ?string $motivo = null): bool
     {
         $fields = ['estado = :estado'];
         $params = ['id' => $id, 'estado' => $estado];
@@ -52,6 +69,8 @@ final class CotizacionRepository extends BaseRepository
             $fields[] = 'motivo_rechazo = :motivo';
             $params['motivo'] = $motivo;
         }
-        $this->execute('UPDATE cotizaciones SET ' . implode(', ', $fields) . ' WHERE id = :id', $params);
+        $stmt = $this->db->prepare('UPDATE cotizaciones SET ' . implode(', ', $fields) . " WHERE id = :id AND estado = 'pendiente'");
+        $stmt->execute($params);
+        return $stmt->rowCount() === 1;
     }
 }

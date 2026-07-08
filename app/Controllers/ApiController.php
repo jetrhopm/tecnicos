@@ -13,6 +13,7 @@ use App\Services\InventarioService;
 use App\Services\OrdenService;
 use App\Services\PagoService;
 use App\Services\ReporteService;
+use App\Validators\CotizacionValidator;
 
 final class ApiController
 {
@@ -58,8 +59,17 @@ final class ApiController
     public function crearCotizacion(Request $request): void
     {
         Auth::requirePermission('cotizaciones', 'crear');
-        $id = (new CotizacionService())->crear($request->all());
-        JsonResponse::success('Cotizacion creada correctamente', ['id' => $id]);
+        $errors = CotizacionValidator::validate($request->all());
+        if ($errors) {
+            JsonResponse::error('No se pudo crear la cotizacion', $errors);
+        }
+
+        try {
+            $id = (new CotizacionService())->crear($request->all());
+            JsonResponse::success('Cotizacion creada correctamente', ['id' => $id]);
+        } catch (\Throwable $exception) {
+            JsonResponse::error($exception->getMessage());
+        }
     }
 
     public function crearPago(Request $request): void

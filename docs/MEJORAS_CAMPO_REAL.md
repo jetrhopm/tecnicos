@@ -50,7 +50,33 @@ Implementado:
 - El PDF de orden mantiene dos copias en la primera hoja y agrega una segunda
   hoja con las condiciones completas para que no se recorten.
 
-### 3. Administracion completa de usuarios
+### 3. Cotizaciones con bloqueo estricto
+
+Estado: implementado.
+
+Objetivo:
+
+- Evitar que una cotizacion aceptada, rechazada o vencida pueda cambiarse.
+- Evitar cotizaciones duplicadas mientras exista una version pendiente.
+- Bloquear autorizaciones de cotizaciones vencidas.
+- Crear nuevas versiones en lugar de modificar o reutilizar una cotizacion
+  cerrada.
+- Mantener auditoria de autorizacion, rechazo y vencimiento.
+
+Implementado:
+
+- `CotizacionService` valida la orden, bloquea ordenes entregadas/canceladas y
+  no permite crear otra version si la ultima cotizacion sigue pendiente.
+- La autorizacion corre en transaccion y usa actualizacion condicional para que
+  dobles clics o peticiones repetidas no cambien dos veces el estado.
+- Si una cotizacion pendiente ya vencio, se marca como `vencida` y se exige
+  generar una nueva version.
+- Las cotizaciones cerradas muestran un aviso en la ficha de orden y habilitan
+  el formulario de nueva version.
+- API y formularios validan importes negativos, cantidad cero y errores basicos
+  antes de crear la cotizacion.
+
+### 4. Administracion completa de usuarios
 
 Estado: pendiente.
 
@@ -62,7 +88,7 @@ Objetivo:
 - Reasignar roles.
 - Auditar cambios de permisos.
 
-### 4. Refacciones ligadas a reparacion
+### 5. Refacciones ligadas a reparacion
 
 Estado: pendiente.
 
@@ -73,7 +99,7 @@ Objetivo:
 - Registrar utilidad estimada.
 - Revertir movimientos si se cancela una aplicacion.
 
-### 5. Agenda minima operativa
+### 6. Agenda minima operativa
 
 Estado: pendiente.
 
@@ -86,7 +112,7 @@ Objetivo:
 
 ## Prioridad media
 
-### 6. Reportes exportables
+### 7. Reportes exportables
 
 Estado: pendiente.
 
@@ -98,7 +124,7 @@ Objetivo:
 - Refacciones mas usadas.
 - Utilidad estimada.
 
-### 7. Pruebas reales de impresion
+### 8. Pruebas reales de impresion
 
 Estado: pendiente.
 
@@ -109,7 +135,7 @@ Objetivo:
 - Probar etiqueta de equipo.
 - Probar lectura de codigo con lector USB y camara movil.
 
-### 8. Checklist de produccion/seguridad
+### 9. Checklist de produccion/seguridad
 
 Estado: pendiente.
 

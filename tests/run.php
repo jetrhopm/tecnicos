@@ -14,6 +14,14 @@ $tests = [
     'crearMensajeWhatsapp' => crearMensajeWhatsapp('Hola {cliente}', ['cliente' => 'Ana']) === 'Hola Ana',
     'validarEmail' => filter_var('admin@local.test', FILTER_VALIDATE_EMAIL) !== false,
     'calcularDiasGarantia' => calcularDiasGarantia('2026-06-01', '2026-07-01') === 30,
+    'cotizacionCantidadCero' => array_filter(
+        \App\Validators\CotizacionValidator::validate(['orden_id' => 1, 'descripcion' => 'Revision', 'cantidad' => 0, 'precio_unitario' => 100]),
+        static fn (array $error): bool => $error['field'] === 'cantidad'
+    ) !== [],
+    'cotizacionPrecioNegativo' => array_filter(
+        \App\Validators\CotizacionValidator::validate(['orden_id' => 1, 'descripcion' => 'Revision', 'cantidad' => 1, 'precio_unitario' => -1]),
+        static fn (array $error): bool => $error['field'] === 'precio_unitario'
+    ) !== [],
 ];
 
 $failed = array_filter($tests, static fn (bool $ok): bool => !$ok);

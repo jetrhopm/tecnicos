@@ -8,6 +8,21 @@ responsable del proyecto.
 
 ## 2026-07-07
 
+### Bloqueo estricto de cotizaciones
+
+- Se impide crear una nueva cotizacion si la ultima version de la orden sigue
+  pendiente.
+- Una cotizacion solo puede aceptarse o rechazarse cuando esta en estado
+  `pendiente`; las aceptadas, rechazadas o vencidas quedan cerradas.
+- Las cotizaciones vencidas se marcan como `vencida` y obligan a generar una
+  nueva version.
+- La autorizacion/rechazo de cotizacion ahora corre en transaccion y usa
+  actualizacion condicional para evitar dobles clics o peticiones repetidas.
+- Formularios y API validan cantidad, precio, descuento e IVA antes de crear
+  cotizaciones.
+- La ficha de orden permite crear nueva version solo cuando la cotizacion previa
+  ya esta cerrada.
+
 ### Garantia configurable para campo real
 
 - Se agrego `garantia.dias_default` para definir desde Configuracion cuantos
