@@ -213,6 +213,86 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshRemoveButtons();
   });
 
+  const formatMoney = (value) => {
+    try {
+      return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value || 0);
+    } catch (error) {
+      return '$' + Number(value || 0).toFixed(2);
+    }
+  };
+
+  const bindPosPartSelect = (select) => {
+    if (select.dataset.posBound === '1') {
+      return;
+    }
+    select.dataset.posBound = '1';
+    select.addEventListener('change', () => {
+      const row = select.closest('[data-pos-row]');
+      const option = select.selectedOptions[0];
+      const price = row ? row.querySelector('[data-pos-price]') : null;
+      if (option && price) {
+        price.value = option.dataset.price || '0';
+      }
+      select.closest('[data-pos-form]')?.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  };
+
+  document.querySelectorAll('[data-pos-form]').forEach((form) => {
+    const addButton = form.querySelector('[data-pos-add-item]') || document.querySelector('[data-pos-add-item]');
+    const itemsContainer = form.querySelector('[data-pos-items]');
+    const template = form.querySelector('[data-pos-item-template]');
+    const totalInput = form.querySelector('[data-pos-total]');
+    const discountInput = form.querySelector('[data-pos-discount]');
+    let nextIndex = 1;
+
+    const updateTotal = () => {
+      let subtotal = 0;
+      form.querySelectorAll('[data-pos-row]').forEach((row) => {
+        const qty = Number(row.querySelector('[data-pos-qty]')?.value || 0);
+        const price = Number(row.querySelector('[data-pos-price]')?.value || 0);
+        subtotal += Math.max(0, qty) * Math.max(0, price);
+      });
+      const discount = Math.max(0, Number(discountInput?.value || 0));
+      if (totalInput) {
+        totalInput.value = formatMoney(Math.max(0, subtotal - discount));
+      }
+    };
+
+    form.querySelectorAll('[data-pos-part-select]').forEach(bindPosPartSelect);
+    form.addEventListener('input', updateTotal);
+
+    if (addButton && itemsContainer && template) {
+      addButton.addEventListener('click', () => {
+        const html = template.innerHTML.replaceAll('__INDEX__', String(nextIndex));
+        nextIndex += 1;
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = html.trim();
+        const row = wrapper.firstElementChild;
+        if (!row) {
+          return;
+        }
+        itemsContainer.appendChild(row);
+        row.querySelectorAll('[data-pos-part-select]').forEach(bindPosPartSelect);
+        updateTotal();
+      });
+    }
+
+    form.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-pos-remove-item]');
+      if (!button) {
+        return;
+      }
+      const rows = form.querySelectorAll('[data-pos-row]');
+      const row = button.closest('[data-pos-row]');
+      if (row && rows.length > 1) {
+        row.remove();
+      }
+      updateTotal();
+    });
+
+    updateTotal();
+  });
+
   if (window.bootstrap && window.bootstrap.Popover) {
     let activeHelpPopover = null;
 

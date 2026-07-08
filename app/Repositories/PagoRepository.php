@@ -54,27 +54,47 @@ final class PagoRepository extends BaseRepository
 
     public function totalHoy(): float
     {
-        $row = $this->fetch("SELECT COALESCE(SUM(monto), 0) total FROM pagos WHERE estado = 'activo' AND DATE(created_at) = CURDATE()");
+        $row = $this->fetch(
+            "SELECT
+                (SELECT COALESCE(SUM(monto), 0) FROM pagos WHERE estado = 'activo' AND DATE(created_at) = CURDATE())
+                +
+                (SELECT COALESCE(SUM(total), 0) FROM ventas_refacciones WHERE estado = 'activa' AND DATE(created_at) = CURDATE())
+                total"
+        );
         return (float) ($row['total'] ?? 0);
     }
 
     public function porPeriodo(?string $inicio, ?string $fin): array
     {
         $params = [];
-        $sql = "SELECT p.*, o.folio, u.name usuario_nombre
-                FROM pagos p
-                JOIN ordenes_servicio o ON o.id = p.orden_id
-                JOIN users u ON u.id = p.usuario_id
-                WHERE p.estado = 'activo'";
+        $wherePagos = '';
+        $whereVentas = '';
         if ($inicio) {
-            $sql .= " AND DATE(p.created_at) >= :inicio";
+            $wherePagos .= " AND DATE(p.created_at) >= :inicio";
+            $whereVentas .= " AND DATE(v.created_at) >= :inicio";
             $params['inicio'] = $inicio;
         }
         if ($fin) {
-            $sql .= " AND DATE(p.created_at) <= :fin";
+            $wherePagos .= " AND DATE(p.created_at) <= :fin";
+            $whereVentas .= " AND DATE(v.created_at) <= :fin";
             $params['fin'] = $fin;
         }
-        $sql .= " ORDER BY p.created_at DESC";
+        $sql = "SELECT *
+                FROM (
+                    SELECT p.id, p.orden_id, p.monto, p.metodo, p.referencia, p.usuario_id, p.notas,
+                           p.estado, p.created_at, o.folio, u.name usuario_nombre, 'orden' origen
+                    FROM pagos p
+                    JOIN ordenes_servicio o ON o.id = p.orden_id
+                    JOIN users u ON u.id = p.usuario_id
+                    WHERE p.estado = 'activo' {$wherePagos}
+                    UNION ALL
+                    SELECT v.id, NULL orden_id, v.total monto, v.metodo_pago metodo, v.referencia, v.usuario_id, v.notas,
+                           v.estado, v.created_at, v.folio, u.name usuario_nombre, 'punto_venta' origen
+                    FROM ventas_refacciones v
+                    JOIN users u ON u.id = v.usuario_id
+                    WHERE v.estado = 'activa' {$whereVentas}
+                ) caja
+                ORDER BY created_at DESC";
         return $this->fetchAll($sql, $params);
     }
 }

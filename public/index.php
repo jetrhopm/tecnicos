@@ -20,6 +20,7 @@ use App\Controllers\NotificacionController;
 use App\Controllers\OrdenController;
 use App\Controllers\ProveedorController;
 use App\Controllers\PagoController;
+use App\Controllers\PuntoVentaController;
 use App\Controllers\PublicController;
 use App\Controllers\ReporteController;
 use App\Controllers\UsuarioController;
@@ -73,6 +74,10 @@ $router->post('/cotizaciones', [CotizacionController::class, 'store']);
 $router->post('/cotizaciones/{id}/autorizar', [CotizacionController::class, 'autorizar']);
 $router->post('/pagos', [PagoController::class, 'store']);
 $router->post('/pagos/{id}/cancelar', [PagoController::class, 'cancelar']);
+
+$router->get('/punto-venta', [PuntoVentaController::class, 'index']);
+$router->post('/punto-venta', [PuntoVentaController::class, 'store']);
+$router->get('/punto-venta/{id}/ticket', [PuntoVentaController::class, 'ticket']);
 
 $router->get('/entregas', [EntregaController::class, 'index']);
 $router->post('/entregas/buscar', [EntregaController::class, 'buscar']);

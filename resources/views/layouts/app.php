@@ -39,7 +39,7 @@ $notifIconos = [
     <meta name="csrf-token" content="<?= e(\App\Core\Csrf::token()) ?>">
     <title><?= e(($title ?? '') !== '' ? ($title . ' | ' . $systemName) : $systemName) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= e(asset('css/app.css') . '?v=20260708-quote-multi-items') ?>" rel="stylesheet">
+    <link href="<?= e(asset('css/app.css') . '?v=20260708-pos-refacciones') ?>" rel="stylesheet">
     <link href="<?= e(asset('css/themes/crystal.css')) ?>" rel="stylesheet">
     <link href="<?= e(asset('css/themes/dark.css') . '?v=20260614-selects') ?>" rel="stylesheet">
     <link href="<?= e(asset('css/themes/live.css')) ?>" rel="stylesheet">
@@ -76,6 +76,7 @@ $notifIconos = [
             <a class="nav-link <?= e(is_active('/equipos')) ?>" href="<?= e(url('/equipos')) ?>">Equipos</a>
             <a class="nav-link <?= e(is_active('/ordenes')) ?>" href="<?= e(url('/ordenes')) ?>">Ordenes</a>
             <a class="nav-link <?= e(is_active('/entregas')) ?>" href="<?= e(url('/entregas')) ?>">Entregas</a>
+            <a class="nav-link <?= e(is_active('/punto-venta')) ?>" href="<?= e(url('/punto-venta')) ?>">Punto de venta</a>
             <a class="nav-link <?= e(is_active('/agenda')) ?>" href="<?= e(url('/agenda')) ?>">Agenda</a>
             <a class="nav-link <?= e(is_active('/inventario')) ?>" href="<?= e(url('/inventario')) ?>">Inventario</a>
             <a class="nav-link <?= e(is_active('/proveedores')) ?>" href="<?= e(url('/proveedores')) ?>">Proveedores</a>
@@ -167,7 +168,7 @@ $notifIconos = [
     </main>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="<?= e(asset('js/app.js') . '?v=20260708-quote-multi-items') ?>"></script>
+<script src="<?= e(asset('js/app.js') . '?v=20260708-pos-refacciones') ?>"></script>
 <script src="<?= e(asset('js/theme-switcher.js') . '?v=20260707-theme-sync') ?>"></script>
 <?php foreach (($pageScripts ?? []) as $script): ?>
     <script src="<?= e($script) ?>"></script>

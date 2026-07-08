@@ -22,16 +22,25 @@ final class ReporteRepository extends BaseRepository
 
     public function corteCajaResumen(?string $inicio, ?string $fin): array
     {
-        [$where, $params] = $this->rangoFechas('p.created_at', $inicio, $fin);
+        [$wherePagos, $paramsPagos] = $this->rangoFechas('p.created_at', $inicio, $fin, 'p_');
+        [$whereVentas, $paramsVentas] = $this->rangoFechas('v.created_at', $inicio, $fin, 'v_');
 
         return $this->fetchAll(
-            "SELECT DATE(p.created_at) fecha, u.name usuario, p.metodo, COUNT(*) operaciones, SUM(p.monto) total
-             FROM pagos p
-             JOIN users u ON u.id = p.usuario_id
-             WHERE p.estado = 'activo' {$where}
-             GROUP BY DATE(p.created_at), u.id, u.name, p.metodo
-             ORDER BY fecha DESC, usuario, p.metodo",
-            $params
+            "SELECT fecha, usuario, metodo, COUNT(*) operaciones, SUM(total) total
+             FROM (
+                SELECT DATE(p.created_at) fecha, u.name usuario, p.metodo, p.monto total
+                FROM pagos p
+                JOIN users u ON u.id = p.usuario_id
+                WHERE p.estado = 'activo' {$wherePagos}
+                UNION ALL
+                SELECT DATE(v.created_at) fecha, u.name usuario, v.metodo_pago metodo, v.total
+                FROM ventas_refacciones v
+                JOIN users u ON u.id = v.usuario_id
+                WHERE v.estado = 'activa' {$whereVentas}
+             ) caja
+             GROUP BY fecha, usuario, metodo
+             ORDER BY fecha DESC, usuario, metodo",
+            array_merge($paramsPagos, $paramsVentas)
         );
     }
 
@@ -55,19 +64,37 @@ final class ReporteRepository extends BaseRepository
 
     public function refaccionesMasUsadas(?string $inicio, ?string $fin): array
     {
-        [$where, $params] = $this->rangoFechas('ro.created_at', $inicio, $fin);
+        [$whereOrdenes, $paramsOrdenes] = $this->rangoFechas('ro.created_at', $inicio, $fin, 'ro_');
+        [$whereVentas, $paramsVentas] = $this->rangoFechas('vi.created_at', $inicio, $fin, 'vi_');
 
         return $this->fetchAll(
-            "SELECT r.sku, r.nombre, r.categoria, SUM(ro.cantidad) cantidad_usada,
-                    SUM(ro.cantidad * ro.precio_unitario) venta_total,
-                    SUM(ro.cantidad * r.costo) costo_total,
-                    SUM(ro.cantidad * (ro.precio_unitario - r.costo)) utilidad_estimada
-             FROM refacciones_ordenes ro
-             JOIN refacciones r ON r.id = ro.refaccion_id
-             WHERE ro.estado = 'activa' {$where}
-             GROUP BY r.id, r.sku, r.nombre, r.categoria
+            "SELECT sku, nombre, categoria, SUM(cantidad_usada) cantidad_usada,
+                    SUM(venta_total) venta_total,
+                    SUM(costo_total) costo_total,
+                    SUM(utilidad_estimada) utilidad_estimada
+             FROM (
+                SELECT r.sku, r.nombre, r.categoria, SUM(ro.cantidad) cantidad_usada,
+                        SUM(ro.cantidad * ro.precio_unitario) venta_total,
+                        SUM(ro.cantidad * r.costo) costo_total,
+                        SUM(ro.cantidad * (ro.precio_unitario - r.costo)) utilidad_estimada
+                 FROM refacciones_ordenes ro
+                 JOIN refacciones r ON r.id = ro.refaccion_id
+                 WHERE ro.estado = 'activa' {$whereOrdenes}
+                 GROUP BY r.id, r.sku, r.nombre, r.categoria
+                 UNION ALL
+                 SELECT vi.sku, vi.descripcion nombre, r.categoria, SUM(vi.cantidad) cantidad_usada,
+                        SUM(vi.subtotal) venta_total,
+                        SUM(vi.cantidad * vi.costo_unitario) costo_total,
+                        SUM(vi.subtotal - (vi.cantidad * vi.costo_unitario)) utilidad_estimada
+                 FROM venta_refaccion_items vi
+                 JOIN ventas_refacciones v ON v.id = vi.venta_id
+                 JOIN refacciones r ON r.id = vi.refaccion_id
+                 WHERE v.estado = 'activa' {$whereVentas}
+                 GROUP BY vi.refaccion_id, vi.sku, vi.descripcion, r.categoria
+             ) refacciones
+             GROUP BY sku, nombre, categoria
              ORDER BY cantidad_usada DESC, venta_total DESC",
-            $params
+            array_merge($paramsOrdenes, $paramsVentas)
         );
     }
 
@@ -96,18 +123,18 @@ final class ReporteRepository extends BaseRepository
         );
     }
 
-    private function rangoFechas(string $campo, ?string $inicio, ?string $fin): array
+    private function rangoFechas(string $campo, ?string $inicio, ?string $fin, string $prefix = ''): array
     {
         $where = '';
         $params = [];
 
         if ($inicio && preg_match('/^\d{4}-\d{2}-\d{2}$/', $inicio)) {
-            $where .= " AND DATE({$campo}) >= :inicio";
-            $params['inicio'] = $inicio;
+            $where .= " AND DATE({$campo}) >= :{$prefix}inicio";
+            $params[$prefix . 'inicio'] = $inicio;
         }
         if ($fin && preg_match('/^\d{4}-\d{2}-\d{2}$/', $fin)) {
-            $where .= " AND DATE({$campo}) <= :fin";
-            $params['fin'] = $fin;
+            $where .= " AND DATE({$campo}) <= :{$prefix}fin";
+            $params[$prefix . 'fin'] = $fin;
         }
 
         return [$where, $params];

@@ -32,6 +32,7 @@ MVP funcional con arquitectura modular propia tipo MVC ligero:
 - Cotizaciones conectadas con inventario: una cotizacion puede llevar varios
   conceptos y cada refaccion cotizada puede descontar stock cuando ya fue
   aceptada.
+- Punto de venta de refacciones para venta de mostrador sin crear orden.
 - Entrega de equipos por clave/codigo de barras aleatoria.
 - Registro de quien entrega el equipo.
 - Documentos imprimibles de orden y de entrega en tamano carta y ticket
@@ -293,6 +294,8 @@ Reglas de refacciones:
   bloque desde la orden y quedan ligadas al concepto cotizado.
 - Al aplicar una refaccion se descuenta stock y queda movimiento ligado a la
   orden.
+- En **Punto de venta**, una venta de mostrador descuenta stock, genera folio
+  propio y emite ticket imprimible sin asociarse a una orden de reparacion.
 - Si se aplico por error, se cancela con motivo y el stock se devuelve.
 - No se permite stock negativo ni aplicar refacciones a ordenes entregadas o
   canceladas.
@@ -332,6 +335,7 @@ php database/upgrade_garantia_config.php   # dias configurables de garantia
 php database/upgrade_refacciones_ordenes_estado.php # cancelacion de refacciones aplicadas
 php database/upgrade_agenda_roles.php      # permisos del modulo agenda
 php database/upgrade_cotizaciones_inventario.php # cotizaciones ligadas a inventario
+php database/upgrade_punto_venta_refacciones.php # punto de venta de refacciones
 ```
 
 Opcional en `.env`:

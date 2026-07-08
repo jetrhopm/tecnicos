@@ -13,6 +13,8 @@ DROP TABLE IF EXISTS garantias;
 DROP TABLE IF EXISTS entregas;
 DROP TABLE IF EXISTS pagos;
 DROP TABLE IF EXISTS inventario_movimientos;
+DROP TABLE IF EXISTS venta_refaccion_items;
+DROP TABLE IF EXISTS ventas_refacciones;
 DROP TABLE IF EXISTS refacciones_ordenes;
 DROP TABLE IF EXISTS refacciones;
 DROP TABLE IF EXISTS proveedores;
@@ -345,10 +347,52 @@ CREATE TABLE refacciones_ordenes (
     UNIQUE KEY uq_ro_cot_item (cotizacion_item_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE ventas_refacciones (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    folio VARCHAR(60) NOT NULL UNIQUE,
+    cliente_nombre VARCHAR(190) NULL,
+    cliente_telefono VARCHAR(40) NULL,
+    subtotal DECIMAL(12,2) NOT NULL DEFAULT 0,
+    descuento DECIMAL(12,2) NOT NULL DEFAULT 0,
+    total DECIMAL(12,2) NOT NULL DEFAULT 0,
+    metodo_pago ENUM('efectivo','transferencia','tarjeta','otro') NOT NULL DEFAULT 'efectivo',
+    referencia VARCHAR(160) NULL,
+    notas TEXT NULL,
+    usuario_id INT UNSIGNED NOT NULL,
+    estado ENUM('activa','cancelada') NOT NULL DEFAULT 'activa',
+    motivo_cancelacion TEXT NULL,
+    cancelado_por INT UNSIGNED NULL,
+    cancelado_at DATETIME NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_vr_user FOREIGN KEY (usuario_id) REFERENCES users(id),
+    CONSTRAINT fk_vr_cancel_user FOREIGN KEY (cancelado_por) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_vr_fecha (created_at),
+    INDEX idx_vr_usuario (usuario_id),
+    INDEX idx_vr_estado (estado)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE venta_refaccion_items (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    venta_id INT UNSIGNED NOT NULL,
+    refaccion_id INT UNSIGNED NOT NULL,
+    descripcion VARCHAR(255) NOT NULL,
+    sku VARCHAR(100) NOT NULL,
+    cantidad INT NOT NULL DEFAULT 1,
+    costo_unitario DECIMAL(12,2) NOT NULL DEFAULT 0,
+    precio_unitario DECIMAL(12,2) NOT NULL DEFAULT 0,
+    subtotal DECIMAL(12,2) NOT NULL DEFAULT 0,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_vri_venta FOREIGN KEY (venta_id) REFERENCES ventas_refacciones(id) ON DELETE CASCADE,
+    CONSTRAINT fk_vri_ref FOREIGN KEY (refaccion_id) REFERENCES refacciones(id),
+    INDEX idx_vri_refaccion (refaccion_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE inventario_movimientos (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     refaccion_id INT UNSIGNED NOT NULL,
     orden_id INT UNSIGNED NULL,
+    venta_refaccion_id INT UNSIGNED NULL,
     usuario_id INT UNSIGNED NOT NULL,
     tipo ENUM('entrada','salida','ajuste','cancelacion') NOT NULL,
     cantidad INT NOT NULL,
@@ -359,6 +403,7 @@ CREATE TABLE inventario_movimientos (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_mov_ref FOREIGN KEY (refaccion_id) REFERENCES refacciones(id),
     CONSTRAINT fk_mov_orden FOREIGN KEY (orden_id) REFERENCES ordenes_servicio(id) ON DELETE SET NULL,
+    CONSTRAINT fk_mov_venta_ref FOREIGN KEY (venta_refaccion_id) REFERENCES ventas_refacciones(id) ON DELETE SET NULL,
     CONSTRAINT fk_mov_user FOREIGN KEY (usuario_id) REFERENCES users(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

@@ -8,6 +8,18 @@ responsable del proyecto.
 
 ## 2026-07-08
 
+### Punto de venta de refacciones
+
+- Se agrego el modulo `/punto-venta` para vender refacciones de mostrador sin
+  crear una orden de reparacion.
+- Cada venta genera folio propio, ticket imprimible, metodo de pago, descuento,
+  cliente opcional y usuario que cobro.
+- La venta descuenta stock por transaccion y registra salida en
+  `inventario_movimientos` ligada a la venta.
+- Se agregaron tablas `ventas_refacciones` y `venta_refaccion_items`.
+- Se agrego `database/upgrade_punto_venta_refacciones.php` para bases
+  existentes.
+
 ### Cotizaciones conectadas con inventario
 
 - La cotizacion ahora puede seleccionar refacciones existentes del inventario.

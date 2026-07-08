@@ -40,6 +40,14 @@ $tests = [
             ['descripcion' => '', 'cantidad' => 1, 'precio_unitario' => 0],
         ],
     ]) === [],
+    'ventaRefaccionVacia' => array_filter(
+        \App\Validators\VentaRefaccionValidator::validate(['items' => []]),
+        static fn (array $error): bool => $error['field'] === 'items'
+    ) !== [],
+    'ventaRefaccionCantidadInvalida' => array_filter(
+        \App\Validators\VentaRefaccionValidator::validate(['items' => [['refaccion_id' => 1, 'cantidad' => 0, 'precio_unitario' => 100]]]),
+        static fn (array $error): bool => str_ends_with($error['field'], 'cantidad')
+    ) !== [],
 ];
 
 $failed = array_filter($tests, static fn (bool $ok): bool => !$ok);

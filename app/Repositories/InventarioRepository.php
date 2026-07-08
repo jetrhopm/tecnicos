@@ -146,11 +146,12 @@ final class InventarioRepository extends BaseRepository
 
     public function registrarMovimiento(array $data): int
     {
+        $data['venta_refaccion_id'] = $data['venta_refaccion_id'] ?? null;
         return $this->insert(
             "INSERT INTO inventario_movimientos
-             (refaccion_id, orden_id, usuario_id, tipo, cantidad, motivo, costo_unitario, stock_anterior, stock_nuevo)
+             (refaccion_id, orden_id, venta_refaccion_id, usuario_id, tipo, cantidad, motivo, costo_unitario, stock_anterior, stock_nuevo)
              VALUES
-             (:refaccion_id, :orden_id, :usuario_id, :tipo, :cantidad, :motivo, :costo_unitario, :stock_anterior, :stock_nuevo)",
+             (:refaccion_id, :orden_id, :venta_refaccion_id, :usuario_id, :tipo, :cantidad, :motivo, :costo_unitario, :stock_anterior, :stock_nuevo)",
             $data
         );
     }
