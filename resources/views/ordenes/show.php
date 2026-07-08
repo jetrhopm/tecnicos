@@ -4,6 +4,7 @@ $consulta = url('/consulta?folio=' . urlencode($orden['folio']) . '&token=' . ur
 $pdfPublico = absolute_url('/consulta/' . rawurlencode((string) $orden['folio']) . '/' . rawurlencode((string) $orden['token_publico']) . '/pdf');
 $telefonoCliente = (string) (($orden['cliente_whatsapp'] ?? '') ?: ($orden['cliente_telefono'] ?? ''));
 $whatsappPdf = linkWhatsapp($telefonoCliente, 'Hola ' . (string) $orden['cliente_nombre'] . ', te compartimos el PDF de tu orden ' . (string) $orden['folio'] . ': ' . $pdfPublico);
+$puedeCancelarPagos = \App\Core\Auth::can('pagos', 'editar');
 ?>
 <div class="row g-3">
     <div class="col-xl-8">
@@ -217,7 +218,8 @@ $whatsappPdf = linkWhatsapp($telefonoCliente, 'Hola ' . (string) $orden['cliente
                 <?= csrf_field() ?>
                 <input type="hidden" name="orden_id" value="<?= e($orden['id']) ?>">
                 <label class="form-label" data-icon="&#36;">Monto</label>
-                <input class="form-control mb-2" type="number" step="0.01" name="monto" required data-money>
+                <input class="form-control mb-2" type="number" step="0.01" min="0.01" max="<?= e((string) max(0, (float) $orden['saldo_pendiente'])) ?>" name="monto" value="<?= e((string) max(0, (float) $orden['saldo_pendiente'])) ?>" required data-money>
+                <div class="form-text mb-2">No debe superar el saldo pendiente.</div>
                 <label class="form-label" data-icon="&#9679;">Metodo</label>
                 <select class="form-select mb-2" name="metodo">
                     <?php foreach (['efectivo','transferencia','tarjeta','otro'] as $metodo): ?><option value="<?= e($metodo) ?>"><?= e($metodo) ?></option><?php endforeach; ?>
@@ -231,9 +233,34 @@ $whatsappPdf = linkWhatsapp($telefonoCliente, 'Hola ' . (string) $orden['cliente
         <div class="glass-card mb-3">
             <h2 class="h5" data-icon="&#128179;">Pagos</h2>
             <?php foreach ($pagos as $pago): ?>
-                <div class="d-flex justify-content-between border-bottom py-2">
-                    <span><?= e(fechaHumana($pago['created_at'])) ?><br><small class="text-muted"><?= e($pago['metodo']) ?></small></span>
-                    <strong><?= e(formatearMoneda((float) $pago['monto'])) ?></strong>
+                <?php $cancelado = ($pago['estado'] ?? 'activo') === 'cancelado'; ?>
+                <div class="border-bottom py-2">
+                    <div class="d-flex justify-content-between gap-2">
+                        <span>
+                            <?= e(fechaHumana($pago['created_at'])) ?>
+                            <?php if ($cancelado): ?><span class="badge text-bg-danger ms-1">Cancelado</span><?php endif; ?>
+                            <br>
+                            <small class="text-muted"><?= e($pago['metodo']) ?> &middot; <?= e($pago['usuario_nombre'] ?? 'sistema') ?></small>
+                        </span>
+                        <strong class="<?= $cancelado ? 'text-decoration-line-through text-muted' : '' ?>"><?= e(formatearMoneda((float) $pago['monto'])) ?></strong>
+                    </div>
+                    <?php if ($cancelado): ?>
+                        <div class="small text-muted mt-1">
+                            Motivo: <?= e($pago['motivo_cancelacion'] ?? '-') ?>
+                            <?php if (!empty($pago['cancelado_por_nombre'])): ?>
+                                &middot; Cancelo: <?= e($pago['cancelado_por_nombre']) ?>
+                            <?php endif; ?>
+                        </div>
+                    <?php elseif ($puedeCancelarPagos): ?>
+                        <form class="mt-2" method="post" action="<?= e(url('/pagos/' . $pago['id'] . '/cancelar')) ?>" data-confirm="Cancelar este pago y recalcular el saldo de la orden">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="orden_id" value="<?= e($orden['id']) ?>">
+                            <div class="input-group input-group-sm">
+                                <input class="form-control" name="motivo_cancelacion" placeholder="Motivo de cancelacion" required>
+                                <button class="btn btn-outline-danger" data-icon="&#10005;">Cancelar</button>
+                            </div>
+                        </form>
+                    <?php endif; ?>
                 </div>
             <?php endforeach; ?>
         </div>
@@ -250,6 +277,7 @@ $whatsappPdf = linkWhatsapp($telefonoCliente, 'Hola ' . (string) $orden['cliente
                 'evidencia_subida' => 'Evidencia subida',
                 'terminos_aceptados' => 'Cliente acepto terminos',
                 'pdf_generado' => 'PDF generado',
+                'pago_cancelado' => 'Pago cancelado',
             ];
             ?>
             <?php if (empty($bitacora)): ?>

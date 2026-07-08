@@ -10,9 +10,15 @@ final class PagoValidator
 {
     public static function validate(array $data): array
     {
-        return (new Validator())
+        $validator = (new Validator())
             ->required($data, ['orden_id' => 'La orden', 'monto' => 'El monto'])
-            ->numeric($data, 'monto', 'El monto')
-            ->errors();
+            ->numeric($data, 'monto', 'El monto');
+
+        $errors = $validator->errors();
+        if (isset($data['monto']) && is_numeric($data['monto']) && (float) $data['monto'] <= 0) {
+            $errors[] = ['field' => 'monto', 'message' => 'El pago debe ser mayor a cero.'];
+        }
+
+        return $errors;
     }
 }

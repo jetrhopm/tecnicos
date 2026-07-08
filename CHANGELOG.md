@@ -8,6 +8,16 @@ responsable del proyecto.
 
 ## 2026-07-07
 
+### Mejora de pagos para campo real
+
+- Se documento la hoja de ruta `docs/MEJORAS_CAMPO_REAL.md`.
+- Los pagos ahora validan monto mayor a cero y bloquean sobrepagos sin permiso
+  especial.
+- Se agrego cancelacion de pagos con motivo, responsable, auditoria y recalculo
+  de saldo de la orden.
+- La ficha de orden muestra pagos cancelados y permite cancelar pagos activos
+  segun permisos.
+
 ### PDF de orden para cliente
 
 - Se actualizo el PDF de recepcion/consulta para que use el diseno nuevo de

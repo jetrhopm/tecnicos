@@ -67,6 +67,7 @@ $router->post('/diagnosticos', [DiagnosticoController::class, 'store']);
 $router->post('/cotizaciones', [CotizacionController::class, 'store']);
 $router->post('/cotizaciones/{id}/autorizar', [CotizacionController::class, 'autorizar']);
 $router->post('/pagos', [PagoController::class, 'store']);
+$router->post('/pagos/{id}/cancelar', [PagoController::class, 'cancelar']);
 
 $router->get('/entregas', [EntregaController::class, 'index']);
 $router->post('/entregas/buscar', [EntregaController::class, 'buscar']);

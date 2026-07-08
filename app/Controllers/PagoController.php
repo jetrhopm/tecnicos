@@ -29,4 +29,19 @@ final class PagoController
         }
         Response::redirect('/ordenes/' . (int) $request->input('orden_id'));
     }
+
+    public function cancelar(Request $request, string $id): void
+    {
+        Auth::requirePermission('pagos', 'editar');
+
+        $ordenId = (int) $request->input('orden_id');
+        try {
+            (new PagoService())->cancelar((int) $id, (string) $request->input('motivo_cancelacion', ''));
+            Session::flash('success', 'Pago cancelado y saldo recalculado.');
+        } catch (\Throwable $exception) {
+            Session::flash('error', $exception->getMessage());
+        }
+
+        Response::redirect($ordenId > 0 ? '/ordenes/' . $ordenId : '/ordenes');
+    }
 }
