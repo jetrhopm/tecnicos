@@ -8,6 +8,18 @@ responsable del proyecto.
 
 ## 2026-07-07
 
+### Agenda minima operativa
+
+- Se agrego el modulo `/agenda` con vista diaria/semanal y filtros por tecnico,
+  estado, tipo y busqueda.
+- Se pueden programar eventos ligados a orden por folio, clave o id.
+- La ficha de orden permite programar seguimientos y muestra sus ultimos eventos.
+- El dashboard muestra la agenda programada del dia.
+- Los eventos cambian entre `programado`, `realizado` y `cancelado` con
+  auditoria.
+- Se agrego `database/upgrade_agenda_roles.php` para permisos de agenda en roles
+  operativos.
+
 ### Inventario conectado al flujo de reparacion
 
 - La ficha de orden permite aplicar refacciones del inventario a una reparacion.
@@ -98,6 +110,7 @@ php database/upgrade_whatsapp_templates.php  # mensajes de WhatsApp por contexto
 php database/upgrade_notificaciones.php      # tabla de notificaciones in-app
 php database/upgrade_inventario_roles.php    # acceso al almacen para tecnicos y recepcion
 php database/upgrade_refacciones_ordenes_estado.php # cancelacion de refacciones aplicadas
+php database/upgrade_agenda_roles.php        # permisos del modulo agenda
 ```
 
 Nuevas variables de entorno (opcional) en `.env`:

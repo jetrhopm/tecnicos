@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../app/bootstrap.php';
 
 use App\Controllers\ApiController;
+use App\Controllers\AgendaController;
 use App\Controllers\AuthController;
 use App\Controllers\ClienteController;
 use App\Controllers\ConfiguracionController;
@@ -75,6 +76,10 @@ $router->get('/entregas', [EntregaController::class, 'index']);
 $router->post('/entregas/buscar', [EntregaController::class, 'buscar']);
 $router->post('/entregas/entregar', [EntregaController::class, 'entregar']);
 $router->get('/entregas/{id}/comprobante', [EntregaController::class, 'comprobante']);
+
+$router->get('/agenda', [AgendaController::class, 'index']);
+$router->post('/agenda', [AgendaController::class, 'store']);
+$router->post('/agenda/{id}/estado', [AgendaController::class, 'estado']);
 
 $router->get('/notificaciones', [NotificacionController::class, 'index']);
 $router->post('/notificaciones/leer-todas', [NotificacionController::class, 'leerTodas']);

@@ -226,11 +226,12 @@ ENT-DEMO2468
 7. Tecnico registra diagnostico.
 8. Se genera cotizacion.
 9. Cliente acepta o rechaza.
-10. Tecnico repara, aplica refacciones si hacen falta y marca resultado.
-11. Caja registra anticipo, pago parcial o liquidacion.
-12. Entrega libera el equipo usando la clave/codigo de barras.
-13. El sistema registra quien entrego.
-14. Se genera comprobante y garantia cuando aplica.
+10. Se programa seguimiento en agenda si hace falta.
+11. Tecnico repara, aplica refacciones si hacen falta y marca resultado.
+12. Caja registra anticipo, pago parcial o liquidacion.
+13. Entrega libera el equipo usando la clave/codigo de barras.
+14. El sistema registra quien entrego.
+15. Se genera comprobante y garantia cuando aplica.
 
 Reglas de cotizacion:
 
@@ -248,6 +249,14 @@ Reglas de refacciones:
 - Si se aplico por error, se cancela con motivo y el stock se devuelve.
 - No se permite stock negativo ni aplicar refacciones a ordenes entregadas o
   canceladas.
+
+Agenda operativa:
+
+- La ruta `/agenda` permite vista diaria o semanal.
+- Los eventos pueden ligarse a una orden por folio, clave o id.
+- Desde la ficha de orden se puede programar seguimiento, entrega, visita o
+  recordatorio.
+- El dashboard muestra la agenda programada del dia.
 
 ## Consulta publica del cliente
 
@@ -274,6 +283,7 @@ php database/upgrade_garantia_texto.php    # texto legal actualizado de garantia
 php database/upgrade_branding_config.php   # nombre del sistema y logo del taller
 php database/upgrade_garantia_config.php   # dias configurables de garantia
 php database/upgrade_refacciones_ordenes_estado.php # cancelacion de refacciones aplicadas
+php database/upgrade_agenda_roles.php      # permisos del modulo agenda
 ```
 
 Opcional en `.env`:

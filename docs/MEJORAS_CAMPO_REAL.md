@@ -115,7 +115,7 @@ Implementado:
 
 ### 6. Agenda minima operativa
 
-Estado: pendiente.
+Estado: implementado.
 
 Objetivo:
 
@@ -123,6 +123,20 @@ Objetivo:
 - Eventos ligados a orden.
 - Programar entrega, visita o revision.
 - Registrar carga de trabajo.
+
+Implementado:
+
+- Se agrego modulo `/agenda` con vista diaria/semanal, filtros por tecnico,
+  estado, tipo y busqueda.
+- Se pueden crear eventos de visita, entrega, recordatorio, trabajo u otro,
+  ligados opcionalmente a una orden por folio, clave o id.
+- La ficha de orden permite programar seguimientos y muestra los ultimos eventos
+  de esa orden.
+- El dashboard muestra la agenda programada del dia.
+- Los eventos pueden cambiar entre `programado`, `realizado` y `cancelado` con
+  auditoria.
+- Se agrego `database/upgrade_agenda_roles.php` para permisos de roles
+  operativos en instalaciones existentes.
 
 ## Prioridad media
 

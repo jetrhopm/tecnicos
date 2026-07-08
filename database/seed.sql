@@ -40,27 +40,27 @@ ON DUPLICATE KEY UPDATE role_id = role_id;
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id FROM roles r CROSS JOIN permissions p
 WHERE r.name = 'recepcion'
-AND ((p.module IN ('dashboard','clientes','equipos','ordenes','mensajes') AND p.action IN ('ver','crear','editar','imprimir'))
+AND ((p.module IN ('dashboard','clientes','equipos','ordenes','agenda','mensajes') AND p.action IN ('ver','crear','editar','imprimir'))
 OR (p.module = 'pagos' AND p.action IN ('ver','crear')))
 ON DUPLICATE KEY UPDATE role_id = role_id;
 
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id FROM roles r CROSS JOIN permissions p
 WHERE r.name = 'tecnico'
-AND p.module IN ('dashboard','ordenes','diagnosticos','reparaciones','mensajes')
+AND p.module IN ('dashboard','ordenes','diagnosticos','reparaciones','agenda','mensajes')
 AND p.action IN ('ver','crear','editar','cambiar_estado','imprimir')
 ON DUPLICATE KEY UPDATE role_id = role_id;
 
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id FROM roles r CROSS JOIN permissions p
 WHERE r.name = 'tecnico_senior'
-AND p.module IN ('dashboard','ordenes','diagnosticos','cotizaciones','reparaciones','inventario','mensajes')
+AND p.module IN ('dashboard','ordenes','diagnosticos','cotizaciones','reparaciones','inventario','agenda','mensajes')
 AND p.action IN ('ver','crear','editar','autorizar','cambiar_estado','imprimir')
 ON DUPLICATE KEY UPDATE role_id = role_id;
 
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id FROM roles r CROSS JOIN permissions p
-WHERE r.name = 'almacen' AND p.module IN ('dashboard','inventario','proveedores','ordenes') AND p.action IN ('ver','crear','editar','exportar')
+WHERE r.name = 'almacen' AND p.module IN ('dashboard','inventario','proveedores','ordenes','agenda') AND p.action IN ('ver','crear','editar','exportar')
 ON DUPLICATE KEY UPDATE role_id = role_id;
 
 -- Acceso al modulo de almacen (inventario y proveedores) para tecnicos y recepcion.
@@ -71,7 +71,7 @@ ON DUPLICATE KEY UPDATE role_id = role_id;
 
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id FROM roles r CROSS JOIN permissions p
-WHERE r.name = 'caja' AND p.module IN ('dashboard','pagos','ordenes','reportes') AND p.action IN ('ver','crear','editar','imprimir','exportar')
+WHERE r.name = 'caja' AND p.module IN ('dashboard','pagos','ordenes','agenda','reportes') AND p.action IN ('ver','crear','editar','imprimir','exportar')
 ON DUPLICATE KEY UPDATE role_id = role_id;
 
 INSERT INTO users (name, email, password, status)

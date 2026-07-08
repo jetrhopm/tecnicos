@@ -48,6 +48,22 @@
         </div>
     </div>
     <div class="col-lg-4">
+        <div class="glass-card mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2 class="h5 mb-0" data-icon="&#128197;">Agenda de hoy</h2>
+                <a class="btn btn-outline-dark btn-sm" href="<?= e(url('/agenda')) ?>">Ver</a>
+            </div>
+            <?php foreach (array_slice($dashboard['agenda_hoy'], 0, 5) as $evento): ?>
+                <div class="border-bottom py-2">
+                    <strong><?= e(date('H:i', strtotime((string) $evento['inicio']))) ?> · <?= e($evento['titulo']) ?></strong><br>
+                    <small class="text-muted"><?= e($evento['tecnico_nombre'] ?: 'Sin asignar') ?><?= !empty($evento['folio']) ? ' · ' . e($evento['folio']) : '' ?></small>
+                </div>
+            <?php endforeach; ?>
+            <?php if (empty($dashboard['agenda_hoy'])): ?>
+                <p class="text-muted small mb-0">Sin eventos programados para hoy.</p>
+            <?php endif; ?>
+        </div>
+
         <div class="glass-card">
             <h2 class="h5" data-icon="&#128295;">Carga por tecnico</h2>
             <?php foreach ($dashboard['por_tecnico'] as $row): ?>

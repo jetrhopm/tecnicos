@@ -76,6 +76,7 @@ $notifIconos = [
             <a class="nav-link <?= e(is_active('/equipos')) ?>" href="<?= e(url('/equipos')) ?>">Equipos</a>
             <a class="nav-link <?= e(is_active('/ordenes')) ?>" href="<?= e(url('/ordenes')) ?>">Ordenes</a>
             <a class="nav-link <?= e(is_active('/entregas')) ?>" href="<?= e(url('/entregas')) ?>">Entregas</a>
+            <a class="nav-link <?= e(is_active('/agenda')) ?>" href="<?= e(url('/agenda')) ?>">Agenda</a>
             <a class="nav-link <?= e(is_active('/inventario')) ?>" href="<?= e(url('/inventario')) ?>">Inventario</a>
             <a class="nav-link <?= e(is_active('/proveedores')) ?>" href="<?= e(url('/proveedores')) ?>">Proveedores</a>
             <a class="nav-link <?= e(is_active('/garantias')) ?>" href="<?= e(url('/garantias')) ?>">Garantias</a>

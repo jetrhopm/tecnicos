@@ -200,6 +200,53 @@ $totalRefaccionesUsadas = array_reduce($refaccionesUsadas ?? [], static function
 
         <div class="glass-card mb-3">
             <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+                <h2 class="h5 mb-0" data-icon="&#128197;">Agenda</h2>
+                <a class="btn btn-outline-dark btn-sm" href="<?= e(url('/agenda?q=' . urlencode((string) $orden['folio']))) ?>">Ver agenda</a>
+            </div>
+            <form method="post" action="<?= e(url('/agenda')) ?>" class="mb-3">
+                <?= csrf_field() ?>
+                <input type="hidden" name="orden_id" value="<?= e($orden['id']) ?>">
+                <input type="hidden" name="titulo" value="Seguimiento <?= e($orden['folio']) ?>">
+                <label class="form-label" data-icon="&#128197;">Programar seguimiento</label>
+                <div class="row g-2">
+                    <div class="col-7"><input class="form-control" type="datetime-local" name="inicio" value="<?= e(date('Y-m-d\TH:i', strtotime('+1 day'))) ?>" required></div>
+                    <div class="col-5">
+                        <select class="form-select" name="tipo">
+                            <option value="trabajo">Trabajo</option>
+                            <option value="entrega">Entrega</option>
+                            <option value="recordatorio">Recordatorio</option>
+                            <option value="visita">Visita</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <select class="form-select" name="tecnico_id">
+                            <option value="">Sin asignar</option>
+                            <?php foreach ($tecnicos as $tecnico): ?>
+                                <option value="<?= e($tecnico['id']) ?>" <?= (int) $orden['tecnico_id'] === (int) $tecnico['id'] ? 'selected' : '' ?>><?= e($tecnico['name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-12"><input class="form-control" name="descripcion" placeholder="Nota del seguimiento"></div>
+                    <div class="col-12 d-grid"><button class="btn btn-primary" data-icon="&#128190;">Programar</button></div>
+                </div>
+            </form>
+            <?php if (!empty($agendaEventos)): ?>
+                <?php foreach (array_slice($agendaEventos, 0, 4) as $evento): ?>
+                    <div class="d-flex justify-content-between border-bottom py-2">
+                        <div>
+                            <strong><?= e($evento['titulo']) ?></strong><br>
+                            <small class="text-muted"><?= e(fechaHumana($evento['inicio'])) ?> · <?= e($evento['tecnico_nombre'] ?: 'Sin asignar') ?></small>
+                        </div>
+                        <span class="badge text-bg-light align-self-start"><?= e($evento['estado']) ?></span>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p class="small text-muted mb-0">Sin eventos programados para esta orden.</p>
+            <?php endif; ?>
+        </div>
+
+        <div class="glass-card mb-3">
+            <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
                 <h2 class="h5 mb-0" data-icon="&#128230;">Refacciones usadas</h2>
                 <span class="badge text-bg-light"><?= e(formatearMoneda($totalRefaccionesUsadas)) ?></span>
             </div>

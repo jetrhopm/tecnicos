@@ -11,6 +11,7 @@ use App\Core\Response;
 use App\Core\Session;
 use App\Core\View;
 use App\Repositories\UserRepository;
+use App\Services\AgendaService;
 use App\Services\AuditoriaService;
 use App\Services\ClienteService;
 use App\Services\ConfiguracionService;
@@ -141,6 +142,7 @@ final class OrdenController
                 static fn (array $refaccion): bool => $refaccion['estatus'] === 'activo'
             )),
             'refaccionesUsadas' => (new InventarioService())->usosPorOrden((int) $id),
+            'agendaEventos' => (new AgendaService())->porOrden((int) $id),
         ]);
     }
 
