@@ -138,6 +138,21 @@ $whatsappPdf = linkWhatsapp($telefonoCliente, 'Hola ' . (string) $orden['cliente
     </div>
 
     <div class="col-xl-4">
+        <?php $desbloqueo = patronDesbloqueo($orden['password_equipo'] ?? ''); ?>
+        <div class="glass-card mb-3">
+            <h2 class="h5" data-icon="&#128274;">Desbloqueo del equipo</h2>
+            <?php if ($desbloqueo && $desbloqueo['tipo'] === 'patron'): ?>
+                <div class="unlock-box"><?= patronSvg($desbloqueo['secuencia'], 132) ?></div>
+                <div class="mt-2"><strong>Secuencia:</strong> <span class="patron-seq"><?= e(implode(' → ', $desbloqueo['secuencia'])) ?></span></div>
+                <div class="small text-muted"><strong>Inicio:</strong> <?= e((string) $desbloqueo['secuencia'][0]) ?> &middot; <strong>Fin:</strong> <?= e((string) end($desbloqueo['secuencia'])) ?></div>
+            <?php elseif ($desbloqueo && $desbloqueo['tipo'] === 'clave'): ?>
+                <div class="unlock-code"><?= e($desbloqueo['valor']) ?></div>
+                <div class="small text-muted">Clave / PIN del equipo</div>
+            <?php else: ?>
+                <p class="small text-muted mb-0">No se registro patron ni clave de desbloqueo para este equipo.</p>
+            <?php endif; ?>
+        </div>
+
         <div class="glass-card mb-3">
             <h2 class="h5" data-icon="&#9889;">Acciones rapidas</h2>
             <form class="mb-3" method="post" action="<?= e(url('/ordenes/' . $orden['id'] . '/estado')) ?>">

@@ -898,6 +898,25 @@ a {
   outline-offset: 2px;
 }
 
+/* Desbloqueo del equipo (ficha de orden): el patron se dibuja en negro, asi
+   que va sobre fondo claro para verse bien en cualquier tema. */
+.unlock-box {
+  display: inline-block;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 8px;
+  line-height: 0;
+}
+
+.unlock-code {
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 1.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+}
+
 /* Botones de accion de la orden: en movil se apilan verticalmente y todos
    quedan del mismo ancho/alto para una linea de acciones uniforme. */
 @media (max-width: 720px) {

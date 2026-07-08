@@ -18,5 +18,22 @@
         <div class="col-md-4"><strong>Estado fisico</strong><p><?= e($equipo['estado_fisico'] ?: '-') ?></p></div>
         <div class="col-md-4"><strong>Observaciones</strong><p><?= e($equipo['observaciones'] ?: '-') ?></p></div>
     </div>
+    <hr>
+    <?php $desbloqueo = patronDesbloqueo($equipo['password_equipo'] ?? ''); ?>
+    <strong data-icon="&#128274;">Desbloqueo del equipo</strong>
+    <?php if ($desbloqueo && $desbloqueo['tipo'] === 'patron'): ?>
+        <div class="d-flex align-items-center gap-3 flex-wrap mt-2">
+            <div class="unlock-box"><?= patronSvg($desbloqueo['secuencia'], 120) ?></div>
+            <div>
+                <div><strong>Secuencia:</strong> <span class="patron-seq"><?= e(implode(' → ', $desbloqueo['secuencia'])) ?></span></div>
+                <div class="small text-muted"><strong>Inicio:</strong> <?= e((string) $desbloqueo['secuencia'][0]) ?> &middot; <strong>Fin:</strong> <?= e((string) end($desbloqueo['secuencia'])) ?></div>
+            </div>
+        </div>
+    <?php elseif ($desbloqueo && $desbloqueo['tipo'] === 'clave'): ?>
+        <div class="unlock-code mt-1"><?= e($desbloqueo['valor']) ?></div>
+        <div class="small text-muted">Clave / PIN del equipo</div>
+    <?php else: ?>
+        <p class="small text-muted mb-0 mt-1">No se registro patron ni clave de desbloqueo.</p>
+    <?php endif; ?>
 </div>
 <?php endif; ?>

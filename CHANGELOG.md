@@ -226,6 +226,19 @@ autorizacion de la cotizacion o avisar que el equipo esta listo.
   actualiza los textos solo si siguen siendo los originales y agrega las nuevas
   plantillas si faltan (no pisa personalizaciones).
 
+### 10. Desbloqueo del equipo visible en pantalla
+
+**Por que:** el patron/clave se capturaba y salia en el ticket impreso, pero el
+tecnico no lo veia en pantalla al revisar la orden.
+
+- Nueva tarjeta "Desbloqueo del equipo" en la ficha de la orden
+  ([resources/views/ordenes/show.php](resources/views/ordenes/show.php)) y en la
+  ficha del equipo ([resources/views/equipos/show.php](resources/views/equipos/show.php)):
+  muestra el patron dibujado (con secuencia, inicio y fin) o la clave/PIN.
+- El patron se dibuja sobre fondo claro (`.unlock-box`) para verse bien en
+  cualquier tema. Solo visible dentro del panel autenticado; no se expone en el
+  portal publico.
+
 ### Otros cambios de la ronda
 
 - Pulido de UI: iconos en titulos/botones, tema aplicado tambien en login y
