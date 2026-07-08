@@ -15,6 +15,8 @@ responsable del proyecto.
   desbloqueo, condiciones, resumen de cobro, codigo de barras y firma.
 - El PDF publico por folio/token ahora carga tambien datos visibles del cliente
   y equipo necesarios para el comprobante, sin exponer notas internas.
+- Se separo el codigo de barras de entrega de las ligas de consulta/PDF para
+  dejar una zona limpia de lectura.
 
 Ronda de trabajo enfocada en seguridad, generacion de URLs, un tema visual
 nuevo, el patron/PIN de desbloqueo y los documentos imprimibles (orden y

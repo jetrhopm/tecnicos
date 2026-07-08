@@ -77,13 +77,11 @@ final class OrdenPdfService
         $this->termsBox($lines, 44, 71, 312, 54, $condiciones);
         $this->totalsBox($lines, 370, 71, 198, 54, $total, $anticipo, $saldo);
 
-        $this->barcode39($lines, (string) ($orden['codigo_entrega'] ?? ''), 44, 33, 24, 0.72);
-        $this->text($lines, 178, 49, 7, 'Consulta cliente:', true, [74, 85, 104]);
-        $this->text($lines, 178, 39, 6, $publicUrl, false, [14, 55, 88]);
-        $this->text($lines, 178, 30, 6, 'PDF: ' . $pdfUrl, false, [74, 85, 104]);
+        $this->barcodeBlock($lines, (string) ($orden['codigo_entrega'] ?? ''), 44, 31);
+        $this->consultaBox($lines, 224, 31, 188, 36, $publicUrl, $pdfUrl);
 
-        $this->line($lines, 412, 34, 548, 34, [74, 85, 104], 0.6);
-        $this->text($lines, 452, 21, 8, 'Firma cliente', false, [74, 85, 104]);
+        $this->line($lines, 438, 38, 558, 38, [74, 85, 104], 0.6);
+        $this->text($lines, 474, 24, 8, 'Firma cliente', false, [74, 85, 104]);
 
         return $this->render(implode("\n", $lines), 'Orden ' . $folio);
     }
@@ -183,6 +181,36 @@ final class OrdenPdfService
         $this->rect($lines, $x + 7, $y + 4, $w - 14, 11, [34, 197, 94], [22, 163, 74], 0.5);
         $this->text($lines, $x + 12, $y + 7, 7, 'Saldo a cobrar', true, [255, 255, 255]);
         $this->text($lines, $x + 120, $y + 7, 8, formatearMoneda($saldo), true, [255, 255, 255]);
+    }
+
+    private function barcodeBlock(array &$lines, string $code, float $x, float $y): void
+    {
+        $code = strtoupper(trim($code));
+        if ($code === '') {
+            return;
+        }
+
+        // Zona blanca dedicada al codigo: evita que textos cercanos contaminen la lectura.
+        $this->rect($lines, $x - 5, $y - 6, 158, 39, [255, 255, 255], [226, 232, 240], 0.4);
+        $this->text($lines, $x, $y + 29, 6, 'Clave de entrega', false, [74, 85, 104]);
+        $this->barcode39($lines, $code, $x, $y + 6, 20, 0.68);
+    }
+
+    private function consultaBox(array &$lines, float $x, float $y, float $w, float $h, string $publicUrl, string $pdfUrl): void
+    {
+        $this->rect($lines, $x, $y, $w, $h, [255, 255, 255], [226, 232, 240], 0.4);
+        $this->text($lines, $x + 7, $y + $h - 11, 6, 'CONSULTA CLIENTE', true, [74, 85, 104]);
+        $this->text($lines, $x + 7, $y + $h - 21, 5, $this->shortUrl($publicUrl, 44), false, [14, 55, 88]);
+        $this->text($lines, $x + 7, $y + $h - 30, 5, 'PDF: ' . $this->shortUrl($pdfUrl, 39), false, [74, 85, 104]);
+    }
+
+    private function shortUrl(string $url, int $max): string
+    {
+        if (strlen($url) <= $max) {
+            return $url;
+        }
+
+        return substr($url, 0, max(0, $max - 3)) . '...';
     }
 
     private function drawPattern(array &$lines, float $x, float $y, float $size, array $sequence): void
