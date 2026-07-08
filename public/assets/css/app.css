@@ -669,6 +669,16 @@ a {
     flex-wrap: wrap;
     align-items: center;
     gap: 10px;
+    /* Barra superior fija en movil: menu, rol, notificaciones, tema y salir
+       quedan siempre visibles al hacer scroll. */
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    margin: -16px -16px 12px;
+    padding: 8px 16px;
+    background: var(--panel-strong);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
   }
 
   /* Menu a la izquierda, controles a la derecha en la misma fila superior;
