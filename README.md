@@ -29,6 +29,8 @@ MVP funcional con arquitectura modular propia tipo MVC ligero:
 - Selector de tipo de servicio con busqueda.
 - Patron/PIN del equipo en registro de orden (rejilla 3x3 o clave).
 - Diagnosticos, cotizaciones y pagos.
+- Cotizaciones conectadas con inventario: una refaccion cotizada puede descontar
+  stock cuando la cotizacion ya fue aceptada.
 - Entrega de equipos por clave/codigo de barras aleatoria.
 - Registro de quien entrega el equipo.
 - Documentos imprimibles de orden y de entrega en tamano carta y ticket
@@ -257,11 +259,13 @@ ENT-DEMO2468
 4. Se crea la orden.
 5. El sistema genera folio, token publico y clave de entrega.
 6. Se imprime nota o comprobante.
-7. Tecnico registra diagnostico.
-8. Se genera cotizacion.
+7. Tecnico registra diagnostico tecnico sin capturar importes.
+8. Se genera cotizacion con mano de obra, servicios y/o refacciones tomadas del
+   inventario.
 9. Cliente acepta o rechaza.
 10. Se programa seguimiento en agenda si hace falta.
-11. Tecnico repara, aplica refacciones si hacen falta y marca resultado.
+11. Tecnico repara, aplica las refacciones cotizadas o captura refacciones
+    adicionales si hacen falta y marca resultado.
 12. Caja registra anticipo, pago parcial o liquidacion.
 13. Entrega libera el equipo usando la clave/codigo de barras.
 14. El sistema registra quien entrego.
@@ -274,10 +278,16 @@ Reglas de cotizacion:
   nueva version.
 - Las cotizaciones vencidas no se pueden autorizar y quedan marcadas como
   `vencida`.
+- El diagnostico describe la falla, pruebas y piezas necesarias; los precios de
+  mano de obra y refacciones se capturan en Cotizacion.
+- Si se selecciona una refaccion de inventario en la cotizacion, el sistema toma
+  su precio de venta como base y guarda el costo de inventario como snapshot.
 
 Reglas de refacciones:
 
 - Las refacciones se aplican desde la ficha de la orden.
+- Las refacciones que vienen de una cotizacion aceptada se pueden aplicar en
+  bloque desde la orden y quedan ligadas al concepto cotizado.
 - Al aplicar una refaccion se descuenta stock y queda movimiento ligado a la
   orden.
 - Si se aplico por error, se cancela con motivo y el stock se devuelve.
@@ -318,6 +328,7 @@ php database/upgrade_branding_config.php   # nombre del sistema y logo del talle
 php database/upgrade_garantia_config.php   # dias configurables de garantia
 php database/upgrade_refacciones_ordenes_estado.php # cancelacion de refacciones aplicadas
 php database/upgrade_agenda_roles.php      # permisos del modulo agenda
+php database/upgrade_cotizaciones_inventario.php # cotizaciones ligadas a inventario
 ```
 
 Opcional en `.env`:

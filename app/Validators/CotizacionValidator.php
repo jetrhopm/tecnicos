@@ -10,8 +10,14 @@ final class CotizacionValidator
 {
     public static function validate(array $data): array
     {
+        $required = ['orden_id' => 'La orden'];
+        if (empty($data['refaccion_id'])) {
+            $required['descripcion'] = 'La descripcion';
+            $required['precio_unitario'] = 'El precio';
+        }
+
         $errors = (new Validator())
-            ->required($data, ['orden_id' => 'La orden', 'descripcion' => 'La descripcion', 'precio_unitario' => 'El precio'])
+            ->required($data, $required)
             ->numeric($data, 'cantidad', 'La cantidad')
             ->numeric($data, 'precio_unitario', 'El precio')
             ->numeric($data, 'descuento', 'El descuento')

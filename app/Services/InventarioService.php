@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Core\Auth;
 use App\Core\Database;
+use App\Repositories\CotizacionRepository;
 use App\Repositories\InventarioRepository;
 use App\Repositories\OrdenRepository;
 use RuntimeException;
@@ -203,6 +204,7 @@ final class InventarioService
             $usoId = $this->refacciones->registrarUsoOrden([
                 'orden_id' => $ordenId,
                 'refaccion_id' => $refaccionId,
+                'cotizacion_item_id' => null,
                 'cantidad' => $cantidad,
                 'precio_unitario' => $precioUnitario,
             ]);
@@ -239,6 +241,99 @@ final class InventarioService
             }
 
             return $usoId;
+        } catch (\Throwable $exception) {
+            if ($db->inTransaction()) {
+                $db->rollBack();
+            }
+            throw $exception;
+        }
+    }
+
+    public function aplicarCotizadas(int $ordenId): int
+    {
+        $db = Database::connection();
+        $db->beginTransaction();
+        $notificar = [];
+
+        try {
+            $orden = (new OrdenRepository())->find($ordenId);
+            if (!$orden) {
+                throw new RuntimeException('Orden no encontrada.');
+            }
+            if (in_array((string) $orden['estado'], ['entregada', 'cancelada'], true)) {
+                throw new RuntimeException('No se pueden aplicar refacciones a una orden entregada o cancelada.');
+            }
+
+            $items = (new CotizacionRepository())->refaccionesCotizadasPendientes($ordenId);
+            if ($items === []) {
+                throw new RuntimeException('No hay refacciones cotizadas pendientes por aplicar.');
+            }
+
+            $aplicadas = 0;
+            foreach ($items as $item) {
+                $refaccionId = (int) $item['refaccion_id'];
+                $cantidad = (int) ceil((float) $item['cantidad']);
+                if ($cantidad <= 0) {
+                    throw new RuntimeException('Una refaccion cotizada tiene cantidad invalida.');
+                }
+
+                $refaccion = $this->refacciones->findForUpdate($refaccionId);
+                if (!$refaccion || $refaccion['estatus'] !== 'activo') {
+                    throw new RuntimeException('Una refaccion cotizada ya no existe o esta inactiva.');
+                }
+
+                $stockAnterior = (int) $refaccion['stock_actual'];
+                $stockNuevo = $stockAnterior - $cantidad;
+                if ($stockNuevo < 0) {
+                    throw new RuntimeException('No hay stock suficiente para: ' . (string) $refaccion['nombre']);
+                }
+
+                $precioUnitario = (float) $item['precio_unitario'];
+                $this->refacciones->setStock($refaccionId, $stockNuevo);
+                $usoId = $this->refacciones->registrarUsoOrden([
+                    'orden_id' => $ordenId,
+                    'refaccion_id' => $refaccionId,
+                    'cotizacion_item_id' => (int) $item['id'],
+                    'cantidad' => $cantidad,
+                    'precio_unitario' => $precioUnitario,
+                ]);
+                $this->refacciones->registrarMovimiento([
+                    'refaccion_id' => $refaccionId,
+                    'orden_id' => $ordenId,
+                    'usuario_id' => Auth::id() ?? 1,
+                    'tipo' => 'salida',
+                    'cantidad' => $cantidad,
+                    'motivo' => mb_substr('Salida por refaccion cotizada en orden ' . (string) $orden['folio'], 0, 255),
+                    'costo_unitario' => (float) $item['costo_unitario'],
+                    'stock_anterior' => $stockAnterior,
+                    'stock_nuevo' => $stockNuevo,
+                ]);
+
+                $this->auditoria->registrar('aplicar_refaccion_cotizada', 'ordenes', $ordenId, null, [
+                    'uso_id' => $usoId,
+                    'cotizacion_item_id' => (int) $item['id'],
+                    'refaccion_id' => $refaccionId,
+                    'cantidad' => $cantidad,
+                    'stock' => $stockNuevo,
+                ]);
+
+                if ($stockNuevo <= (int) $refaccion['stock_minimo'] && (int) $refaccion['stock_minimo'] > 0) {
+                    $notificar[] = [$refaccionId, (string) $refaccion['nombre'], $stockNuevo];
+                }
+                $aplicadas++;
+            }
+
+            $db->commit();
+
+            foreach ($notificar as [$refaccionId, $nombre, $stock]) {
+                try {
+                    (new NotificacionService())->stockBajo((int) $refaccionId, (string) $nombre, (int) $stock);
+                } catch (\Throwable) {
+                    // La salida ya quedo registrada; la notificacion no debe revertirla.
+                }
+            }
+
+            return $aplicadas;
         } catch (\Throwable $exception) {
             if ($db->inTransaction()) {
                 $db->rollBack();

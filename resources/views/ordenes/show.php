@@ -87,7 +87,12 @@ $help = static function (string $texto, string $ejemplo = ''): string {
             <?php if ($diagnostico): ?>
                 <p><strong>Diagnostico <?= $help('Detalle tecnico interno. No debe enviarse al cliente si contiene notas sensibles.', 'Falla por humedad en conector') ?>:</strong> <?= nl2br(e($diagnostico['diagnostico_tecnico'])) ?></p>
                 <p><strong>Visible al cliente <?= $help('Resumen explicado de forma clara para el cliente.', 'Se requiere cambio de centro de carga') ?>:</strong> <?= nl2br(e($diagnostico['diagnostico_cliente'] ?: '-')) ?></p>
-                <p class="mb-0"><strong>Total sugerido <?= $help('Costo recomendado por el tecnico antes de generar cotizacion.', '$850.00') ?>:</strong> <?= e(formatearMoneda((float) $diagnostico['costo_total_sugerido'])) ?></p>
+                <p><strong>Pruebas realizadas <?= $help('Acciones tecnicas hechas para confirmar la falla.', 'Prueba de carga, prueba de pantalla, revision con fuente') ?>:</strong> <?= nl2br(e($diagnostico['pruebas_realizadas'] ?: '-')) ?></p>
+                <p><strong>Piezas necesarias <?= $help('Refacciones o materiales que el tecnico considera necesarios. El precio se captura en Cotizacion.', 'Pantalla, centro de carga, flex') ?>:</strong> <?= nl2br(e($diagnostico['piezas_necesarias'] ?: '-')) ?></p>
+                <p class="mb-0"><strong>Tiempo estimado <?= $help('Tiempo aproximado de trabajo o espera antes de entregar.', '2 dias habiles') ?>:</strong> <?= e($diagnostico['tiempo_estimado'] ?: '-') ?></p>
+                <?php if ((float) ($diagnostico['costo_total_sugerido'] ?? 0) > 0): ?>
+                    <p class="small text-muted mt-2 mb-0">Este diagnostico conserva un monto sugerido de versiones anteriores: <?= e(formatearMoneda((float) $diagnostico['costo_total_sugerido'])) ?>. Los importes nuevos deben capturarse desde Cotizacion.</p>
+                <?php endif; ?>
             <?php else: ?>
                 <form method="post" action="<?= e(url('/diagnosticos')) ?>">
                     <?= csrf_field() ?>
@@ -96,8 +101,9 @@ $help = static function (string $texto, string $ejemplo = ''): string {
                         <div class="col-md-6"><label class="form-label" data-icon="&#9998;">Diagnostico interno <?= $help('Notas tecnicas para el taller. No aparecen en portal publico.', 'Flex danado, posible humedad') ?></label><textarea class="form-control" name="diagnostico_tecnico" required></textarea></div>
                         <div class="col-md-6"><label class="form-label" data-icon="&#128065;">Diagnostico visible <?= $help('Texto que si puede entender/ver el cliente.', 'La pantalla requiere reemplazo') ?></label><textarea class="form-control" name="diagnostico_cliente"></textarea></div>
                         <div class="col-md-4"><label class="form-label" data-icon="&#9888;">Causa probable <?= $help('Origen probable de la falla segun pruebas.', 'Golpe, humedad, desgaste, variacion de voltaje') ?></label><input class="form-control" name="causa_probable"></div>
-                        <div class="col-md-4"><label class="form-label" data-icon="&#36;">Mano de obra <?= $help('Costo del trabajo tecnico sin refacciones.', '350') ?></label><input class="form-control" type="number" step="0.01" name="costo_mano_obra" value="0" data-money></div>
-                        <div class="col-md-4"><label class="form-label" data-icon="&#36;">Refacciones <?= $help('Costo estimado de piezas necesarias.', '500') ?></label><input class="form-control" type="number" step="0.01" name="costo_refacciones" value="0" data-money></div>
+                        <div class="col-md-4"><label class="form-label" data-icon="&#128300;">Pruebas realizadas <?= $help('Describe como se reviso el equipo. No lleva precio.', 'Prueba de carga y pantalla') ?></label><textarea class="form-control" name="pruebas_realizadas"></textarea></div>
+                        <div class="col-md-4"><label class="form-label" data-icon="&#128230;">Piezas necesarias <?= $help('Lista tecnica de piezas probables. El costo se captura en Cotizacion.', 'Display, bateria, flex') ?></label><textarea class="form-control" name="piezas_necesarias"></textarea></div>
+                        <div class="col-md-4"><label class="form-label" data-icon="&#9201;">Tiempo estimado <?= $help('Tiempo aproximado para reparar o conseguir piezas.', '24 a 48 horas') ?></label><input class="form-control" name="tiempo_estimado"></div>
                     </div>
                     <button class="btn btn-primary mt-3" data-icon="&#128190;">Guardar diagnostico</button>
                 </form>
@@ -113,7 +119,17 @@ $help = static function (string $texto, string $ejemplo = ''): string {
                         <thead><tr><th>Concepto</th><th>Cantidad</th><th>Precio</th><th>Subtotal</th></tr></thead>
                         <tbody>
                         <?php foreach ($cotizacion['items'] as $item): ?>
-                            <tr><td><?= e($item['descripcion']) ?></td><td><?= e($item['cantidad']) ?></td><td><?= e(formatearMoneda((float) $item['precio_unitario'])) ?></td><td><?= e(formatearMoneda((float) $item['subtotal'])) ?></td></tr>
+                            <tr>
+                                <td>
+                                    <?= e($item['descripcion']) ?>
+                                    <?php if (!empty($item['refaccion_id'])): ?>
+                                        <br><small class="text-muted">Inventario: <?= e($item['refaccion_sku'] ?? '') ?> · Stock actual <?= e($item['refaccion_stock_actual'] ?? '0') ?></small>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?= e($item['cantidad']) ?></td>
+                                <td><?= e(formatearMoneda((float) $item['precio_unitario'])) ?></td>
+                                <td><?= e(formatearMoneda((float) $item['subtotal'])) ?></td>
+                            </tr>
                         <?php endforeach; ?>
                         </tbody>
                     </table>
@@ -147,13 +163,29 @@ $help = static function (string $texto, string $ejemplo = ''): string {
                     <?= csrf_field() ?>
                     <input type="hidden" name="orden_id" value="<?= e($orden['id']) ?>">
                     <div class="row g-3">
+                        <div class="col-md-5">
+                            <label class="form-label" data-icon="&#128230;">Refaccion inventario <?= $help('Opcional. Si eliges una pieza, se cargan descripcion y precio de venta desde inventario.', 'Pantalla OLED · Stock 2 · $850') ?></label>
+                            <select class="form-select" name="refaccion_id" data-quote-part-select>
+                                <option value="">Concepto manual sin inventario</option>
+                                <?php foreach ($refaccionesDisponibles ?? [] as $refaccion): ?>
+                                    <option
+                                        value="<?= e($refaccion['id']) ?>"
+                                        data-description="<?= e(trim((string) $refaccion['nombre'] . ' ' . (string) $refaccion['sku'])) ?>"
+                                        data-price="<?= e((string) $refaccion['precio_venta']) ?>"
+                                        data-stock="<?= e((string) $refaccion['stock_actual']) ?>"
+                                    >
+                                        <?= e($refaccion['nombre']) ?> · <?= e($refaccion['sku']) ?> · Stock <?= e($refaccion['stock_actual']) ?> · <?= e(formatearMoneda((float) $refaccion['precio_venta'])) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                         <div class="col-md-3">
                             <label class="form-label" data-icon="&#9671;">Tipo <?= $help('Clasifica el concepto para reportes y claridad.', 'mano_obra, refaccion, servicio') ?></label>
-                            <select class="form-select" name="tipo"><option value="mano_obra">Mano de obra</option><option value="refaccion">Refaccion</option><option value="servicio">Servicio</option><option value="otro">Otro</option></select>
+                            <select class="form-select" name="tipo" data-quote-type><option value="mano_obra">Mano de obra</option><option value="refaccion">Refaccion</option><option value="servicio">Servicio</option><option value="otro">Otro</option></select>
                         </div>
-                        <div class="col-md-5"><label class="form-label" data-icon="&#9998;">Descripcion <?= $help('Texto que explica que se va a cobrar.', 'Cambio de pantalla calidad original') ?></label><input class="form-control" name="descripcion" required></div>
+                        <div class="col-md-4"><label class="form-label" data-icon="&#9998;">Descripcion <?= $help('Texto que explica que se va a cobrar. Si eliges inventario, se llena con la refaccion.', 'Cambio de pantalla calidad original') ?></label><input class="form-control" name="descripcion" data-quote-description></div>
                         <div class="col-md-2"><label class="form-label" data-icon="&#35;">Cantidad <?= $help('Numero de piezas o servicios iguales.', '1 pantalla, 2 conectores') ?></label><input class="form-control" type="number" step="0.01" name="cantidad" value="1"></div>
-                        <div class="col-md-2"><label class="form-label" data-icon="&#36;">Precio <?= $help('Precio unitario antes de descuento e IVA.', '850') ?></label><input class="form-control" type="number" step="0.01" name="precio_unitario" value="<?= e($diagnostico['costo_total_sugerido'] ?? 0) ?>" data-money></div>
+                        <div class="col-md-2"><label class="form-label" data-icon="&#36;">Precio venta <?= $help('Precio unitario que se cobrara al cliente. En refacciones se toma de inventario y puedes ajustarlo si tu rol lo permite.', '850') ?></label><input class="form-control" type="number" step="0.01" name="precio_unitario" value="<?= e($diagnostico['costo_total_sugerido'] ?? 0) ?>" data-money data-quote-price></div>
                         <div class="col-md-3"><label class="form-label" data-icon="&#37;">Descuento <?= $help('Descuento en pesos aplicado al subtotal.', '100') ?></label><input class="form-control" type="number" step="0.01" name="descuento" value="0" data-money></div>
                         <div class="col-md-3"><label class="form-label" data-icon="&#37;">IVA <?= $help('Impuesto en pesos si lo aplicas. Si no cobras IVA, dejalo en 0.', '232') ?></label><input class="form-control" type="number" step="0.01" name="iva" value="0" data-money></div>
                         <div class="col-md-3"><label class="form-label" data-icon="&#128197;">Vigencia <?= $help('Fecha hasta la que respetas precio y disponibilidad.', '2026-07-15') ?></label><input class="form-control" type="date" name="vigencia"></div>
@@ -267,6 +299,17 @@ $help = static function (string $texto, string $ejemplo = ''): string {
                 <span class="badge text-bg-light"><?= e(formatearMoneda($totalRefaccionesUsadas)) ?> <?= $help('Importe total de refacciones activas aplicadas a esta orden.', '$850.00') ?></span>
             </div>
 
+            <?php if ($puedeGestionarInventario && !empty($refaccionesCotizadasPendientes) && !in_array($orden['estado'], ['entregada', 'cancelada'], true)): ?>
+                <div class="alert alert-info">
+                    <strong>Refacciones cotizadas pendientes:</strong>
+                    <?= e(count($refaccionesCotizadasPendientes)) ?> pieza(s) aprobadas en cotizacion.
+                    <form class="mt-2" method="post" action="<?= e(url('/ordenes/' . $orden['id'] . '/refacciones-cotizadas')) ?>" data-confirm="Aplicar refacciones cotizadas y descontar stock">
+                        <?= csrf_field() ?>
+                        <button class="btn btn-primary btn-sm" data-icon="&#8722;">Aplicar refacciones cotizadas</button>
+                    </form>
+                </div>
+            <?php endif; ?>
+
             <?php if ($puedeGestionarInventario && !in_array($orden['estado'], ['entregada', 'cancelada'], true)): ?>
                 <form class="row g-2 mb-3" method="post" action="<?= e(url('/ordenes/' . $orden['id'] . '/refacciones')) ?>">
                     <?= csrf_field() ?>
@@ -308,6 +351,9 @@ $help = static function (string $texto, string $ejemplo = ''): string {
                                 <td>
                                     <strong><?= e($uso['nombre']) ?></strong><br>
                                     <small class="text-muted"><?= e($uso['sku']) ?></small>
+                                    <?php if (!empty($uso['cotizacion_item_id'])): ?>
+                                        <div class="small text-success">Aplicada desde cotizacion</div>
+                                    <?php endif; ?>
                                     <?php if ($uso['estado'] === 'cancelada' && $uso['motivo_cancelacion']): ?>
                                         <div class="small text-danger"><?= e($uso['motivo_cancelacion']) ?></div>
                                     <?php endif; ?>

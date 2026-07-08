@@ -244,12 +244,15 @@ CREATE TABLE cotizacion_items (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     cotizacion_id INT UNSIGNED NOT NULL,
     tipo ENUM('mano_obra','refaccion','servicio','otro') NOT NULL DEFAULT 'servicio',
+    refaccion_id INT UNSIGNED NULL,
     descripcion VARCHAR(255) NOT NULL,
     cantidad DECIMAL(10,2) NOT NULL DEFAULT 1,
+    costo_unitario DECIMAL(12,2) NOT NULL DEFAULT 0,
     precio_unitario DECIMAL(12,2) NOT NULL DEFAULT 0,
     subtotal DECIMAL(12,2) NOT NULL DEFAULT 0,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_cot_item FOREIGN KEY (cotizacion_id) REFERENCES cotizaciones(id) ON DELETE CASCADE
+    CONSTRAINT fk_cot_item FOREIGN KEY (cotizacion_id) REFERENCES cotizaciones(id) ON DELETE CASCADE,
+    INDEX idx_cot_item_refaccion (refaccion_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE reparaciones (
@@ -319,10 +322,14 @@ CREATE TABLE refacciones (
     INDEX idx_ref_stock (stock_actual, stock_minimo)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+ALTER TABLE cotizacion_items
+    ADD CONSTRAINT fk_cot_item_refaccion FOREIGN KEY (refaccion_id) REFERENCES refacciones(id) ON DELETE SET NULL;
+
 CREATE TABLE refacciones_ordenes (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     orden_id INT UNSIGNED NOT NULL,
     refaccion_id INT UNSIGNED NOT NULL,
+    cotizacion_item_id INT UNSIGNED NULL,
     cantidad INT NOT NULL DEFAULT 1,
     precio_unitario DECIMAL(12,2) NOT NULL DEFAULT 0,
     estado ENUM('activa','cancelada') NOT NULL DEFAULT 'activa',
@@ -332,8 +339,10 @@ CREATE TABLE refacciones_ordenes (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_ro_orden FOREIGN KEY (orden_id) REFERENCES ordenes_servicio(id) ON DELETE CASCADE,
     CONSTRAINT fk_ro_ref FOREIGN KEY (refaccion_id) REFERENCES refacciones(id),
+    CONSTRAINT fk_ro_cot_item FOREIGN KEY (cotizacion_item_id) REFERENCES cotizacion_items(id) ON DELETE SET NULL,
     CONSTRAINT fk_ro_cancel_user FOREIGN KEY (cancelado_por) REFERENCES users(id) ON DELETE SET NULL,
-    INDEX idx_ro_estado (estado)
+    INDEX idx_ro_estado (estado),
+    UNIQUE KEY uq_ro_cot_item (cotizacion_item_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE inventario_movimientos (

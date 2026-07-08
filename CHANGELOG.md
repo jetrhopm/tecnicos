@@ -6,6 +6,23 @@ responsable del proyecto.
 
 ---
 
+## 2026-07-08
+
+### Cotizaciones conectadas con inventario
+
+- La cotizacion ahora puede seleccionar refacciones existentes del inventario.
+- Al seleccionar una refaccion se precargan descripcion y precio de venta, y se
+  guarda una referencia al item de inventario con costo snapshot.
+- Las refacciones de una cotizacion aceptada pueden aplicarse desde la ficha de
+  la orden para descontar stock y registrar el movimiento de salida.
+- Se evita aplicar dos veces la misma refaccion cotizada mediante relacion con
+  el item de cotizacion.
+- El diagnostico tecnico deja de pedir montos de mano de obra/refacciones en la
+  vista; esos importes se capturan en Cotizacion para mantener separado lo
+  tecnico de lo financiero.
+- Se agrego `database/upgrade_cotizaciones_inventario.php` para instalaciones
+  existentes.
+
 ## 2026-07-07
 
 ### Ayudas contextuales en ficha de orden

@@ -65,6 +65,7 @@ $router->get('/ordenes/{id}/pdf', [OrdenController::class, 'pdf']);
 $router->post('/ordenes/{id}/evidencia', [OrdenController::class, 'subirEvidencia']);
 $router->get('/ordenes/{id}/evidencia/{archivo}', [OrdenController::class, 'verEvidencia']);
 $router->post('/ordenes/{id}/refacciones', [OrdenController::class, 'aplicarRefaccion']);
+$router->post('/ordenes/{id}/refacciones-cotizadas', [OrdenController::class, 'aplicarRefaccionesCotizadas']);
 $router->post('/ordenes/{id}/refacciones/{uso}/cancelar', [OrdenController::class, 'cancelarRefaccion']);
 
 $router->post('/diagnosticos', [DiagnosticoController::class, 'store']);

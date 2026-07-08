@@ -22,6 +22,10 @@ $tests = [
         \App\Validators\CotizacionValidator::validate(['orden_id' => 1, 'descripcion' => 'Revision', 'cantidad' => 1, 'precio_unitario' => -1]),
         static fn (array $error): bool => $error['field'] === 'precio_unitario'
     ) !== [],
+    'cotizacionRefaccionSinPrecioManual' => array_filter(
+        \App\Validators\CotizacionValidator::validate(['orden_id' => 1, 'refaccion_id' => 1, 'cantidad' => 1]),
+        static fn (array $error): bool => in_array($error['field'], ['descripcion', 'precio_unitario'], true)
+    ) === [],
 ];
 
 $failed = array_filter($tests, static fn (bool $ok): bool => !$ok);

@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Core\Auth;
 use App\Core\Database;
 use App\Repositories\CotizacionRepository;
+use App\Repositories\InventarioRepository;
 use App\Repositories\OrdenRepository;
 use RuntimeException;
 
@@ -26,6 +27,11 @@ final class CotizacionService
         }
 
         return $cotizacion;
+    }
+
+    public function refaccionesPendientesPorOrden(int $ordenId): array
+    {
+        return $this->cotizaciones->refaccionesCotizadasPendientes($ordenId);
     }
 
     public function crear(array $data): int
@@ -51,6 +57,7 @@ final class CotizacionService
             if ($items === []) {
                 $items = [[
                     'tipo' => $data['tipo'] ?? 'servicio',
+                    'refaccion_id' => $data['refaccion_id'] ?? null,
                     'descripcion' => $data['descripcion'] ?? 'Servicio tecnico',
                     'cantidad' => $data['cantidad'] ?? 1,
                     'precio_unitario' => $data['precio_unitario'] ?? 0,
@@ -58,10 +65,29 @@ final class CotizacionService
             }
 
             $subtotal = 0.0;
+            $inventario = new InventarioRepository();
             foreach ($items as &$item) {
                 $cantidad = (float) ($item['cantidad'] ?? 0);
                 $precio = (float) ($item['precio_unitario'] ?? 0);
                 $descripcion = trim((string) ($item['descripcion'] ?? ''));
+                $refaccionId = !empty($item['refaccion_id']) ? (int) $item['refaccion_id'] : null;
+                $costoUnitario = 0.0;
+
+                if ($refaccionId !== null) {
+                    $refaccion = $inventario->find($refaccionId);
+                    if (!$refaccion || $refaccion['estatus'] !== 'activo') {
+                        throw new RuntimeException('La refaccion seleccionada no existe o esta inactiva.');
+                    }
+                    $item['tipo'] = 'refaccion';
+                    $descripcion = $descripcion !== ''
+                        ? $descripcion
+                        : trim((string) $refaccion['nombre'] . ' ' . (string) $refaccion['sku']);
+                    if ($precio <= 0) {
+                        $precio = (float) $refaccion['precio_venta'];
+                    }
+                    $costoUnitario = (float) $refaccion['costo'];
+                }
+
                 if ($descripcion === '') {
                     throw new RuntimeException('Cada concepto de cotizacion debe tener descripcion.');
                 }
@@ -71,9 +97,14 @@ final class CotizacionService
                 if ($precio < 0) {
                     throw new RuntimeException('El precio de cada concepto no puede ser negativo.');
                 }
+                if (!in_array((string) ($item['tipo'] ?? 'servicio'), ['mano_obra', 'refaccion', 'servicio', 'otro'], true)) {
+                    $item['tipo'] = 'servicio';
+                }
                 $item['descripcion'] = $descripcion;
                 $item['cantidad'] = $cantidad;
                 $item['precio_unitario'] = $precio;
+                $item['refaccion_id'] = $refaccionId;
+                $item['costo_unitario'] = $costoUnitario;
                 $item['subtotal'] = calcularSubtotal((float) $item['cantidad'], (float) $item['precio_unitario']);
                 $subtotal += $item['subtotal'];
             }
@@ -106,8 +137,10 @@ final class CotizacionService
                 $this->cotizaciones->addItem([
                     'cotizacion_id' => $cotizacionId,
                     'tipo' => $item['tipo'],
+                    'refaccion_id' => $item['refaccion_id'],
                     'descripcion' => $item['descripcion'],
                     'cantidad' => (float) $item['cantidad'],
+                    'costo_unitario' => (float) $item['costo_unitario'],
                     'precio_unitario' => (float) $item['precio_unitario'],
                     'subtotal' => (float) $item['subtotal'],
                 ]);

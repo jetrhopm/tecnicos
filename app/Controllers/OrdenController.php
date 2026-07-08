@@ -142,6 +142,7 @@ final class OrdenController
                 static fn (array $refaccion): bool => $refaccion['estatus'] === 'activo'
             )),
             'refaccionesUsadas' => (new InventarioService())->usosPorOrden((int) $id),
+            'refaccionesCotizadasPendientes' => (new CotizacionService())->refaccionesPendientesPorOrden((int) $id),
             'agendaEventos' => (new AgendaService())->porOrden((int) $id),
         ]);
     }
@@ -160,6 +161,18 @@ final class OrdenController
                 (string) $request->input('motivo', '')
             );
             Session::flash('success', 'Refaccion aplicada y stock descontado.');
+        } catch (\Throwable $exception) {
+            Session::flash('error', $exception->getMessage());
+        }
+        Response::redirect('/ordenes/' . $id);
+    }
+
+    public function aplicarRefaccionesCotizadas(Request $request, string $id): void
+    {
+        Auth::requirePermission('inventario', 'editar');
+        try {
+            $total = (new InventarioService())->aplicarCotizadas((int) $id);
+            Session::flash('success', "Refacciones cotizadas aplicadas: {$total}. Stock descontado.");
         } catch (\Throwable $exception) {
             Session::flash('error', $exception->getMessage());
         }

@@ -140,6 +140,34 @@ document.addEventListener('DOMContentLoaded', () => {
     button.addEventListener('click', () => window.print());
   });
 
+  document.querySelectorAll('[data-quote-part-select]').forEach((select) => {
+    const form = select.closest('form');
+    if (!form) {
+      return;
+    }
+
+    const description = form.querySelector('[data-quote-description]');
+    const price = form.querySelector('[data-quote-price]');
+    const type = form.querySelector('[data-quote-type]');
+
+    select.addEventListener('change', () => {
+      const option = select.selectedOptions[0];
+      if (!option || !select.value) {
+        return;
+      }
+
+      if (description) {
+        description.value = option.dataset.description || description.value;
+      }
+      if (price) {
+        price.value = option.dataset.price || price.value || '0';
+      }
+      if (type) {
+        type.value = 'refaccion';
+      }
+    });
+  });
+
   if (window.bootstrap && window.bootstrap.Popover) {
     let activeHelpPopover = null;
 

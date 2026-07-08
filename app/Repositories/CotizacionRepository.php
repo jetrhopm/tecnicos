@@ -23,7 +23,34 @@ final class CotizacionRepository extends BaseRepository
 
     public function items(int $cotizacionId): array
     {
-        return $this->fetchAll('SELECT * FROM cotizacion_items WHERE cotizacion_id = :id ORDER BY id', ['id' => $cotizacionId]);
+        return $this->fetchAll(
+            "SELECT ci.*, r.sku refaccion_sku, r.nombre refaccion_nombre, r.stock_actual refaccion_stock_actual,
+                    r.precio_venta refaccion_precio_venta, r.costo refaccion_costo
+             FROM cotizacion_items ci
+             LEFT JOIN refacciones r ON r.id = ci.refaccion_id
+             WHERE ci.cotizacion_id = :id
+             ORDER BY ci.id",
+            ['id' => $cotizacionId]
+        );
+    }
+
+    public function refaccionesCotizadasPendientes(int $ordenId): array
+    {
+        return $this->fetchAll(
+            "SELECT ci.*, q.estado cotizacion_estado, q.version cotizacion_version,
+                    r.nombre refaccion_nombre, r.sku refaccion_sku, r.stock_actual, r.stock_minimo,
+                    r.precio_venta, r.costo, ro.id uso_id, ro.estado uso_estado
+             FROM cotizaciones q
+             JOIN cotizacion_items ci ON ci.cotizacion_id = q.id
+             JOIN refacciones r ON r.id = ci.refaccion_id
+             LEFT JOIN refacciones_ordenes ro ON ro.cotizacion_item_id = ci.id
+             WHERE q.orden_id = :orden_id
+               AND q.estado = 'aceptada'
+               AND ci.refaccion_id IS NOT NULL
+               AND ro.id IS NULL
+             ORDER BY q.version DESC, ci.id",
+            ['orden_id' => $ordenId]
+        );
     }
 
     public function nextVersion(int $ordenId): int
@@ -44,8 +71,8 @@ final class CotizacionRepository extends BaseRepository
     public function addItem(array $data): int
     {
         return $this->insert(
-            "INSERT INTO cotizacion_items (cotizacion_id, tipo, descripcion, cantidad, precio_unitario, subtotal)
-             VALUES (:cotizacion_id, :tipo, :descripcion, :cantidad, :precio_unitario, :subtotal)",
+            "INSERT INTO cotizacion_items (cotizacion_id, tipo, refaccion_id, descripcion, cantidad, costo_unitario, precio_unitario, subtotal)
+             VALUES (:cotizacion_id, :tipo, :refaccion_id, :descripcion, :cantidad, :costo_unitario, :precio_unitario, :subtotal)",
             $data
         );
     }

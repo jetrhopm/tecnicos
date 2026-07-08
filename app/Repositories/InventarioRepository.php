@@ -101,8 +101,8 @@ final class InventarioRepository extends BaseRepository
     public function registrarUsoOrden(array $data): int
     {
         return $this->insert(
-            "INSERT INTO refacciones_ordenes (orden_id, refaccion_id, cantidad, precio_unitario)
-             VALUES (:orden_id, :refaccion_id, :cantidad, :precio_unitario)",
+            "INSERT INTO refacciones_ordenes (orden_id, refaccion_id, cotizacion_item_id, cantidad, precio_unitario)
+             VALUES (:orden_id, :refaccion_id, :cotizacion_item_id, :cantidad, :precio_unitario)",
             $data
         );
     }
@@ -110,10 +110,12 @@ final class InventarioRepository extends BaseRepository
     public function usosPorOrden(int $ordenId): array
     {
         return $this->fetchAll(
-            "SELECT ro.*, r.nombre, r.sku, r.costo, r.precio_venta, r.stock_actual, u.name cancelado_por_nombre
+            "SELECT ro.*, r.nombre, r.sku, r.costo, r.precio_venta, r.stock_actual, u.name cancelado_por_nombre,
+                    ci.descripcion cotizacion_descripcion
              FROM refacciones_ordenes ro
              JOIN refacciones r ON r.id = ro.refaccion_id
              LEFT JOIN users u ON u.id = ro.cancelado_por
+             LEFT JOIN cotizacion_items ci ON ci.id = ro.cotizacion_item_id
              WHERE ro.orden_id = :orden_id
              ORDER BY ro.id DESC",
             ['orden_id' => $ordenId]
