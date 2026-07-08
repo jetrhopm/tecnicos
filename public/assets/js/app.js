@@ -141,12 +141,46 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   if (window.bootstrap && window.bootstrap.Popover) {
+    let activeHelpPopover = null;
+
     document.querySelectorAll('[data-help-popover]').forEach((element) => {
-      new window.bootstrap.Popover(element, {
-        trigger: 'focus',
+      const popover = new window.bootstrap.Popover(element, {
+        trigger: 'manual',
         container: 'body',
         placement: element.getAttribute('data-help-placement') || 'auto',
       });
+
+      element.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (activeHelpPopover && activeHelpPopover !== popover) {
+          activeHelpPopover.hide();
+        }
+
+        popover.toggle();
+        activeHelpPopover = popover;
+      });
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!activeHelpPopover) {
+        return;
+      }
+
+      const clickedHelp = event.target.closest('[data-help-popover]');
+      const clickedPopover = event.target.closest('.popover');
+      if (!clickedHelp && !clickedPopover) {
+        activeHelpPopover.hide();
+        activeHelpPopover = null;
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && activeHelpPopover) {
+        activeHelpPopover.hide();
+        activeHelpPopover = null;
+      }
     });
   }
 });
