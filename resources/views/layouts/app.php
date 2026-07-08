@@ -69,16 +69,16 @@ $notifIconos = [
     </aside>
     <main class="main">
         <header class="topbar">
+            <button class="mobile-menu-toggle btn btn-outline-dark btn-sm" type="button" aria-controls="app-sidebar" aria-expanded="false" data-sidebar-toggle>Menu</button>
             <div class="topbar-title">
-                <button class="mobile-menu-toggle btn btn-outline-dark btn-sm" type="button" aria-controls="app-sidebar" aria-expanded="false" data-sidebar-toggle>Menu</button>
                 <h1 class="h3 mb-1" data-icon="&#9671;"><?= e($title ?? '') ?></h1>
                 <div class="text-muted">Operacion diaria del taller</div>
             </div>
-            <div class="d-flex align-items-center gap-2">
+            <div class="d-flex align-items-center gap-2 topbar-actions">
                 <form class="d-none d-md-block" action="<?= e(url('/ordenes')) ?>">
                     <input class="form-control" name="q" placeholder="Buscar folio, cliente o telefono">
                 </form>
-                <span class="badge text-bg-light"><?= e($user['name'] ?? 'Usuario') ?></span>
+                <span class="badge text-bg-light topbar-user"><?= e($user['name'] ?? 'Usuario') ?></span>
                 <div class="dropdown">
                     <button class="btn btn-outline-secondary btn-sm notif-bell" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notificaciones">
                         &#128276;
@@ -111,7 +111,7 @@ $notifIconos = [
                     </div>
                 </div>
                 <div class="dropdown theme-switcher">
-                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-icon="&#9681;">Tema</button>
+                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Tema" data-icon="&#9681;"><span class="btn-label">Tema</span></button>
                     <div class="dropdown-menu dropdown-menu-end p-2" style="min-width: 230px;">
                         <div class="fw-bold small text-muted px-1 mb-1">Tema de diseno</div>
                         <label class="dropdown-item d-flex align-items-center gap-2">
@@ -133,7 +133,7 @@ $notifIconos = [
                 </div>
                 <form method="post" action="<?= e(url('/logout')) ?>">
                     <?= csrf_field() ?>
-                    <button class="btn btn-outline-dark btn-sm" data-icon="&#128274;">Salir</button>
+                    <button class="btn btn-outline-dark btn-sm" aria-label="Salir" data-icon="&#128274;"><span class="btn-label">Salir</span></button>
                 </form>
             </div>
         </header>

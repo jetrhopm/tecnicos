@@ -641,6 +641,8 @@ a {
     width: max-content;
     align-items: center;
     justify-content: center;
+    order: 1;
+    flex: 0 0 auto;
   }
 
   .nav-link {
@@ -653,14 +655,40 @@ a {
   }
 
   .topbar {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 12px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
   }
 
-  .topbar > .d-flex {
+  /* Menu a la izquierda, controles a la derecha en la misma fila superior;
+     el titulo baja a su propia linea. Orden: rol, notificaciones, tema, salir. */
+  .topbar-actions {
+    order: 2;
+    margin-left: auto;
+    width: auto;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  .topbar-title {
+    order: 3;
+    flex-basis: 100%;
     width: 100%;
-    flex-wrap: wrap;
+  }
+
+  /* Compacta los controles para que menu + rol + campana + tema + salir
+     quepan en una sola fila superior. */
+  .topbar-actions .btn-label {
+    display: none;
+  }
+
+  .topbar-user {
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .form-control,
