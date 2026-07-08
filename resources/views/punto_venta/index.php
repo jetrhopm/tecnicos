@@ -69,6 +69,7 @@ $puedeCrear = \App\Core\Auth::can('punto_venta', 'crear');
                             <span class="text-muted small">Total</span>
                             <strong data-pos-total>$0.00</strong>
                         </div>
+                        <button class="btn btn-outline-danger btn-lg" type="button" data-pos-clear-sale data-icon="&#8634;">Limpiar venta</button>
                         <button class="btn btn-primary btn-lg" type="button" data-pos-open-payment data-icon="&#128179;">Cobrar</button>
                     </div>
                 </form>
@@ -104,6 +105,26 @@ $puedeCrear = \App\Core\Auth::can('punto_venta', 'crear');
 </div>
 
 <?php if ($puedeCrear): ?>
+    <?php if (!empty($ticketUrl)): ?>
+        <div class="modal fade" id="posTicketModal" tabindex="-1" aria-labelledby="posTicketModalLabel" aria-hidden="true" data-ticket-url="<?= e($ticketUrl) ?>">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title h5" id="posTicketModalLabel">Ticket de venta</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <iframe class="pos-ticket-frame" src="<?= e($ticketUrl) ?>" title="Ticket de venta"></iframe>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-outline-dark" target="_blank" href="<?= e($ticketUrl) ?>">Abrir aparte</a>
+                        <button class="btn btn-primary" type="button" data-pos-print-ticket>Imprimir ticket</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <div class="modal fade" id="posPaymentModal" tabindex="-1" aria-labelledby="posPaymentModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">

@@ -627,6 +627,14 @@ a {
   line-height: 1.1;
 }
 
+.pos-ticket-frame {
+  display: block;
+  width: 100%;
+  min-height: min(76vh, 760px);
+  border: 0;
+  background: #fff;
+}
+
 .modal-backdrop {
   z-index: 1060;
 }

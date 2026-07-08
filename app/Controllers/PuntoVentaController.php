@@ -20,6 +20,7 @@ final class PuntoVentaController
     public function index(): void
     {
         Auth::requirePermission('punto_venta', 'ver');
+        $ticketId = isset($_GET['ticket']) && ctype_digit((string) $_GET['ticket']) ? (int) $_GET['ticket'] : 0;
         View::render('punto_venta/index', [
             'title' => 'Punto de venta',
             'refacciones' => array_values(array_filter(
@@ -27,6 +28,7 @@ final class PuntoVentaController
                 static fn (array $refaccion): bool => $refaccion['estatus'] === 'activo'
             )),
             'ventas' => (new VentaRefaccionService())->recientes(),
+            'ticketUrl' => $ticketId > 0 ? url('/punto-venta/' . $ticketId . '/ticket') : '',
         ]);
     }
 
@@ -42,7 +44,7 @@ final class PuntoVentaController
         try {
             $ventaId = (new VentaRefaccionService())->vender($request->all());
             Session::flash('success', 'Venta registrada y stock descontado.');
-            Response::redirect('/punto-venta/' . $ventaId . '/ticket');
+            Response::redirect('/punto-venta?ticket=' . $ventaId);
         } catch (\Throwable $exception) {
             Session::flash('error', $exception->getMessage());
             Response::back();

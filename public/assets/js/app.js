@@ -229,6 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const emptyRow = form.querySelector('[data-pos-empty]');
     const template = form.querySelector('[data-pos-row-template]');
     const paymentModalElement = document.getElementById('posPaymentModal');
+    const ticketModalElement = document.getElementById('posTicketModal');
+    const clearSaleButton = form.querySelector('[data-pos-clear-sale]');
     const totalDisplays = [
       ...form.querySelectorAll('[data-pos-total]'),
       ...(paymentModalElement ? paymentModalElement.querySelectorAll('[data-pos-modal-total]') : []),
@@ -236,8 +238,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const discountInput = form.querySelector('[data-pos-discount]');
     const openPaymentButton = form.querySelector('[data-pos-open-payment]');
     const searchUrl = form.dataset.posSearchUrl || '';
+    const draftKey = 'tecnico-pos-sale-draft:v1';
     let nextIndex = 1;
     let searchTimer = null;
+    let restoringDraft = false;
 
     const setTotalDisplays = (value) => {
       const formatted = formatMoney(value);
@@ -277,7 +281,40 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     };
 
-    const addProduct = (product) => {
+    const currentDraft = () => Array.from(form.querySelectorAll('[data-pos-row]')).map((row) => ({
+      id: row.dataset.refaccionId || '',
+      nombre: row.dataset.nombre || row.querySelector('[data-pos-name]')?.textContent || '',
+      sku: row.dataset.sku || row.querySelector('[data-pos-sku]')?.textContent || '',
+      stock_actual: row.dataset.stock || row.querySelector('[data-pos-stock]')?.textContent || '0',
+      precio_venta: row.querySelector('[data-pos-price]')?.value || '0',
+      cantidad: row.querySelector('[data-pos-qty]')?.value || '1',
+    })).filter((item) => item.id);
+
+    const saveDraft = () => {
+      if (restoringDraft) {
+        return;
+      }
+      try {
+        const items = currentDraft();
+        if (!items.length) {
+          localStorage.removeItem(draftKey);
+          return;
+        }
+        localStorage.setItem(draftKey, JSON.stringify({ items, savedAt: Date.now() }));
+      } catch (error) {
+        // Si el navegador no permite localStorage, la venta sigue funcionando sin cache local.
+      }
+    };
+
+    const clearDraft = () => {
+      try {
+        localStorage.removeItem(draftKey);
+      } catch (error) {
+        // Cache local opcional.
+      }
+    };
+
+    const addProduct = (product, options = {}) => {
       if (!product || !template || !cart) {
         return;
       }
@@ -286,10 +323,18 @@ document.addEventListener('DOMContentLoaded', () => {
       if (existing) {
         const qtyInput = existing.querySelector('[data-pos-qty]');
         if (qtyInput) {
-          qtyInput.value = String(Math.max(1, Number(qtyInput.value || 0) + 1));
+          const addQty = Number(options.cantidad || 1);
+          qtyInput.value = String(Math.max(1, Number(qtyInput.value || 0) + addQty));
+        }
+        if (options.precio_venta) {
+          const priceInput = existing.querySelector('[data-pos-price]');
+          if (priceInput) {
+            priceInput.value = options.precio_venta;
+          }
         }
         updateTotal();
         syncNames();
+        saveDraft();
         return;
       }
 
@@ -301,15 +346,53 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       row.dataset.refaccionId = String(product.id);
+      row.dataset.nombre = product.nombre || 'Refaccion';
+      row.dataset.sku = product.sku || '';
+      row.dataset.stock = product.stock_actual ?? '0';
       row.querySelector('[data-pos-name]').textContent = product.nombre || 'Refaccion';
       row.querySelector('[data-pos-sku]').textContent = product.sku || '';
       row.querySelector('[data-pos-stock]').textContent = product.stock_actual ?? '0';
       row.querySelector('[data-pos-field="refaccion_id"]').value = product.id;
-      row.querySelector('[data-pos-price]').value = product.precio_venta || '0';
+      row.querySelector('[data-pos-price]').value = options.precio_venta || product.precio_venta || '0';
+      row.querySelector('[data-pos-qty]').value = String(Math.max(1, Number(options.cantidad || 1)));
       cart.appendChild(row);
       nextIndex += 1;
       syncNames();
       updateTotal();
+      saveDraft();
+    };
+
+    const restoreDraft = () => {
+      try {
+        const raw = localStorage.getItem(draftKey);
+        if (!raw) {
+          return;
+        }
+        const draft = JSON.parse(raw);
+        const items = Array.isArray(draft.items) ? draft.items : [];
+        if (!items.length) {
+          return;
+        }
+        restoringDraft = true;
+        items.forEach((item) => {
+          addProduct({
+            id: item.id,
+            nombre: item.nombre,
+            sku: item.sku,
+            stock_actual: item.stock_actual,
+            precio_venta: item.precio_venta,
+          }, {
+            cantidad: item.cantidad,
+            precio_venta: item.precio_venta,
+          });
+        });
+      } catch (error) {
+        clearDraft();
+      } finally {
+        restoringDraft = false;
+        syncNames();
+        updateTotal();
+      }
     };
 
     const hideResults = () => {
@@ -393,6 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       syncNames();
       updateTotal();
+      saveDraft();
     });
 
     form.addEventListener('input', (event) => {
@@ -403,6 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       updateTotal();
       syncNames();
+      saveDraft();
     });
 
     searchInput?.addEventListener('keydown', (event) => {
@@ -422,6 +507,17 @@ document.addEventListener('DOMContentLoaded', () => {
         searchInput.focus();
       }
       hideResults();
+    });
+
+    clearSaleButton?.addEventListener('click', () => {
+      if (form.querySelectorAll('[data-pos-row]').length > 0 && !window.confirm('Limpiar todos los productos de esta venta?')) {
+        return;
+      }
+      form.querySelectorAll('[data-pos-row]').forEach((row) => row.remove());
+      clearDraft();
+      syncNames();
+      updateTotal();
+      searchInput?.focus();
     });
 
     openPaymentButton?.addEventListener('click', () => {
@@ -448,8 +544,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     nextIndex += form.querySelectorAll('[data-pos-row]').length;
+    if (ticketModalElement) {
+      clearDraft();
+    } else {
+      restoreDraft();
+    }
     syncNames();
     updateTotal();
+
+    if (ticketModalElement && window.bootstrap && window.bootstrap.Modal) {
+      window.bootstrap.Modal.getOrCreateInstance(ticketModalElement).show();
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('ticket')) {
+        url.searchParams.delete('ticket');
+        window.history.replaceState({}, document.title, url.toString());
+      }
+    }
+
+    document.querySelector('[data-pos-print-ticket]')?.addEventListener('click', () => {
+      const frame = document.querySelector('.pos-ticket-frame');
+      frame?.contentWindow?.focus();
+      frame?.contentWindow?.print();
+    });
   });
 
   if (window.bootstrap && window.bootstrap.Popover) {

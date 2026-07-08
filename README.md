@@ -301,6 +301,9 @@ Reglas de refacciones:
   coincidencias para seleccionar.
 - El cobro abre una ventana modal donde se elige metodo de pago y se captura
   referencia y cliente opcional para el ticket.
+- El ticket se muestra en una ventana dentro del sistema y la lista de venta se
+  guarda temporalmente en el navegador hasta confirmar el cobro o usar
+  **Limpiar venta**.
 - Si se aplico por error, se cancela con motivo y el stock se devuelve.
 - No se permite stock negativo ni aplicar refacciones a ordenes entregadas o
   canceladas.

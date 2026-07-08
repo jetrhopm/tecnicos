@@ -20,6 +20,12 @@ responsable del proyecto.
   una ventana modal de cobro.
 - Se corrigio la capa del modal de cobro para que no quede detras del fondo
   transparente de Bootstrap.
+- Al confirmar una venta, el ticket se muestra dentro del sistema en un modal
+  con iframe y opcion de imprimir, sin abandonar el punto de venta.
+- La lista de productos del POS se guarda en cache local del navegador y se
+  restaura si se cierra o recarga la pagina antes de cobrar.
+- Se agrego el boton `Limpiar venta` para vaciar la tabla y borrar el borrador
+  local.
 - Cada venta genera folio propio, ticket imprimible, metodo de pago,
   referencia, cliente opcional y usuario que cobro.
 - La venta descuenta stock por transaccion y registra salida en
