@@ -50,6 +50,7 @@ $puedeCrear = \App\Core\Auth::can('punto_venta', 'crear');
                                 <strong data-pos-name></strong><br>
                                 <small class="text-muted"><span data-pos-sku></span> - Stock <span data-pos-stock></span></small>
                                 <input type="hidden" data-pos-field="refaccion_id">
+                                <input type="hidden" data-pos-field="sku">
                             </td>
                             <td>
                                 <input class="form-control" type="number" min="1" step="1" value="1" data-pos-qty>

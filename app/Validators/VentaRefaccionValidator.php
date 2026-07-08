@@ -21,7 +21,7 @@ final class VentaRefaccionValidator
         $items = isset($data['items']) && is_array($data['items'])
             ? array_values(array_filter($data['items'], 'is_array'))
             : [];
-        $items = array_values(array_filter($items, static fn (array $item): bool => !empty($item['refaccion_id'])));
+        $items = array_values(array_filter($items, static fn (array $item): bool => !empty($item['refaccion_id']) || trim((string) ($item['sku'] ?? '')) !== ''));
 
         if ($items === []) {
             $errors[] = ['field' => 'items', 'message' => 'Agrega al menos una refaccion a la venta'];
@@ -30,9 +30,14 @@ final class VentaRefaccionValidator
 
         foreach ($items as $index => $item) {
             $field = 'items.' . $index;
+            $refaccionId = (int) ($item['refaccion_id'] ?? 0);
+            $sku = trim((string) ($item['sku'] ?? ''));
             $cantidad = $item['cantidad'] ?? '';
             $precio = $item['precio_unitario'] ?? '';
 
+            if ($refaccionId <= 0 && $sku === '') {
+                $errors[] = ['field' => $field . '.refaccion_id', 'message' => 'La refaccion debe tener ID o SKU'];
+            }
             if ($cantidad === '' || !is_numeric($cantidad) || (int) $cantidad <= 0) {
                 $errors[] = ['field' => $field . '.cantidad', 'message' => 'La cantidad debe ser mayor a cero'];
             }

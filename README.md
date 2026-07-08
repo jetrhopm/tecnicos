@@ -304,6 +304,9 @@ Reglas de refacciones:
 - El ticket se muestra en una ventana dentro del sistema y la lista de venta se
   guarda temporalmente en el navegador hasta confirmar el cobro o usar
   **Limpiar venta**.
+- Al recuperar una venta guardada por recarga o cierre accidental, el sistema
+  conserva ID y SKU; si falta el ID local, el backend busca la refaccion por SKU
+  y descuenta inventario en la misma transaccion.
 - Si se aplico por error, se cancela con motivo y el stock se devuelve.
 - No se permite stock negativo ni aplicar refacciones a ordenes entregadas o
   canceladas.

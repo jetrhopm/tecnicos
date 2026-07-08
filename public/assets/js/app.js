@@ -276,19 +276,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const syncNames = () => {
       form.querySelectorAll('[data-pos-row]').forEach((row, index) => {
         row.querySelector('[data-pos-field="refaccion_id"]')?.setAttribute('name', `items[${index}][refaccion_id]`);
+        row.querySelector('[data-pos-field="sku"]')?.setAttribute('name', `items[${index}][sku]`);
         row.querySelector('[data-pos-qty]')?.setAttribute('name', `items[${index}][cantidad]`);
         row.querySelector('[data-pos-price]')?.setAttribute('name', `items[${index}][precio_unitario]`);
       });
     };
 
     const currentDraft = () => Array.from(form.querySelectorAll('[data-pos-row]')).map((row) => ({
-      id: row.dataset.refaccionId || '',
+      id: row.dataset.refaccionId || row.querySelector('[data-pos-field="refaccion_id"]')?.value || '',
+      refaccion_id: row.dataset.refaccionId || row.querySelector('[data-pos-field="refaccion_id"]')?.value || '',
       nombre: row.dataset.nombre || row.querySelector('[data-pos-name]')?.textContent || '',
-      sku: row.dataset.sku || row.querySelector('[data-pos-sku]')?.textContent || '',
+      sku: row.dataset.sku || row.querySelector('[data-pos-field="sku"]')?.value || row.querySelector('[data-pos-sku]')?.textContent || '',
       stock_actual: row.dataset.stock || row.querySelector('[data-pos-stock]')?.textContent || '0',
       precio_venta: row.querySelector('[data-pos-price]')?.value || '0',
       cantidad: row.querySelector('[data-pos-qty]')?.value || '1',
-    })).filter((item) => item.id);
+    })).filter((item) => item.id || item.sku);
 
     const saveDraft = () => {
       if (restoringDraft) {
@@ -319,7 +321,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const existing = form.querySelector(`[data-pos-row][data-refaccion-id="${product.id}"]`);
+      const productId = product.id || product.refaccion_id || '';
+      const productSku = product.sku || '';
+      const existing = Array.from(form.querySelectorAll('[data-pos-row]')).find((row) => (
+        (productId && row.dataset.refaccionId === String(productId))
+        || (productSku && row.dataset.sku === String(productSku))
+      ));
       if (existing) {
         const qtyInput = existing.querySelector('[data-pos-qty]');
         if (qtyInput) {
@@ -345,14 +352,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      row.dataset.refaccionId = String(product.id);
+      row.dataset.refaccionId = String(productId);
       row.dataset.nombre = product.nombre || 'Refaccion';
-      row.dataset.sku = product.sku || '';
+      row.dataset.sku = productSku;
       row.dataset.stock = product.stock_actual ?? '0';
       row.querySelector('[data-pos-name]').textContent = product.nombre || 'Refaccion';
-      row.querySelector('[data-pos-sku]').textContent = product.sku || '';
+      row.querySelector('[data-pos-sku]').textContent = productSku;
       row.querySelector('[data-pos-stock]').textContent = product.stock_actual ?? '0';
-      row.querySelector('[data-pos-field="refaccion_id"]').value = product.id;
+      row.querySelector('[data-pos-field="refaccion_id"]').value = productId;
+      row.querySelector('[data-pos-field="sku"]').value = productSku;
       row.querySelector('[data-pos-price]').value = options.precio_venta || product.precio_venta || '0';
       row.querySelector('[data-pos-qty]').value = String(Math.max(1, Number(options.cantidad || 1)));
       cart.appendChild(row);
@@ -376,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
         restoringDraft = true;
         items.forEach((item) => {
           addProduct({
-            id: item.id,
+            id: item.id || item.refaccion_id || '',
             nombre: item.nombre,
             sku: item.sku,
             stock_actual: item.stock_actual,

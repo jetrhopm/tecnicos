@@ -39,7 +39,7 @@ final class VentaRefaccionService
         $items = isset($data['items']) && is_array($data['items'])
             ? array_values(array_filter($data['items'], 'is_array'))
             : [];
-        $items = array_values(array_filter($items, static fn (array $item): bool => !empty($item['refaccion_id'])));
+        $items = array_values(array_filter($items, static fn (array $item): bool => !empty($item['refaccion_id']) || trim((string) ($item['sku'] ?? '')) !== ''));
         if ($items === []) {
             throw new RuntimeException('Agrega al menos una refaccion a la venta.');
         }
@@ -61,15 +61,19 @@ final class VentaRefaccionService
 
             foreach ($items as $item) {
                 $refaccionId = (int) ($item['refaccion_id'] ?? 0);
+                $sku = trim((string) ($item['sku'] ?? ''));
                 $cantidad = (int) ($item['cantidad'] ?? 0);
-                if ($refaccionId <= 0 || $cantidad <= 0) {
+                if (($refaccionId <= 0 && $sku === '') || $cantidad <= 0) {
                     throw new RuntimeException('Cada refaccion debe tener cantidad mayor a cero.');
                 }
 
-                $refaccion = $this->inventario->findForUpdate($refaccionId);
+                $refaccion = $refaccionId > 0
+                    ? $this->inventario->findForUpdate($refaccionId)
+                    : $this->inventario->findBySkuForUpdate($sku);
                 if (!$refaccion || $refaccion['estatus'] !== 'activo') {
                     throw new RuntimeException('Una refaccion no existe o esta inactiva.');
                 }
+                $refaccionId = (int) $refaccion['id'];
 
                 $stockAnterior = (int) $refaccion['stock_actual'];
                 $reservadoPrevio = (int) ($stockReservado[$refaccionId] ?? 0);

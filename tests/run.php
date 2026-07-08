@@ -48,6 +48,11 @@ $tests = [
         \App\Validators\VentaRefaccionValidator::validate(['items' => [['refaccion_id' => 1, 'cantidad' => 0, 'precio_unitario' => 100]]]),
         static fn (array $error): bool => str_ends_with($error['field'], 'cantidad')
     ) !== [],
+    'ventaRefaccionAceptaSkuSinId' => \App\Validators\VentaRefaccionValidator::validate([
+        'items' => [
+            ['sku' => 'BAT-DEMO-001', 'cantidad' => 1, 'precio_unitario' => 100],
+        ],
+    ]) === [],
 ];
 
 $failed = array_filter($tests, static fn (bool $ok): bool => !$ok);

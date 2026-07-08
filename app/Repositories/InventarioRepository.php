@@ -58,6 +58,18 @@ final class InventarioRepository extends BaseRepository
         );
     }
 
+    public function findBySkuForUpdate(string $sku): ?array
+    {
+        return $this->fetch(
+            "SELECT r.*, p.nombre proveedor_nombre
+             FROM refacciones r
+             LEFT JOIN proveedores p ON p.id = r.proveedor_id
+             WHERE r.sku = :sku AND r.deleted_at IS NULL
+             FOR UPDATE",
+            ['sku' => $sku]
+        );
+    }
+
     public function buscarParaVenta(string $query, int $limite = 12): array
     {
         $query = trim($query);

@@ -24,6 +24,8 @@ responsable del proyecto.
   con iframe y opcion de imprimir, sin abandonar el punto de venta.
 - La lista de productos del POS se guarda en cache local del navegador y se
   restaura si se cierra o recarga la pagina antes de cobrar.
+- El borrador del POS guarda ID y SKU; si al recuperar una venta falta el ID,
+  el servidor resuelve la refaccion por SKU antes de descontar inventario.
 - Se agrego el boton `Limpiar venta` para vaciar la tabla y borrar el borrador
   local.
 - Cada venta genera folio propio, ticket imprimible, metodo de pago,
