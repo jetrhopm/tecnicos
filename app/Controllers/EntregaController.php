@@ -69,7 +69,7 @@ final class EntregaController
         }
 
         $formato = (string) $request->input('formato', 'carta');
-        if (!in_array($formato, ['carta', '80', '58'], true)) {
+        if (!in_array($formato, ['carta', '80', '56'], true)) {
             $formato = 'carta';
         }
 

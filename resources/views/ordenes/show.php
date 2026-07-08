@@ -45,7 +45,7 @@ $help = static function (string $texto, string $ejemplo = ''): string {
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" target="_blank" href="<?= e(url('/ordenes/' . $orden['id'] . '/imprimir?formato=carta')) ?>">Hoja carta</a></li>
                             <li><a class="dropdown-item" target="_blank" href="<?= e(url('/ordenes/' . $orden['id'] . '/imprimir?formato=80')) ?>">Ticket 80&nbsp;mm</a></li>
-                            <li><a class="dropdown-item" target="_blank" href="<?= e(url('/ordenes/' . $orden['id'] . '/imprimir?formato=58')) ?>">Ticket 58&nbsp;mm</a></li>
+                            <li><a class="dropdown-item" target="_blank" href="<?= e(url('/ordenes/' . $orden['id'] . '/imprimir?formato=56')) ?>">Ticket 56&nbsp;mm</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" target="_blank" href="<?= e(url('/ordenes/' . $orden['id'] . '/etiqueta')) ?>">Etiqueta equipo</a></li>
                         </ul>
@@ -57,7 +57,7 @@ $help = static function (string $texto, string $ejemplo = ''): string {
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" target="_blank" href="<?= e(url('/entregas/' . $entrega['id'] . '/comprobante?formato=carta')) ?>">Hoja carta</a></li>
                                 <li><a class="dropdown-item" target="_blank" href="<?= e(url('/entregas/' . $entrega['id'] . '/comprobante?formato=80')) ?>">Ticket 80&nbsp;mm</a></li>
-                                <li><a class="dropdown-item" target="_blank" href="<?= e(url('/entregas/' . $entrega['id'] . '/comprobante?formato=58')) ?>">Ticket 58&nbsp;mm</a></li>
+                                <li><a class="dropdown-item" target="_blank" href="<?= e(url('/entregas/' . $entrega['id'] . '/comprobante?formato=56')) ?>">Ticket 56&nbsp;mm</a></li>
                             </ul>
                         </div>
                     <?php endif; ?>

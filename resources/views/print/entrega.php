@@ -4,7 +4,7 @@
  * Formatos: carta y termico 80/58 mm (mismos estilos que la orden).
  * $formato lo pasa el controlador; $config trae los datos del negocio.
  */
-$formato = in_array(($formato ?? 'carta'), ['carta', '80', '58'], true) ? $formato : 'carta';
+$formato = in_array(($formato ?? 'carta'), ['carta', '80', '56'], true) ? $formato : 'carta';
 $printSize = $formato;
 $docClass = 'doc doc-' . $formato;
 

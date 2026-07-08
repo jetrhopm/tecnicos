@@ -3,7 +3,7 @@
    Tres formatos por clase en el contenedor .doc:
      .doc-carta  -> hoja tamano carta (boxes, dos firmas)
      .doc-80     -> ticket termico 80 mm
-     .doc-58     -> ticket termico 58 mm
+     .doc-56     -> ticket termico 56 mm
    El @page (tamano de papel) lo fija el layout segun el formato.
    Se ve igual en pantalla (vista /imprimir) y en papel.
    ======================================================================= */
@@ -385,15 +385,15 @@
 
 /* =====================  Formatos TERMICOS (80 / 58 mm)  ===================== */
 .doc-80,
-.doc-58 {
+.doc-56 {
   font-family: "Segoe UI", Arial, sans-serif;
 }
 
 .doc-80 { width: 74mm; padding: 2mm; font-size: 12px; }
-.doc-58 { width: 54mm; padding: 1.5mm; font-size: 10.5px; }
+.doc-56 { width: 50mm; padding: 1.5mm; font-size: 10.5px; }
 
 .doc-80 .doc-head,
-.doc-58 .doc-head {
+.doc-56 .doc-head {
   flex-direction: column;
   align-items: center;
   gap: 4px;
@@ -401,47 +401,47 @@
 }
 
 .doc-80 .doc-logo { width: 54px; height: 54px; }
-.doc-58 .doc-logo { width: 42px; height: 42px; }
+.doc-56 .doc-logo { width: 42px; height: 42px; }
 
 .doc-80 .doc-logo .doc-logo-mark { font-size: 18px; }
-.doc-58 .doc-logo .doc-logo-mark { font-size: 15px; border-radius: 9px; }
+.doc-56 .doc-logo .doc-logo-mark { font-size: 15px; border-radius: 9px; }
 
 .doc-80 .doc-biz-name { font-size: 15px; }
-.doc-58 .doc-biz-name { font-size: 13px; }
+.doc-56 .doc-biz-name { font-size: 13px; }
 
 .doc-80 .doc-orden { font-size: 17px; }
-.doc-58 .doc-orden { font-size: 15px; }
+.doc-56 .doc-orden { font-size: 15px; }
 
 .doc-80 .doc-title,
-.doc-58 .doc-title { margin: 3px 0; }
+.doc-56 .doc-title { margin: 3px 0; }
 
 /* Campos termicos: apilados, con separadores finos */
 .doc-80 .field,
-.doc-58 .field {
+.doc-56 .field {
   padding: 2px 0;
   border-bottom: 1px dotted #bbb;
 }
 
 .doc-80 .field-l,
-.doc-58 .field-l { font-size: 0.85em; }
+.doc-56 .field-l { font-size: 0.85em; }
 
 .doc-80 .patron-box,
-.doc-58 .patron-box {
+.doc-56 .patron-box {
   gap: 8px;
   padding: 3px 0;
   border-bottom: 1px dotted #bbb;
 }
 
 .doc-80 .patron-svg { width: 78px; height: 78px; }
-.doc-58 .patron-svg { width: 64px; height: 64px; }
+.doc-56 .patron-svg { width: 64px; height: 64px; }
 
 .doc-80 .saldo-box,
-.doc-58 .saldo-box { margin-top: 4px; }
+.doc-56 .saldo-box { margin-top: 4px; }
 
-.doc-58 .saldo-box .saldo-amount { font-size: 1.1em; }
+.doc-56 .saldo-box .saldo-amount { font-size: 1.1em; }
 
 .doc-80 .firmas,
-.doc-58 .firmas {
+.doc-56 .firmas {
   flex-direction: column;
   gap: 16px;
   margin-top: 18px;

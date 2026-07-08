@@ -269,7 +269,7 @@ final class OrdenController
     {
         Auth::requirePermission('ordenes', 'imprimir');
 
-        // Salida HTML preparada para impresion. Formato carta o termico 80/58mm
+        // Salida HTML preparada para impresion. Formato carta o termico 80/56mm
         // segun ?formato=; los datos del negocio/logo salen de configuracion.
         $orden = (new OrdenService())->obtener((int) $id);
         if (!$orden) {
@@ -279,7 +279,7 @@ final class OrdenController
         }
 
         $formato = (string) $request->input('formato', 'carta');
-        if (!in_array($formato, ['carta', '80', '58'], true)) {
+        if (!in_array($formato, ['carta', '80', '56'], true)) {
             $formato = 'carta';
         }
 

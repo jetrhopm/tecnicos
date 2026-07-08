@@ -1,20 +1,24 @@
 <?php
 /*
- * La vista puede definir $printSize ('carta'|'80'|'58') para fijar el tamano
+ * La vista puede definir $printSize ('carta'|'80'|'56') para fijar el tamano
  * de papel del documento; por defecto usa carta.
  */
 $printSize = $printSize ?? 'carta';
 $pageSize = match ((string) $printSize) {
     '80' => '80mm auto',
-    '58' => '58mm auto',
+    '56' => '56mm auto',
     'etiqueta' => '62mm 32mm',
     default => 'letter',
 };
 $pageMargin = match ((string) $printSize) {
     'carta' => '10mm',
-    'etiqueta' => '2mm',
+    '56', 'etiqueta' => '2mm',
     default => '3mm',
 };
+
+// Ruta actual sin query, para poder cambiar de formato desde la barra.
+$printPath = strtok((string) ($_SERVER['REQUEST_URI'] ?? ''), '?');
+$printFormatos = ['carta' => 'Carta', '80' => 'Ticket 80 mm', '56' => 'Ticket 56 mm'];
 ?>
 <!doctype html>
 <html lang="es">
@@ -32,9 +36,16 @@ $pageMargin = match ((string) $printSize) {
     <div class="print-toolbar no-print">
         <div>
             <strong>Vista de impresion</strong>
-            <div class="small text-muted">Si tu celular no abre el dialogo automaticamente, toca Imprimir.</div>
+            <div class="small text-muted">Elige el formato y toca Imprimir. Para ticket usa impresora termica.</div>
         </div>
-        <div class="d-flex gap-2 flex-wrap">
+        <div class="d-flex gap-2 flex-wrap align-items-center">
+            <?php if (isset($printFormatos[(string) $printSize])): ?>
+                <div class="btn-group btn-group-sm" role="group" aria-label="Formato de impresion">
+                    <?php foreach ($printFormatos as $fmt => $etiqueta): ?>
+                        <a class="btn <?= (string) $printSize === (string) $fmt ? 'btn-dark' : 'btn-outline-dark' ?>" href="<?= e($printPath . '?formato=' . $fmt) ?>"><?= e($etiqueta) ?></a>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
             <button class="btn btn-primary btn-sm" type="button" data-print-now>Imprimir</button>
             <button class="btn btn-outline-dark btn-sm" type="button" data-print-back>Volver</button>
         </div>

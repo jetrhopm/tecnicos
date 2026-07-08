@@ -4,7 +4,7 @@
  * Formatos: carta (hoja con recuadros y firmas) y termico 80/58 mm.
  * $formato lo pasa el controlador; $config trae los datos del negocio.
  */
-$formato = in_array(($formato ?? 'carta'), ['carta', '80', '58'], true) ? $formato : 'carta';
+$formato = in_array(($formato ?? 'carta'), ['carta', '80', '56'], true) ? $formato : 'carta';
 $printSize = $formato;
 $docClass = 'doc doc-' . $formato;
 
@@ -19,7 +19,7 @@ $imei = (string) ($orden['imei'] ?? '');
 $imeiSerie = trim($imei . ($imei && $serie ? ' / ' : '') . $serie);
 
 $desbloqueo = patronDesbloqueo($orden['password_equipo'] ?? '');
-$patronPx = $formato === '58' ? 64 : ($formato === '80' ? 78 : 92);
+$patronPx = $formato === '56' ? 64 : ($formato === '80' ? 78 : 92);
 
 $total = (float) ($orden['costo_final'] ?? $orden['costo_estimado'] ?? 0);
 $anticipo = (float) ($orden['anticipo'] ?? 0);
@@ -148,7 +148,7 @@ $accesorios = trim((string) ($orden['accesorios_recibidos'] ?? '')) ?: 'Sin acce
         <div class="field"><div class="field-l">Estado</div><div class="field-v"><?= e($orden['estado'] ?? '') ?></div></div>
         <div class="field barcode-field">
             <div class="field-l">Codigo de entrega</div>
-            <?= codigoBarras39Svg((string) ($orden['codigo_entrega'] ?? ''), $formato === '58' ? 34 : 40, 1) ?>
+            <?= codigoBarras39Svg((string) ($orden['codigo_entrega'] ?? ''), $formato === '56' ? 34 : 40, 1) ?>
         </div>
 
         <?php if ($desbloqueo && $desbloqueo['tipo'] === 'patron'): ?>
