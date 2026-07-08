@@ -299,6 +299,8 @@ Reglas de refacciones:
 - El punto de venta usa buscador asincrono: al escanear o escribir un SKU unico
   agrega el producto directo a la tabla; por nombre, marca o modelo muestra
   coincidencias para seleccionar.
+- El cobro abre una ventana modal donde se elige metodo de pago y se captura
+  referencia y cliente opcional para el ticket.
 - Si se aplico por error, se cancela con motivo y el stock se devuelve.
 - No se permite stock negativo ni aplicar refacciones a ordenes entregadas o
   canceladas.

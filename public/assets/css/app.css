@@ -612,6 +612,21 @@ a {
   min-width: 110px;
 }
 
+.pos-total-box {
+  display: grid;
+  min-width: 160px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  text-align: right;
+}
+
+.pos-total-box strong {
+  font-size: 1.35rem;
+  line-height: 1.1;
+}
+
 .camera-scanner-wrap {
   max-width: 540px;
 }

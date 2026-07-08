@@ -228,11 +228,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const cart = form.querySelector('[data-pos-cart]');
     const emptyRow = form.querySelector('[data-pos-empty]');
     const template = form.querySelector('[data-pos-row-template]');
-    const totalInput = form.querySelector('[data-pos-total]');
+    const totalDisplays = form.querySelectorAll('[data-pos-total], [data-pos-modal-total]');
     const discountInput = form.querySelector('[data-pos-discount]');
+    const openPaymentButton = form.querySelector('[data-pos-open-payment]');
+    const paymentModalElement = form.querySelector('#posPaymentModal');
     const searchUrl = form.dataset.posSearchUrl || '';
     let nextIndex = 1;
     let searchTimer = null;
+
+    const setTotalDisplays = (value) => {
+      const formatted = formatMoney(value);
+      totalDisplays.forEach((element) => {
+        if ('value' in element) {
+          element.value = formatted;
+        } else {
+          element.textContent = formatted;
+        }
+      });
+    };
 
     const updateTotal = () => {
       let subtotal = 0;
@@ -247,9 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
       const discount = Math.max(0, Number(discountInput?.value || 0));
-      if (totalInput) {
-        totalInput.value = formatMoney(Math.max(0, subtotal - discount));
-      }
+      setTotalDisplays(Math.max(0, subtotal - discount));
       if (emptyRow) {
         emptyRow.classList.toggle('d-none', form.querySelectorAll('[data-pos-row]').length > 0);
       }
@@ -410,7 +421,26 @@ document.addEventListener('DOMContentLoaded', () => {
       hideResults();
     });
 
-    form.addEventListener('submit', () => {
+    openPaymentButton?.addEventListener('click', () => {
+      if (form.querySelectorAll('[data-pos-row]').length === 0) {
+        window.alert('Agrega al menos una refaccion para cobrar.');
+        searchInput?.focus();
+        return;
+      }
+
+      updateTotal();
+      if (window.bootstrap && window.bootstrap.Modal && paymentModalElement) {
+        window.bootstrap.Modal.getOrCreateInstance(paymentModalElement).show();
+      }
+    });
+
+    form.addEventListener('submit', (event) => {
+      if (form.querySelectorAll('[data-pos-row]').length === 0) {
+        event.preventDefault();
+        window.alert('Agrega al menos una refaccion para cobrar.');
+        searchInput?.focus();
+        return;
+      }
       syncNames();
     });
 

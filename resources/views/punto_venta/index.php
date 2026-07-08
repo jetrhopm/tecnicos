@@ -64,41 +64,58 @@ $puedeCrear = \App\Core\Auth::can('punto_venta', 'crear');
                         </tr>
                     </template>
 
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label class="form-label" data-icon="&#128100;">Cliente opcional</label>
-                            <input class="form-control" name="cliente_nombre" placeholder="Venta mostrador">
+                    <div class="d-flex justify-content-end align-items-center gap-3 flex-wrap">
+                        <div class="pos-total-box">
+                            <span class="text-muted small">Total</span>
+                            <strong data-pos-total>$0.00</strong>
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label" data-icon="&#128241;">Telefono opcional</label>
-                            <input class="form-control" name="cliente_telefono">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label" data-icon="&#9679;">Metodo</label>
-                            <select class="form-select" name="metodo_pago">
-                                <?php foreach (['efectivo','transferencia','tarjeta','otro'] as $metodo): ?>
-                                    <option value="<?= e($metodo) ?>"><?= e($metodo) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label" data-icon="&#37;">Descuento</label>
-                            <input class="form-control" type="number" min="0" step="0.01" name="descuento" value="0" data-pos-discount>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label" data-icon="&#35;">Referencia</label>
-                            <input class="form-control" name="referencia">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label" data-icon="&#36;">Total estimado</label>
-                            <input class="form-control fw-bold" value="$0.00" data-pos-total readonly>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label" data-icon="&#9998;">Notas</label>
-                            <input class="form-control" name="notas" placeholder="Garantia, observaciones o referencia interna">
+                        <button class="btn btn-primary btn-lg" type="button" data-pos-open-payment data-icon="&#128179;">Cobrar</button>
+                    </div>
+
+                    <div class="modal fade" id="posPaymentModal" tabindex="-1" aria-labelledby="posPaymentModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div>
+                                        <h2 class="modal-title h5" id="posPaymentModalLabel">Cobrar venta</h2>
+                                        <div class="text-muted small">Total: <strong data-pos-modal-total>$0.00</strong></div>
+                                    </div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label class="form-label" data-icon="&#9679;">Metodo de pago</label>
+                                    <div class="row g-2 mb-3">
+                                        <?php foreach (['efectivo' => 'Efectivo', 'transferencia' => 'Transferencia', 'tarjeta' => 'Tarjeta', 'otro' => 'Otro'] as $valor => $label): ?>
+                                            <div class="col-6">
+                                                <input class="btn-check" type="radio" name="metodo_pago" id="pos_metodo_<?= e($valor) ?>" value="<?= e($valor) ?>" <?= $valor === 'efectivo' ? 'checked' : '' ?>>
+                                                <label class="btn btn-outline-primary w-100" for="pos_metodo_<?= e($valor) ?>"><?= e($label) ?></label>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label" data-icon="&#35;">Referencia</label>
+                                        <input class="form-control" name="referencia" placeholder="Folio, autorizacion, ultimos 4 digitos o nota">
+                                    </div>
+
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" data-icon="&#128100;">Cliente opcional</label>
+                                            <input class="form-control" name="cliente_nombre" placeholder="Venta mostrador">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" data-icon="&#128241;">Telefono opcional</label>
+                                            <input class="form-control" name="cliente_telefono">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Cancelar</button>
+                                    <button class="btn btn-primary" type="submit" data-icon="&#128179;">Confirmar cobro</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <button class="btn btn-primary mt-3" data-icon="&#128179;">Cobrar e imprimir ticket</button>
                 </form>
             <?php else: ?>
                 <div class="alert alert-warning mb-0">Tu rol no puede crear ventas de mostrador.</div>

@@ -15,8 +15,11 @@ responsable del proyecto.
 - La captura de venta se cambio a buscador asincrono con tabla de compra:
   SKU exacto agrega automaticamente y busqueda por nombre/marca/modelo muestra
   coincidencias para elegir.
-- Cada venta genera folio propio, ticket imprimible, metodo de pago, descuento,
-  cliente opcional y usuario que cobro.
+- La pantalla principal del punto de venta queda reducida a buscador, tabla y
+  boton Cobrar; metodo de pago, referencia y cliente opcional se capturan en
+  una ventana modal de cobro.
+- Cada venta genera folio propio, ticket imprimible, metodo de pago,
+  referencia, cliente opcional y usuario que cobro.
 - La venta descuenta stock por transaccion y registra salida en
   `inventario_movimientos` ligada a la venta.
 - Se agregaron tablas `ventas_refacciones` y `venta_refaccion_items`.
