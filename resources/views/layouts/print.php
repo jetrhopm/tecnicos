@@ -7,9 +7,14 @@ $printSize = $printSize ?? 'carta';
 $pageSize = match ((string) $printSize) {
     '80' => '80mm auto',
     '58' => '58mm auto',
+    'etiqueta' => '62mm 32mm',
     default => 'letter',
 };
-$pageMargin = (string) $printSize === 'carta' ? '10mm' : '3mm';
+$pageMargin = match ((string) $printSize) {
+    'carta' => '10mm',
+    'etiqueta' => '2mm',
+    default => '3mm',
+};
 ?>
 <!doctype html>
 <html lang="es">
@@ -19,7 +24,7 @@ $pageMargin = (string) $printSize === 'carta' ? '10mm' : '3mm';
     <title><?= e($title ?? 'Impresion') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= e(asset('css/app.css') . '?v=20260707-print-mobile') ?>" rel="stylesheet">
-    <link href="<?= e(asset('css/print.css') . '?v=20260707') ?>" rel="stylesheet">
+    <link href="<?= e(asset('css/print.css') . '?v=20260708-barcode') ?>" rel="stylesheet">
     <style>@page { size: <?= $pageSize ?>; margin: <?= $pageMargin ?>; }</style>
 </head>
 <body>

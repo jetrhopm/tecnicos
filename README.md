@@ -217,6 +217,15 @@ El modulo **Reportes** permite filtrar por fecha y exportar CSV de:
 Los CSV se generan al momento desde la base de datos; no se guardan en el
 servidor.
 
+## Etiquetas y codigos de barras
+
+Cada orden genera una `codigo_entrega` unico. Desde la ficha de orden, en
+**Imprimir > Etiqueta equipo**, se puede imprimir una etiqueta Code 39 para
+pegar al dispositivo. Ese codigo funciona con lectores USB como si fuera
+teclado y tambien puede leerse desde el modulo de entregas con camara cuando el
+navegador lo permita. La etiqueta no contiene patron, costos ni notas internas;
+solo sirve como llave operativa para localizar y liberar el equipo correcto.
+
 ## Checklist de produccion
 
 En **Configuracion** aparece un checklist de seguridad para revisar antes de

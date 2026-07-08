@@ -6,6 +6,10 @@ function codigoBarras39Svg(string $texto, int $alto = 58, int $modulo = 2): stri
 {
     $texto = strtoupper(trim($texto));
     $texto = preg_replace('/[^A-Z0-9 \-\.\$\/\+%]/', '', $texto) ?? '';
+    if ($texto === '') {
+        return '';
+    }
+
     $texto = '*' . $texto . '*';
 
     $patrones = [

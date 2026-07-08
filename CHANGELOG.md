@@ -8,6 +8,14 @@ responsable del proyecto.
 
 ## 2026-07-07
 
+### Etiqueta de equipo con codigo de barras
+
+- Se agrego impresion de etiqueta de equipo desde la ficha de orden.
+- La etiqueta imprime Code 39 con la clave de entrega para usar lector USB o
+  camara del modulo de entregas, sin incluir datos sensibles.
+- La nota de recepcion/ticket ahora muestra el codigo de barras de entrega
+  ademas de la clave en texto.
+
 ### Reportes exportables y checklist de produccion
 
 - El modulo `/reportes` agrega exportaciones CSV para corte de caja, saldos

@@ -112,6 +112,14 @@ $accesorios = trim((string) ($orden['accesorios_recibidos'] ?? '')) ?: 'Sin acce
             <div class="cell cell-3"><div class="field-l">Clave de entrega</div><div class="field-v"><?= e($orden['codigo_entrega'] ?? '') ?></div></div>
         </div>
 
+        <div class="doc-barcode-row">
+            <div>
+                <div class="field-l">Codigo de barras para recepcion/entrega</div>
+                <div class="doc-note">El lector USB escribe esta clave como teclado. No contiene datos personales.</div>
+            </div>
+            <?= codigoBarras39Svg((string) ($orden['codigo_entrega'] ?? ''), 42, 1) ?>
+        </div>
+
         <div style="display:flex; gap:16px; margin-top:8px;">
             <div style="flex:1.4;">
                 <div class="field-l">Garantia y condiciones</div>
@@ -138,6 +146,10 @@ $accesorios = trim((string) ($orden['accesorios_recibidos'] ?? '')) ?: 'Sin acce
         <div class="field"><div class="field-l">Equipo</div><div class="field-v"><?= e($equipoFull) ?></div></div>
         <?php if ($imeiSerie !== ''): ?><div class="field"><div class="field-l">IMEI / Serie</div><div class="field-v"><?= e($imeiSerie) ?></div></div><?php endif; ?>
         <div class="field"><div class="field-l">Estado</div><div class="field-v"><?= e($orden['estado'] ?? '') ?></div></div>
+        <div class="field barcode-field">
+            <div class="field-l">Codigo de entrega</div>
+            <?= codigoBarras39Svg((string) ($orden['codigo_entrega'] ?? ''), $formato === '58' ? 34 : 40, 1) ?>
+        </div>
 
         <?php if ($desbloqueo && $desbloqueo['tipo'] === 'patron'): ?>
             <div class="patron-box">

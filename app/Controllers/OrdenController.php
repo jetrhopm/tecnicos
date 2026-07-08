@@ -280,6 +280,24 @@ final class OrdenController
         ], 'layouts/print');
     }
 
+    public function etiqueta(Request $request, string $id): void
+    {
+        Auth::requirePermission('ordenes', 'imprimir');
+
+        $orden = (new OrdenService())->obtener((int) $id);
+        if (!$orden) {
+            Response::status(404);
+            View::render('errors/404', ['title' => 'Orden no encontrada']);
+            return;
+        }
+
+        View::render('print/etiqueta_equipo', [
+            'title' => 'Etiqueta ' . ($orden['folio'] ?? ''),
+            'orden' => $orden,
+            'config' => $this->printConfig(),
+        ], 'layouts/print');
+    }
+
     public function pdf(Request $request, string $id): void
     {
         Auth::requirePermission('ordenes', 'imprimir');

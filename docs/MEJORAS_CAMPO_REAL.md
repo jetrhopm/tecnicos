@@ -176,7 +176,7 @@ Implementado:
 
 ### 8. Pruebas reales de impresion
 
-Estado: pendiente.
+Estado: pendiente de prueba fisica.
 
 Objetivo:
 
@@ -184,6 +184,13 @@ Objetivo:
 - Probar ticket 80/58 mm.
 - Probar etiqueta de equipo.
 - Probar lectura de codigo con lector USB y camara movil.
+
+Implementado para prueba:
+
+- La ficha de orden permite imprimir una etiqueta de equipo con codigo de barras
+  Code 39 usando la clave de entrega.
+- La nota de recepcion/ticket tambien incluye el codigo de barras de entrega.
+- La etiqueta evita datos sensibles: no imprime patron, costos ni notas internas.
 
 ### 9. Checklist de produccion/seguridad
 

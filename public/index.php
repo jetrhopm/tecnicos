@@ -60,6 +60,7 @@ $router->get('/ordenes/{id}', [OrdenController::class, 'show']);
 $router->post('/ordenes/{id}/estado', [OrdenController::class, 'cambiarEstado']);
 $router->post('/ordenes/{id}/tecnico', [OrdenController::class, 'asignarTecnico']);
 $router->get('/ordenes/{id}/imprimir', [OrdenController::class, 'imprimir']);
+$router->get('/ordenes/{id}/etiqueta', [OrdenController::class, 'etiqueta']);
 $router->get('/ordenes/{id}/pdf', [OrdenController::class, 'pdf']);
 $router->post('/ordenes/{id}/evidencia', [OrdenController::class, 'subirEvidencia']);
 $router->get('/ordenes/{id}/evidencia/{archivo}', [OrdenController::class, 'verEvidencia']);

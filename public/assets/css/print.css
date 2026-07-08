@@ -230,6 +230,83 @@
   color: #333;
 }
 
+.doc-barcode-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid #111;
+  padding: 4px 8px;
+  margin-top: 8px;
+}
+
+.barcode {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.barcode-field {
+  text-align: center;
+}
+
+.barcode-field .barcode {
+  margin: 3px auto 0;
+}
+
+.label-device,
+.label-device * {
+  box-sizing: border-box;
+}
+
+.label-device {
+  width: 58mm;
+  min-height: 28mm;
+  color: #000;
+  background: #fff;
+  border: 1px solid #111;
+  padding: 2mm;
+  font-family: "Segoe UI", Arial, sans-serif;
+  line-height: 1.15;
+}
+
+.label-device__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 3mm;
+  font-size: 8px;
+  text-transform: uppercase;
+}
+
+.label-device__device {
+  margin-top: 1mm;
+  font-size: 9px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.label-device__serie {
+  font-size: 7px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.label-device__barcode .barcode {
+  width: 100%;
+  margin-top: 1mm;
+}
+
+.label-device__code {
+  text-align: center;
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
 /* =====================  Pantalla (vista /imprimir)  ===================== */
 @media screen {
   .doc {
@@ -304,6 +381,7 @@
 
 .doc-carta .doc-terms { margin-top: 8px; }
 .doc-carta .totales { margin-top: 2px; }
+.doc-carta .doc-barcode-row .barcode { width: 52mm; }
 
 /* =====================  Formatos TERMICOS (80 / 58 mm)  ===================== */
 .doc-80,
@@ -378,5 +456,9 @@
   .doc {
     margin: 0;
     box-shadow: none;
+  }
+
+  .label-device {
+    margin: 0;
   }
 }
