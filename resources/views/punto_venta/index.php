@@ -110,7 +110,7 @@ $puedeCrear = \App\Core\Auth::can('punto_venta', 'crear');
 
 <?php if ($puedeCrear): ?>
     <?php if (!empty($ticketUrl)): ?>
-        <div class="modal fade" id="posTicketModal" tabindex="-1" aria-labelledby="posTicketModalLabel" aria-hidden="true" data-ticket-url="<?= e($ticketUrl) ?>">
+        <div class="modal fade pos-ticket-modal" id="posTicketModal" tabindex="-1" aria-labelledby="posTicketModalLabel" aria-hidden="true" data-ticket-url="<?= e($ticketUrl) ?>">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -129,7 +129,7 @@ $puedeCrear = \App\Core\Auth::can('punto_venta', 'crear');
         </div>
     <?php endif; ?>
 
-    <div class="modal fade" id="posPaymentModal" tabindex="-1" aria-labelledby="posPaymentModalLabel" aria-hidden="true">
+    <div class="modal fade pos-payment-modal" id="posPaymentModal" tabindex="-1" aria-labelledby="posPaymentModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -145,7 +145,7 @@ $puedeCrear = \App\Core\Auth::can('punto_venta', 'crear');
                         <?php foreach (['efectivo' => 'Efectivo', 'transferencia' => 'Transferencia', 'tarjeta' => 'Tarjeta', 'otro' => 'Otro'] as $valor => $label): ?>
                             <div class="col-6">
                                 <input class="btn-check" type="radio" name="metodo_pago" id="pos_metodo_<?= e($valor) ?>" value="<?= e($valor) ?>" form="posSaleForm" <?= $valor === 'efectivo' ? 'checked' : '' ?>>
-                                <label class="btn btn-outline-primary w-100" for="pos_metodo_<?= e($valor) ?>"><?= e($label) ?></label>
+                                <label class="btn btn-outline-primary pos-payment-method w-100" for="pos_metodo_<?= e($valor) ?>"><?= e($label) ?></label>
                             </div>
                         <?php endforeach; ?>
                     </div>

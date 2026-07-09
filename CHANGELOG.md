@@ -20,6 +20,11 @@ responsable del proyecto.
   `database/upgrade_caja_corte.php`.
 - El rol caja deja de depender de Reportes para consultar su corte operativo.
 
+### Punto de venta
+
+- El modal de cobro ahora se adapta al tema activo, incluyendo fondo, bordes,
+  boton de cierre y botones de metodo de pago.
+
 ### Navegacion mobile por rol
 
 - Se agrego una barra inferior fija en mobile con accesos rapidos por rol.

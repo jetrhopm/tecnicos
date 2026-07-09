@@ -106,3 +106,21 @@
   border-color: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(8px);
 }
+
+[data-theme="crystal"] .pos-payment-modal .modal-content,
+[data-theme="crystal"] .pos-ticket-modal .modal-content {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0.42));
+  border-color: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 24px 70px rgba(56, 120, 180, 0.24), inset 0 1px 1px rgba(255, 255, 255, 0.82);
+}
+
+[data-theme="crystal"] .pos-payment-method {
+  border-color: rgba(56, 189, 248, 0.42);
+  background: rgba(255, 255, 255, 0.45);
+}
+
+[data-theme="crystal"] .btn-check:checked + .pos-payment-method {
+  color: #083044;
+  background: rgba(125, 211, 252, 0.72);
+  border-color: rgba(56, 189, 248, 0.72);
+}

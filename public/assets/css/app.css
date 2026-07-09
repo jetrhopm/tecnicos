@@ -644,6 +644,31 @@ a {
   z-index: 1070;
 }
 
+.pos-payment-modal .modal-content,
+.pos-ticket-modal .modal-content {
+  color: var(--ink);
+  background: var(--panel-strong);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 24px 70px rgba(9, 31, 40, 0.24);
+  backdrop-filter: blur(18px);
+}
+
+.pos-payment-modal .modal-header,
+.pos-payment-modal .modal-footer,
+.pos-ticket-modal .modal-header,
+.pos-ticket-modal .modal-footer {
+  border-color: var(--line);
+}
+
+.pos-payment-method {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+}
+
 .camera-scanner-wrap {
   max-width: 540px;
 }

@@ -255,6 +255,38 @@
   --bs-btn-hover-border-color: var(--aqua);
 }
 
+[data-theme="blueprint"] .pos-payment-modal .modal-content,
+[data-theme="blueprint"] .pos-ticket-modal .modal-content {
+  color: var(--ink);
+  background: rgba(7, 18, 36, 0.96);
+  border-color: rgba(63, 181, 240, 0.42);
+  box-shadow: 0 0 0 1px rgba(63, 181, 240, 0.14), 0 24px 70px rgba(2, 8, 20, 0.68);
+}
+
+[data-theme="blueprint"] .pos-payment-modal .btn-close,
+[data-theme="blueprint"] .pos-ticket-modal .btn-close {
+  filter: invert(1) grayscale(100%) brightness(180%);
+}
+
+[data-theme="blueprint"] .pos-payment-method {
+  --bs-btn-color: #d4e6fa;
+  --bs-btn-border-color: rgba(63, 181, 240, 0.48);
+  --bs-btn-hover-bg: rgba(63, 181, 240, 0.16);
+  --bs-btn-hover-border-color: var(--aqua);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: #3fb5f0;
+  --bs-btn-active-border-color: #7bd94f;
+  --bs-btn-active-color: #061b2f;
+  background: rgba(9, 24, 46, 0.62);
+}
+
+[data-theme="blueprint"] .btn-check:checked + .pos-payment-method {
+  color: #061b2f;
+  background: #3fb5f0;
+  border-color: #7bd94f;
+  box-shadow: 0 0 18px rgba(63, 181, 240, 0.42);
+}
+
 [data-theme="blueprint"] .text-muted {
   color: var(--muted) !important;
 }

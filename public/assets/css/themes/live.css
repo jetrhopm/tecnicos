@@ -106,3 +106,22 @@
   border-radius: 10px;
   border-color: var(--line);
 }
+
+[data-theme="live"] .pos-payment-modal .modal-content,
+[data-theme="live"] .pos-ticket-modal .modal-content {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(123, 47, 247, 0.18);
+  box-shadow: 0 24px 70px rgba(123, 47, 247, 0.26);
+}
+
+[data-theme="live"] .pos-payment-method {
+  border-color: rgba(123, 47, 247, 0.28);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+[data-theme="live"] .btn-check:checked + .pos-payment-method {
+  color: #fff;
+  background: linear-gradient(135deg, #7b2ff7, #ff3d81);
+  border-color: rgba(255, 61, 129, 0.58);
+  box-shadow: 0 10px 24px rgba(255, 61, 129, 0.22);
+}
