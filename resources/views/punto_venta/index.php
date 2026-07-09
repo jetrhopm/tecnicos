@@ -9,6 +9,9 @@ $puedeCrear = \App\Core\Auth::can('punto_venta', 'crear');
                     <h2 class="h5 mb-1" data-icon="&#128722;">Venta de refacciones</h2>
                     <div class="text-muted small">Busca por SKU con lector de barras o por nombre/modelo para elegir coincidencias.</div>
                 </div>
+                <?php if (\App\Core\Auth::can('caja', 'ver')): ?>
+                    <a class="btn btn-outline-dark btn-sm" data-icon="&#128179;" href="<?= e(url('/caja')) ?>">Corte de caja</a>
+                <?php endif; ?>
             </div>
 
             <?php if ($puedeCrear): ?>

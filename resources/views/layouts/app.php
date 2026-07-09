@@ -57,13 +57,13 @@ $quickItem = static fn (string $label, string $href, string $icon, string $modul
 $quickNavByRole = [
     'superadmin' => [
         $quickItem('Orden', '/ordenes/create', "\u{2795}", 'ordenes', 'crear'),
-        $quickItem('Entregar', '/entregas', "\u{1F4E6}", 'ordenes', 'ver'),
+        $quickItem('Caja', '/caja', "\u{1F4B5}", 'caja', 'ver'),
         $quickItem('Venta', '/punto-venta', "\u{1F6D2}", 'punto_venta', 'ver'),
         $quickItem('Reportes', '/reportes', "\u{1F4CA}", 'reportes', 'ver'),
     ],
     'admin' => [
         $quickItem('Orden', '/ordenes/create', "\u{2795}", 'ordenes', 'crear'),
-        $quickItem('Entregar', '/entregas', "\u{1F4E6}", 'ordenes', 'ver'),
+        $quickItem('Caja', '/caja', "\u{1F4B5}", 'caja', 'ver'),
         $quickItem('Venta', '/punto-venta', "\u{1F6D2}", 'punto_venta', 'ver'),
         $quickItem('Reportes', '/reportes', "\u{1F4CA}", 'reportes', 'ver'),
     ],
@@ -86,10 +86,10 @@ $quickNavByRole = [
         $quickItem('Dash', '/', "\u{2302}", 'dashboard', 'ver'),
     ],
     'caja' => [
+        $quickItem('Corte', '/caja', "\u{1F4B5}", 'caja', 'ver'),
         $quickItem('Venta', '/punto-venta', "\u{1F6D2}", 'punto_venta', 'ver'),
         $quickItem('Entregar', '/entregas', "\u{1F4E6}", 'ordenes', 'ver'),
         $quickItem('Orden', '/ordenes/create', "\u{2795}", 'ordenes', 'crear'),
-        $quickItem('Ordenes', '/ordenes', "\u{1F4CB}", 'ordenes', 'ver'),
     ],
     'almacen' => [
         $quickItem('Invent.', '/inventario', "\u{1F9F0}", 'inventario', 'ver'),
@@ -114,6 +114,7 @@ $fallbackQuickItems = [
     $quickItem('Orden', '/ordenes/create', "\u{2795}", 'ordenes', 'crear'),
     $quickItem('Entregar', '/entregas', "\u{1F4E6}", 'ordenes', 'ver'),
     $quickItem('Venta', '/punto-venta', "\u{1F6D2}", 'punto_venta', 'ver'),
+    $quickItem('Caja', '/caja', "\u{1F4B5}", 'caja', 'ver'),
 ];
 $mobileQuickNav = [];
 foreach (array_merge($quickNavByRole[$primaryRole] ?? $quickNavByRole['default'], $fallbackQuickItems) as $item) {
@@ -168,19 +169,26 @@ $mobileQuickNav = array_values($mobileQuickNav);
             <button class="sidebar-close" type="button" aria-label="Cerrar menu" data-sidebar-close>&times;</button>
         </div>
         <nav class="nav flex-column">
-            <a class="nav-link <?= e(is_active('/')) ?>" href="<?= e(url('/')) ?>">Dashboard</a>
-            <a class="nav-link <?= e(is_active('/clientes')) ?>" href="<?= e(url('/clientes')) ?>">Clientes</a>
-            <a class="nav-link <?= e(is_active('/equipos')) ?>" href="<?= e(url('/equipos')) ?>">Equipos</a>
-            <a class="nav-link <?= e(is_active('/ordenes')) ?>" href="<?= e(url('/ordenes')) ?>">Ordenes</a>
-            <a class="nav-link <?= e(is_active('/entregas')) ?>" href="<?= e(url('/entregas')) ?>">Entregas</a>
-            <a class="nav-link <?= e(is_active('/punto-venta')) ?>" href="<?= e(url('/punto-venta')) ?>">Punto de venta</a>
-            <a class="nav-link <?= e(is_active('/agenda')) ?>" href="<?= e(url('/agenda')) ?>">Agenda</a>
-            <a class="nav-link <?= e(is_active('/inventario')) ?>" href="<?= e(url('/inventario')) ?>">Inventario</a>
-            <a class="nav-link <?= e(is_active('/proveedores')) ?>" href="<?= e(url('/proveedores')) ?>">Proveedores</a>
-            <a class="nav-link <?= e(is_active('/garantias')) ?>" href="<?= e(url('/garantias')) ?>">Garantias</a>
-            <a class="nav-link <?= e(is_active('/reportes')) ?>" href="<?= e(url('/reportes')) ?>">Reportes</a>
-            <a class="nav-link <?= e(is_active('/configuracion')) ?>" href="<?= e(url('/configuracion')) ?>">Configuracion</a>
-            <a class="nav-link <?= e(is_active('/usuarios')) ?>" href="<?= e(url('/usuarios')) ?>">Usuarios y roles</a>
+            <?php foreach ([
+                ['Dashboard', '/', 'dashboard'],
+                ['Clientes', '/clientes', 'clientes'],
+                ['Equipos', '/equipos', 'equipos'],
+                ['Ordenes', '/ordenes', 'ordenes'],
+                ['Entregas', '/entregas', 'ordenes'],
+                ['Punto de venta', '/punto-venta', 'punto_venta'],
+                ['Caja', '/caja', 'caja'],
+                ['Agenda', '/agenda', 'agenda'],
+                ['Inventario', '/inventario', 'inventario'],
+                ['Proveedores', '/proveedores', 'proveedores'],
+                ['Garantias', '/garantias', 'garantias'],
+                ['Reportes', '/reportes', 'reportes'],
+                ['Configuracion', '/configuracion', 'configuracion'],
+                ['Usuarios y roles', '/usuarios', 'usuarios'],
+            ] as [$label, $href, $module]): ?>
+                <?php if (Auth::can($module, 'ver')): ?>
+                    <a class="nav-link <?= e(is_active($href)) ?>" href="<?= e(url($href)) ?>"><?= e($label) ?></a>
+                <?php endif; ?>
+            <?php endforeach; ?>
         </nav>
     </aside>
     <main class="main">

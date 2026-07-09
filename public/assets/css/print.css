@@ -219,6 +219,84 @@
   margin-top: 26px;
 }
 
+.print-sheet {
+  color: #111;
+  background: #fff;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 12px;
+}
+
+.print-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #111;
+}
+
+.print-header h1 {
+  margin: 0 0 2px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.print-header p {
+  margin: 0;
+}
+
+.print-grid {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.print-grid.two {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.print-grid.three {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.print-grid > div,
+.print-box {
+  padding: 7px;
+  border: 1px solid #111;
+  border-radius: 4px;
+}
+
+.print-table {
+  width: 100%;
+  margin-bottom: 10px;
+  border-collapse: collapse;
+}
+
+.print-table th,
+.print-table td {
+  padding: 5px 6px;
+  border: 1px solid #111;
+}
+
+.print-table th {
+  background: #f0f0f0;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+
+.print-signatures {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+  margin-top: 36px;
+}
+
+.print-signatures > div {
+  padding-top: 8px;
+  border-top: 1px solid #111;
+  text-align: center;
+}
+
 .firma {
   flex: 1;
   text-align: center;

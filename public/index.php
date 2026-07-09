@@ -7,6 +7,7 @@ require_once __DIR__ . '/../app/bootstrap.php';
 use App\Controllers\ApiController;
 use App\Controllers\AgendaController;
 use App\Controllers\AuthController;
+use App\Controllers\CajaController;
 use App\Controllers\ClienteController;
 use App\Controllers\ConfiguracionController;
 use App\Controllers\CotizacionController;
@@ -79,6 +80,12 @@ $router->get('/punto-venta', [PuntoVentaController::class, 'index']);
 $router->get('/punto-venta/buscar', [PuntoVentaController::class, 'buscar']);
 $router->post('/punto-venta', [PuntoVentaController::class, 'store']);
 $router->get('/punto-venta/{id}/ticket', [PuntoVentaController::class, 'ticket']);
+
+$router->get('/caja', [CajaController::class, 'index']);
+$router->post('/caja/abrir', [CajaController::class, 'abrir']);
+$router->post('/caja/retiro', [CajaController::class, 'retirar']);
+$router->post('/caja/cerrar', [CajaController::class, 'cerrar']);
+$router->get('/caja/{id}/imprimir', [CajaController::class, 'imprimir']);
 
 $router->get('/entregas', [EntregaController::class, 'index']);
 $router->post('/entregas/buscar', [EntregaController::class, 'buscar']);

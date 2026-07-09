@@ -42,7 +42,7 @@ MVP funcional con arquitectura modular propia tipo MVC ligero:
   por orden.
 - Temas de diseno seleccionables, incluido "Blueprint neon".
 - Portal publico de consulta por folio/token.
-- Dashboard, reportes iniciales, configuracion y auditoria.
+- Dashboard, caja/corte operativo, reportes iniciales, configuracion y auditoria.
 - API JSON interna con formato consistente (con CSRF).
 - Seed con usuarios, roles, cliente demo, equipos demo, orden demo y pagos demo.
 
@@ -154,7 +154,7 @@ funcional.
 | `tecnico` | Tecnico Demo | `tecnico@local.test` | `password` | Ordenes, diagnosticos, reparaciones y avances. |
 | `tecnico_senior` | Tecnico Senior Demo | `tecnico_senior@local.test` | `password` | Diagnostico avanzado, cotizaciones, autorizaciones e inventario. |
 | `almacen` | Almacen Demo | `almacen@local.test` | `password` | Inventario, proveedores y refacciones. |
-| `caja` | Caja Demo | `caja@local.test` | `password` | Pagos, caja, reportes y entrega operativa. |
+| `caja` | Caja Demo | `caja@local.test` | `password` | Pagos, punto de venta, corte de caja y entrega operativa. |
 | `cliente_consulta` | Cliente Consulta Demo | `cliente_consulta@local.test` | `password` | Rol reservado para consulta/portal; no debe tener acceso administrativo amplio. |
 
 Nota sobre `cliente_consulta`: el portal publico actual no requiere login; usa
@@ -184,7 +184,7 @@ Resumen operativo:
 - `tecnico`: ordenes, diagnosticos, reparaciones y creacion de cotizaciones.
 - `tecnico_senior`: tecnico mas autorizaciones, cotizaciones e inventario.
 - `almacen`: inventario, proveedores y consulta de ordenes.
-- `caja`: pagos, reportes, impresion y consulta de ordenes.
+- `caja`: pagos, punto de venta, corte de caja, impresion y consulta de ordenes.
 - `cliente_consulta`: reservado para consulta limitada futura.
 
 Desde el panel **Usuarios y roles**, un usuario con permiso de administracion
@@ -213,7 +213,8 @@ El seed crea:
 
 El modulo **Reportes** permite filtrar por fecha y exportar CSV de:
 
-- Corte de caja por fecha, usuario y metodo de pago.
+- Corte de caja operativo por turno en `/caja`.
+- Reportes administrativos por fecha, usuario y metodo de pago en `/reportes`.
 - Saldos pendientes.
 - Refacciones mas usadas.
 - Utilidad estimada por orden.
@@ -347,6 +348,7 @@ php database/upgrade_refacciones_ordenes_estado.php # cancelacion de refacciones
 php database/upgrade_agenda_roles.php      # permisos del modulo agenda
 php database/upgrade_cotizaciones_inventario.php # cotizaciones ligadas a inventario
 php database/upgrade_punto_venta_refacciones.php # punto de venta de refacciones
+php database/upgrade_caja_corte.php # modulo operativo de caja/corte
 ```
 
 Opcional en `.env`:

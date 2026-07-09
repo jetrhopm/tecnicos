@@ -12,6 +12,8 @@ DROP TABLE IF EXISTS sesiones;
 DROP TABLE IF EXISTS garantias;
 DROP TABLE IF EXISTS entregas;
 DROP TABLE IF EXISTS pagos;
+DROP TABLE IF EXISTS caja_movimientos;
+DROP TABLE IF EXISTS caja_turnos;
 DROP TABLE IF EXISTS inventario_movimientos;
 DROP TABLE IF EXISTS venta_refaccion_items;
 DROP TABLE IF EXISTS ventas_refacciones;
@@ -386,6 +388,46 @@ CREATE TABLE venta_refaccion_items (
     CONSTRAINT fk_vri_venta FOREIGN KEY (venta_id) REFERENCES ventas_refacciones(id) ON DELETE CASCADE,
     CONSTRAINT fk_vri_ref FOREIGN KEY (refaccion_id) REFERENCES refacciones(id),
     INDEX idx_vri_refaccion (refaccion_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE caja_turnos (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    folio VARCHAR(60) NOT NULL UNIQUE,
+    estado ENUM('abierto','cerrado') NOT NULL DEFAULT 'abierto',
+    fondo_inicial DECIMAL(12,2) NOT NULL DEFAULT 0,
+    efectivo_contado DECIMAL(12,2) NOT NULL DEFAULT 0,
+    transferencia_contado DECIMAL(12,2) NOT NULL DEFAULT 0,
+    tarjeta_contado DECIMAL(12,2) NOT NULL DEFAULT 0,
+    otro_contado DECIMAL(12,2) NOT NULL DEFAULT 0,
+    total_esperado DECIMAL(12,2) NOT NULL DEFAULT 0,
+    total_contado DECIMAL(12,2) NOT NULL DEFAULT 0,
+    diferencia DECIMAL(12,2) NOT NULL DEFAULT 0,
+    abierto_por INT UNSIGNED NOT NULL,
+    cerrado_por INT UNSIGNED NULL,
+    opened_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    closed_at DATETIME NULL,
+    observaciones TEXT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_caja_turno_abre FOREIGN KEY (abierto_por) REFERENCES users(id),
+    CONSTRAINT fk_caja_turno_cierra FOREIGN KEY (cerrado_por) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_caja_turno_estado (estado),
+    INDEX idx_caja_turno_opened (opened_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE caja_movimientos (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    turno_id INT UNSIGNED NOT NULL,
+    tipo ENUM('retiro') NOT NULL,
+    monto DECIMAL(12,2) NOT NULL,
+    metodo ENUM('efectivo','transferencia','tarjeta','otro') NOT NULL DEFAULT 'efectivo',
+    concepto VARCHAR(255) NOT NULL,
+    usuario_id INT UNSIGNED NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_caja_mov_turno FOREIGN KEY (turno_id) REFERENCES caja_turnos(id) ON DELETE CASCADE,
+    CONSTRAINT fk_caja_mov_user FOREIGN KEY (usuario_id) REFERENCES users(id),
+    INDEX idx_caja_mov_turno (turno_id),
+    INDEX idx_caja_mov_fecha (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE inventario_movimientos (

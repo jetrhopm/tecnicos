@@ -8,6 +8,18 @@ responsable del proyecto.
 
 ## 2026-07-08
 
+### Caja y corte
+
+- Se agrego el modulo operativo `/caja` para corte de caja separado de
+  Reportes.
+- El corte calcula ingresos del turno tomando pagos de ordenes y ventas de
+  punto de venta, separados por metodo de pago.
+- Admin y superadmin pueden iniciar caja y registrar retiros de efectivo; el
+  rol caja puede consultar, cerrar e imprimir el corte.
+- Se agregaron tablas `caja_turnos` y `caja_movimientos`, mas la migracion
+  `database/upgrade_caja_corte.php`.
+- El rol caja deja de depender de Reportes para consultar su corte operativo.
+
 ### Navegacion mobile por rol
 
 - Se agrego una barra inferior fija en mobile con accesos rapidos por rol.
@@ -224,6 +236,7 @@ php database/upgrade_notificaciones.php      # tabla de notificaciones in-app
 php database/upgrade_inventario_roles.php    # acceso al almacen para tecnicos y recepcion
 php database/upgrade_refacciones_ordenes_estado.php # cancelacion de refacciones aplicadas
 php database/upgrade_agenda_roles.php        # permisos del modulo agenda
+php database/upgrade_caja_corte.php          # modulo operativo de caja/corte
 ```
 
 Nuevas variables de entorno (opcional) en `.env`:

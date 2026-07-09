@@ -16,7 +16,7 @@ SELECT m.module, a.action, CONCAT(a.action, ' ', m.module)
 FROM (
     SELECT 'dashboard' module UNION SELECT 'clientes' UNION SELECT 'equipos' UNION SELECT 'ordenes'
     UNION SELECT 'diagnosticos' UNION SELECT 'cotizaciones' UNION SELECT 'reparaciones'
-    UNION SELECT 'inventario' UNION SELECT 'proveedores' UNION SELECT 'pagos' UNION SELECT 'punto_venta' UNION SELECT 'garantias'
+    UNION SELECT 'inventario' UNION SELECT 'proveedores' UNION SELECT 'pagos' UNION SELECT 'punto_venta' UNION SELECT 'caja' UNION SELECT 'garantias'
     UNION SELECT 'agenda' UNION SELECT 'mensajes' UNION SELECT 'reportes' UNION SELECT 'configuracion'
     UNION SELECT 'usuarios' UNION SELECT 'auditoria'
 ) m
@@ -84,7 +84,12 @@ ON DUPLICATE KEY UPDATE role_id = role_id;
 
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id FROM roles r CROSS JOIN permissions p
-WHERE r.name = 'caja' AND p.module IN ('dashboard','pagos','ordenes','agenda','reportes','punto_venta') AND p.action IN ('ver','crear','editar','imprimir','exportar')
+WHERE r.name = 'caja' AND p.module IN ('dashboard','pagos','ordenes','agenda','punto_venta') AND p.action IN ('ver','crear','editar','imprimir','exportar')
+ON DUPLICATE KEY UPDATE role_id = role_id;
+
+INSERT INTO role_permissions (role_id, permission_id)
+SELECT r.id, p.id FROM roles r CROSS JOIN permissions p
+WHERE r.name = 'caja' AND p.module = 'caja' AND p.action IN ('ver','editar','imprimir')
 ON DUPLICATE KEY UPDATE role_id = role_id;
 
 INSERT INTO users (name, email, password, status)
