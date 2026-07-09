@@ -22,10 +22,22 @@ final class EntregaController
         // llega desde teclado, lector de barras o camara; solo se usa para
         // buscar la orden candidata, no para entregarla automaticamente.
         $codigo = strtoupper(trim((string) $request->input('codigo', '')));
+        $service = new EntregaService();
+        $orden = $codigo ? $service->buscar($codigo) : null;
+
+        // Si la orden ya se entrego, se ubica su ultima entrega para poder
+        // reimprimir el comprobante/ticket desde este mismo modulo.
+        $entregaId = null;
+        if ($orden && ($orden['estado'] ?? '') === 'entregada') {
+            $ultima = $service->ultimaPorOrden((int) $orden['id']);
+            $entregaId = $ultima['id'] ?? null;
+        }
+
         View::render('entregas/index', [
             'title' => 'Entrega de equipo',
             'codigo' => $codigo,
-            'orden' => $codigo ? (new EntregaService())->buscar($codigo) : null,
+            'orden' => $orden,
+            'entregaId' => $entregaId,
         ]);
     }
 

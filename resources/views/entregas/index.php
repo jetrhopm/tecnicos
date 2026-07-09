@@ -58,7 +58,17 @@ $pageScripts = [
             <div class="glass-card">
                 <h2 class="h5" data-icon="&#128275;">Liberar equipo</h2>
                 <?php if ($orden['estado'] === 'entregada'): ?>
-                    <div class="alert alert-info mb-0">Esta orden ya esta marcada como entregada.</div>
+                    <div class="alert alert-info">Esta orden ya esta marcada como entregada.</div>
+                    <?php if (!empty($entregaId)): ?>
+                        <label class="form-label" data-icon="&#128424;">Reimprimir comprobante / ticket</label>
+                        <div class="d-grid gap-2">
+                            <a class="btn btn-outline-dark" target="_blank" href="<?= e(url('/entregas/' . $entregaId . '/comprobante?formato=carta')) ?>">Hoja carta</a>
+                            <a class="btn btn-outline-dark" target="_blank" href="<?= e(url('/entregas/' . $entregaId . '/comprobante?formato=80')) ?>">Ticket 80&nbsp;mm</a>
+                            <a class="btn btn-outline-dark" target="_blank" href="<?= e(url('/entregas/' . $entregaId . '/comprobante?formato=56')) ?>">Ticket 56&nbsp;mm</a>
+                        </div>
+                    <?php else: ?>
+                        <p class="small text-muted mb-0">No se encontro el comprobante de esta entrega.</p>
+                    <?php endif; ?>
                 <?php else: ?>
                     <form method="post" action="<?= e(url('/entregas/entregar')) ?>" data-confirm="Confirmar entrega del equipo con esta clave">
                         <?= csrf_field() ?>

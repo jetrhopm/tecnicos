@@ -8,6 +8,12 @@ responsable del proyecto.
 
 ## 2026-07-08
 
+### Entregas
+
+- Al consultar una orden ya entregada desde `/entregas`, el sistema muestra
+  accesos para reimprimir el comprobante en hoja carta, ticket 80 mm o ticket
+  56 mm usando la ultima entrega registrada.
+
 ### Punto de venta de refacciones
 
 - Se agrego el modulo `/punto-venta` para vender refacciones de mostrador sin
