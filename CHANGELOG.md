@@ -8,6 +8,16 @@ responsable del proyecto.
 
 ## 2026-07-08
 
+### Navegacion mobile por rol
+
+- Se agrego una barra inferior fija en mobile con accesos rapidos por rol.
+- La barra muestra hasta cuatro opciones utiles para caja, recepcion, tecnico,
+  almacen, admin y superadmin, siempre filtradas por permisos reales.
+- Si un rol tiene menos accesos disponibles, se rellena con Dashboard u otros
+  modulos permitidos para mantener una navegacion compacta.
+- Se corrigio el indicador `active` para que Dashboard no aparezca activo en
+  todas las rutas internas.
+
 ### Entregas
 
 - Al consultar una orden ya entregada desde `/entregas`, el sistema muestra

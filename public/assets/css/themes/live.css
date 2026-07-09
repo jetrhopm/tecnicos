@@ -74,6 +74,19 @@
   border-radius: 10px;
 }
 
+[data-theme="live"] .mobile-quick-nav {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(123, 47, 247, 0.18);
+  box-shadow: 0 18px 44px rgba(123, 47, 247, 0.24);
+}
+
+[data-theme="live"] .mobile-quick-nav__item:hover,
+[data-theme="live"] .mobile-quick-nav__item.active {
+  color: var(--ink);
+  background: rgba(255, 61, 129, 0.12);
+  border-color: rgba(255, 61, 129, 0.24);
+}
+
 [data-theme="live"] .btn-primary {
   --bs-btn-bg: #7b2ff7;
   --bs-btn-border-color: #7b2ff7;

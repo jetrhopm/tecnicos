@@ -1,6 +1,7 @@
 <?php
 use App\Core\Auth;
 use App\Core\Session;
+use App\Repositories\UserRepository;
 use App\Services\ConfiguracionService;
 use App\Services\NotificacionService;
 
@@ -30,6 +31,102 @@ $notifIconos = [
     'cotizacion_autorizada' => "\u{2705}",
     'stock_bajo' => "\u{1F4E6}",
 ];
+$roleNames = [];
+if ($user) {
+    try {
+        $roleNames = array_column((new UserRepository())->rolesForUser((int) $user['id']), 'name');
+    } catch (Throwable) {
+        $roleNames = [];
+    }
+}
+$rolePriority = ['superadmin', 'admin', 'recepcion', 'tecnico_senior', 'tecnico', 'caja', 'almacen', 'cliente_consulta'];
+$primaryRole = 'default';
+foreach ($rolePriority as $roleName) {
+    if (in_array($roleName, $roleNames, true)) {
+        $primaryRole = $roleName;
+        break;
+    }
+}
+$quickItem = static fn (string $label, string $href, string $icon, string $module, string $action = 'ver'): array => [
+    'label' => $label,
+    'href' => $href,
+    'icon' => $icon,
+    'module' => $module,
+    'action' => $action,
+];
+$quickNavByRole = [
+    'superadmin' => [
+        $quickItem('Orden', '/ordenes/create', "\u{2795}", 'ordenes', 'crear'),
+        $quickItem('Entregar', '/entregas', "\u{1F4E6}", 'ordenes', 'ver'),
+        $quickItem('Venta', '/punto-venta', "\u{1F6D2}", 'punto_venta', 'ver'),
+        $quickItem('Reportes', '/reportes', "\u{1F4CA}", 'reportes', 'ver'),
+    ],
+    'admin' => [
+        $quickItem('Orden', '/ordenes/create', "\u{2795}", 'ordenes', 'crear'),
+        $quickItem('Entregar', '/entregas', "\u{1F4E6}", 'ordenes', 'ver'),
+        $quickItem('Venta', '/punto-venta', "\u{1F6D2}", 'punto_venta', 'ver'),
+        $quickItem('Reportes', '/reportes', "\u{1F4CA}", 'reportes', 'ver'),
+    ],
+    'recepcion' => [
+        $quickItem('Orden', '/ordenes/create', "\u{2795}", 'ordenes', 'crear'),
+        $quickItem('Entregar', '/entregas', "\u{1F4E6}", 'ordenes', 'ver'),
+        $quickItem('Clientes', '/clientes', "\u{1F464}", 'clientes', 'ver'),
+        $quickItem('Ordenes', '/ordenes', "\u{1F4CB}", 'ordenes', 'ver'),
+    ],
+    'tecnico_senior' => [
+        $quickItem('Ordenes', '/ordenes', "\u{1F527}", 'ordenes', 'ver'),
+        $quickItem('Agenda', '/agenda', "\u{1F4C5}", 'agenda', 'ver'),
+        $quickItem('Invent.', '/inventario', "\u{1F9F0}", 'inventario', 'ver'),
+        $quickItem('Dash', '/', "\u{2302}", 'dashboard', 'ver'),
+    ],
+    'tecnico' => [
+        $quickItem('Ordenes', '/ordenes', "\u{1F527}", 'ordenes', 'ver'),
+        $quickItem('Agenda', '/agenda', "\u{1F4C5}", 'agenda', 'ver'),
+        $quickItem('Invent.', '/inventario', "\u{1F9F0}", 'inventario', 'ver'),
+        $quickItem('Dash', '/', "\u{2302}", 'dashboard', 'ver'),
+    ],
+    'caja' => [
+        $quickItem('Venta', '/punto-venta', "\u{1F6D2}", 'punto_venta', 'ver'),
+        $quickItem('Entregar', '/entregas', "\u{1F4E6}", 'ordenes', 'ver'),
+        $quickItem('Orden', '/ordenes/create', "\u{2795}", 'ordenes', 'crear'),
+        $quickItem('Ordenes', '/ordenes', "\u{1F4CB}", 'ordenes', 'ver'),
+    ],
+    'almacen' => [
+        $quickItem('Invent.', '/inventario', "\u{1F9F0}", 'inventario', 'ver'),
+        $quickItem('Proveed.', '/proveedores', "\u{1F69A}", 'proveedores', 'ver'),
+        $quickItem('Ordenes', '/ordenes', "\u{1F4CB}", 'ordenes', 'ver'),
+        $quickItem('Dash', '/', "\u{2302}", 'dashboard', 'ver'),
+    ],
+    'cliente_consulta' => [
+        $quickItem('Dash', '/', "\u{2302}", 'dashboard', 'ver'),
+        $quickItem('Ordenes', '/ordenes', "\u{1F4CB}", 'ordenes', 'ver'),
+    ],
+    'default' => [
+        $quickItem('Dash', '/', "\u{2302}", 'dashboard', 'ver'),
+        $quickItem('Ordenes', '/ordenes', "\u{1F4CB}", 'ordenes', 'ver'),
+        $quickItem('Orden', '/ordenes/create', "\u{2795}", 'ordenes', 'crear'),
+        $quickItem('Entregar', '/entregas', "\u{1F4E6}", 'ordenes', 'ver'),
+    ],
+];
+$fallbackQuickItems = [
+    $quickItem('Dash', '/', "\u{2302}", 'dashboard', 'ver'),
+    $quickItem('Ordenes', '/ordenes', "\u{1F4CB}", 'ordenes', 'ver'),
+    $quickItem('Orden', '/ordenes/create', "\u{2795}", 'ordenes', 'crear'),
+    $quickItem('Entregar', '/entregas', "\u{1F4E6}", 'ordenes', 'ver'),
+    $quickItem('Venta', '/punto-venta', "\u{1F6D2}", 'punto_venta', 'ver'),
+];
+$mobileQuickNav = [];
+foreach (array_merge($quickNavByRole[$primaryRole] ?? $quickNavByRole['default'], $fallbackQuickItems) as $item) {
+    $key = $item['href'];
+    if (isset($mobileQuickNav[$key]) || !Auth::can($item['module'], $item['action'])) {
+        continue;
+    }
+    $mobileQuickNav[$key] = $item;
+    if (count($mobileQuickNav) >= 4) {
+        break;
+    }
+}
+$mobileQuickNav = array_values($mobileQuickNav);
 ?>
 <!doctype html>
 <html lang="es">
@@ -39,7 +136,7 @@ $notifIconos = [
     <meta name="csrf-token" content="<?= e(\App\Core\Csrf::token()) ?>">
     <title><?= e(($title ?? '') !== '' ? ($title . ' | ' . $systemName) : $systemName) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= e(asset('css/app.css') . '?v=20260708-pos-ticket-draft') ?>" rel="stylesheet">
+    <link href="<?= e(asset('css/app.css') . '?v=20260708-mobile-quick-nav') ?>" rel="stylesheet">
     <link href="<?= e(asset('css/themes/crystal.css')) ?>" rel="stylesheet">
     <link href="<?= e(asset('css/themes/dark.css') . '?v=20260614-selects') ?>" rel="stylesheet">
     <link href="<?= e(asset('css/themes/live.css')) ?>" rel="stylesheet">
@@ -167,6 +264,16 @@ $notifIconos = [
         <?= $content ?>
     </main>
 </div>
+<?php if (!empty($mobileQuickNav)): ?>
+    <nav class="mobile-quick-nav" aria-label="Accesos rapidos por rol">
+        <?php foreach ($mobileQuickNav as $item): ?>
+            <a class="mobile-quick-nav__item <?= e(is_active($item['href'])) ?>" href="<?= e(url($item['href'])) ?>">
+                <span class="mobile-quick-nav__icon" aria-hidden="true"><?= e($item['icon']) ?></span>
+                <span class="mobile-quick-nav__label"><?= e($item['label']) ?></span>
+            </a>
+        <?php endforeach; ?>
+    </nav>
+<?php endif; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="<?= e(asset('js/app.js') . '?v=20260708-pos-ticket-draft') ?>"></script>
 <script src="<?= e(asset('js/theme-switcher.js') . '?v=20260707-theme-sync') ?>"></script>

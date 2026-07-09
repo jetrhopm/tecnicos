@@ -49,6 +49,19 @@
   background: var(--panel-strong);
 }
 
+[data-theme="dark"] .mobile-quick-nav {
+  background: rgba(12, 20, 28, 0.9);
+  border-color: rgba(120, 180, 195, 0.22);
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.48);
+}
+
+[data-theme="dark"] .mobile-quick-nav__item:hover,
+[data-theme="dark"] .mobile-quick-nav__item.active {
+  color: var(--ink);
+  background: rgba(45, 212, 224, 0.16);
+  border-color: rgba(45, 212, 224, 0.34);
+}
+
 /* Tablas */
 [data-theme="dark"] .table {
   --bs-table-color: var(--ink);

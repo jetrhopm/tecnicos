@@ -97,5 +97,10 @@ function asset(string $path): string
 function is_active(string $prefix): string
 {
     $request = new \App\Core\Request();
-    return str_starts_with($request->path(), $prefix) ? 'active' : '';
+    $path = $request->path();
+    if ($prefix === '/') {
+        return $path === '/' ? 'active' : '';
+    }
+
+    return str_starts_with($path, $prefix) ? 'active' : '';
 }

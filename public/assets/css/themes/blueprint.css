@@ -79,6 +79,19 @@
   background: var(--panel-strong);
 }
 
+[data-theme="blueprint"] .mobile-quick-nav {
+  background: rgba(7, 18, 36, 0.92);
+  border-color: rgba(63, 181, 240, 0.42);
+  box-shadow: 0 0 0 1px rgba(63, 181, 240, 0.12), 0 16px 42px rgba(2, 8, 20, 0.62);
+}
+
+[data-theme="blueprint"] .mobile-quick-nav__item:hover,
+[data-theme="blueprint"] .mobile-quick-nav__item.active {
+  color: #fff;
+  background: rgba(63, 181, 240, 0.18);
+  border-color: rgba(63, 181, 240, 0.42);
+}
+
 /* Encabezados de seccion con acento cian */
 [data-theme="blueprint"] .glass-card h2 {
   text-shadow: 0 0 14px rgba(63, 181, 240, 0.35);
