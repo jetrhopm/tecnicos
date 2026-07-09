@@ -17,6 +17,8 @@ responsable del proyecto.
   modulos permitidos para mantener una navegacion compacta.
 - Se corrigio el indicador `active` para que Dashboard no aparezca activo en
   todas las rutas internas.
+- Se ajusto el tema Dark para que la barra inferior use fondo, texto e iconos
+  oscuros coherentes y se actualizo el cache-buster de los temas.
 
 ### Entregas
 

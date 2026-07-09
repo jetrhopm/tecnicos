@@ -137,10 +137,10 @@ $mobileQuickNav = array_values($mobileQuickNav);
     <title><?= e(($title ?? '') !== '' ? ($title . ' | ' . $systemName) : $systemName) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= e(asset('css/app.css') . '?v=20260708-mobile-quick-nav') ?>" rel="stylesheet">
-    <link href="<?= e(asset('css/themes/crystal.css')) ?>" rel="stylesheet">
-    <link href="<?= e(asset('css/themes/dark.css') . '?v=20260614-selects') ?>" rel="stylesheet">
-    <link href="<?= e(asset('css/themes/live.css')) ?>" rel="stylesheet">
-    <link href="<?= e(asset('css/themes/blueprint.css') . '?v=20260707-btns') ?>" rel="stylesheet">
+    <link href="<?= e(asset('css/themes/crystal.css') . '?v=20260708-mobile-quick-nav') ?>" rel="stylesheet">
+    <link href="<?= e(asset('css/themes/dark.css') . '?v=20260708-mobile-quick-nav') ?>" rel="stylesheet">
+    <link href="<?= e(asset('css/themes/live.css') . '?v=20260708-mobile-quick-nav') ?>" rel="stylesheet">
+    <link href="<?= e(asset('css/themes/blueprint.css') . '?v=20260708-mobile-quick-nav') ?>" rel="stylesheet">
     <script>
         (function () {
             var u = <?= json_encode($user['name'] ?? 'guest') ?>;
