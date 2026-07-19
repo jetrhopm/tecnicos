@@ -142,6 +142,11 @@ enie, simbolos y compatibilidad UTF-8 completa en MySQL/MariaDB.
 Despues de importarlo, configura `.env` con los datos reales que te da
 Hostinger: `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` y `APP_URL`.
 
+Para armar un ZIP/FTP de produccion revisa `.hostingerignore`: ahi se listan
+archivos y carpetas que no conviene subir al hosting, como `.git`, `tests`,
+`docs`, SQL, logs, sesiones, backups y uploads locales. El `.htaccess` raiz
+tambien bloquea acceso web a carpetas internas si por error se suben.
+
 ## Credenciales iniciales
 
 Administrador principal:

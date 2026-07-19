@@ -14,6 +14,8 @@ responsable del proyecto.
   Hostinger/phpMyAdmin dentro de una base ya creada.
 - El archivo combina estructura y datos iniciales, usa `utf8mb4` y no contiene
   instrucciones para crear o seleccionar base de datos.
+- Se agrego `.hostingerignore` como lista de exclusion para paquetes ZIP/FTP y
+  se actualizo `.gitignore` para no rastrear uploads publicos locales.
 
 ## 2026-07-08
 

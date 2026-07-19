@@ -1,0 +1,44 @@
+# Lista de exclusion para preparar ZIP/FTP hacia Hostinger.
+# Nota: Hostinger no siempre lee este archivo automaticamente; usalo como
+# referencia al armar el paquete o en scripts de deploy.
+
+.git/
+.gitignore
+.hostingerignore
+
+# Entorno local. En Hostinger crea/sube un .env propio con credenciales reales.
+.env
+
+# Archivos de desarrollo/documentacion que no necesita el runtime.
+tests/
+docs/
+README.md
+CHANGELOG.md
+LICENSE
+
+# SQL/migraciones: importalos en phpMyAdmin, no los dejes publicados.
+database/
+
+# Dependencias locales si existen. Instala o sube vendor solo si tu hosting lo requiere.
+vendor/
+
+# Archivos generados en runtime.
+storage/logs/*
+!storage/logs/.gitkeep
+storage/backups/*
+!storage/backups/.gitkeep
+storage/sessions/*
+!storage/sessions/.gitkeep
+storage/uploads/*
+!storage/uploads/.gitkeep
+
+# Uploads publicos del negocio/demo. En produccion se generan al usar el sistema.
+public/assets/img/uploads/*
+!public/assets/img/uploads/.htaccess
+!public/assets/img/uploads/.gitkeep
+
+# Basura del sistema operativo/editor.
+.DS_Store
+Thumbs.db
+*.log
+*.bak

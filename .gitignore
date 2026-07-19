@@ -7,6 +7,9 @@
 !/storage/backups/.gitkeep
 /storage/sessions/*
 !/storage/sessions/.gitkeep
+/public/assets/img/uploads/*
+!/public/assets/img/uploads/.htaccess
+!/public/assets/img/uploads/.gitkeep
 /vendor/
 .DS_Store
 Thumbs.db
