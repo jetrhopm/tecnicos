@@ -6,6 +6,15 @@ responsable del proyecto.
 
 ---
 
+## 2026-07-18
+
+### SQL para Hostinger
+
+- Se agrego `database/hostinger_full.sql`, un SQL completo para importar en
+  Hostinger/phpMyAdmin dentro de una base ya creada.
+- El archivo combina estructura y datos iniciales, usa `utf8mb4` y no contiene
+  instrucciones para crear o seleccionar base de datos.
+
 ## 2026-07-08
 
 ### Caja y corte

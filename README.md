@@ -126,6 +126,22 @@ APP_URL=https://tudominio.com
 3. Copia `.env.example` a `.env`.
 4. Ajusta credenciales si tu MySQL no usa `root / rufles123`.
 
+## Instalacion en Hostinger
+
+En Hostinger normalmente primero creas la base de datos desde el panel y luego
+importas el SQL en phpMyAdmin. Para ese caso usa:
+
+```text
+database/hostinger_full.sql
+```
+
+Ese archivo ya combina estructura y datos iniciales. No incluye instrucciones
+para crear o seleccionar base de datos, y usa `utf8mb4` para conservar acentos,
+enie, simbolos y compatibilidad UTF-8 completa en MySQL/MariaDB.
+
+Despues de importarlo, configura `.env` con los datos reales que te da
+Hostinger: `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` y `APP_URL`.
+
 ## Credenciales iniciales
 
 Administrador principal:
