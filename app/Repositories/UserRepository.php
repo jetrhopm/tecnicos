@@ -69,6 +69,8 @@ final class UserRepository extends BaseRepository
 
     public function hasPermission(int $userId, string $module, string $action): bool
     {
+        $superadminBypass = $module !== 'licencias';
+        $superadminSql = $superadminBypass ? "r.name = 'superadmin' OR " : '';
         $row = $this->fetch(
             "SELECT 1
              FROM users u
@@ -78,9 +80,9 @@ final class UserRepository extends BaseRepository
              JOIN permissions p ON p.id = rp.permission_id
              WHERE u.id = :user_id
                AND u.status = 'activo'
-               AND ((r.name = 'superadmin' AND :module_superadmin <> 'licencias') OR (p.module = :module AND p.action = :action))
+               AND ({$superadminSql}(p.module = :module AND p.action = :action))
              LIMIT 1",
-            ['user_id' => $userId, 'module' => $module, 'module_superadmin' => $module, 'action' => $action]
+            ['user_id' => $userId, 'module' => $module, 'action' => $action]
         );
 
         return $row !== null;
