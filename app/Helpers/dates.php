@@ -2,6 +2,17 @@
 
 declare(strict_types=1);
 
+function normalizarZonaHoraria(string $zona, string $default = 'America/Mexico_City'): string
+{
+    $zona = trim($zona);
+    try {
+        new DateTimeZone($zona);
+        return $zona;
+    } catch (Throwable) {
+        return $default;
+    }
+}
+
 function fechaHumana(?string $fecha): string
 {
     if (!$fecha) {

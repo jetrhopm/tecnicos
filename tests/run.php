@@ -14,6 +14,8 @@ $tests = [
     'crearMensajeWhatsapp' => crearMensajeWhatsapp('Hola {cliente}', ['cliente' => 'Ana']) === 'Hola Ana',
     'validarEmail' => filter_var('admin@local.test', FILTER_VALIDATE_EMAIL) !== false,
     'calcularDiasGarantia' => calcularDiasGarantia('2026-06-01', '2026-07-01') === 30,
+    'normalizarZonaHorariaValida' => normalizarZonaHoraria('America/Bogota') === 'America/Bogota',
+    'normalizarZonaHorariaInvalida' => normalizarZonaHoraria('zona-invalida') === 'America/Mexico_City',
     'cotizacionCantidadCero' => array_filter(
         \App\Validators\CotizacionValidator::validate(['orden_id' => 1, 'descripcion' => 'Revision', 'cantidad' => 0, 'precio_unitario' => 100]),
         static fn (array $error): bool => str_ends_with($error['field'], 'cantidad')

@@ -127,6 +127,10 @@ final class ConfiguracionService
             return $codigo !== '' ? substr($codigo, 0, 4) : '52';
         }
 
+        if ($clave === 'sistema.zona_horaria') {
+            return normalizarZonaHoraria($valor);
+        }
+
         return $valor;
     }
 

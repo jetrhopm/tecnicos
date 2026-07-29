@@ -40,11 +40,26 @@ final class Database
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]);
+            self::syncTimezone();
         } catch (PDOException $exception) {
             Logger::error('Database connection failed', ['error' => $exception->getMessage()]);
             throw new RuntimeException('No se pudo conectar con la base de datos.');
         }
 
         return self::$connection;
+    }
+
+    public static function syncTimezone(): void
+    {
+        if (!self::$connection instanceof PDO) {
+            return;
+        }
+
+        $offset = (new \DateTimeImmutable('now'))->format('P');
+        try {
+            self::$connection->exec("SET time_zone = '{$offset}'");
+        } catch (\Throwable $exception) {
+            Logger::error('No se pudo sincronizar zona horaria MySQL', ['error' => $exception->getMessage(), 'offset' => $offset]);
+        }
     }
 }

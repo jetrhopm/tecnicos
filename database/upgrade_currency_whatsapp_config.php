@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * Agrega configuracion editable de moneda y codigo de pais para WhatsApp.
+ * Agrega configuracion editable de moneda, zona horaria y codigo de pais para WhatsApp.
  *
  * Uso: php database/upgrade_currency_whatsapp_config.php
  */
@@ -21,6 +21,7 @@ $stmt = $db->prepare(
 
 $configuraciones = [
     ['sistema.moneda', 'MXN', 'string', 'sistema'],
+    ['sistema.zona_horaria', 'America/Mexico_City', 'string', 'sistema'],
     ['whatsapp.codigo_pais', '52', 'string', 'mensajes'],
 ];
 
@@ -34,4 +35,4 @@ foreach ($configuraciones as [$clave, $valor, $tipo, $grupo]) {
     echo "Lista: {$clave}\n";
 }
 
-echo "Configuracion de moneda y WhatsApp lista.\n";
+echo "Configuracion de moneda, zona horaria y WhatsApp lista.\n";

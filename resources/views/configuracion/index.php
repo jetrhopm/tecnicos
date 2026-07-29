@@ -1,5 +1,19 @@
 <?php
 $monedas = ['MXN', 'USD', 'EUR', 'COP', 'ARS', 'CLP', 'PEN', 'GTQ', 'CRC', 'DOP'];
+$zonasHorarias = [
+    'America/Mexico_City',
+    'America/Cancun',
+    'America/Monterrey',
+    'America/Tijuana',
+    'America/Bogota',
+    'America/Lima',
+    'America/Santiago',
+    'America/Argentina/Buenos_Aires',
+    'America/New_York',
+    'America/Los_Angeles',
+    'Europe/Madrid',
+    'UTC',
+];
 $codigosWhatsapp = [
     '52' => 'Mexico (+52)',
     '1' => 'Estados Unidos / Canada (+1)',
@@ -67,6 +81,14 @@ $codigosWhatsapp = [
                                     <?php endforeach; ?>
                                 </datalist>
                                 <div class="form-text">Usa clave ISO de 3 letras. Ejemplo: MXN, USD, COP.</div>
+                            <?php elseif ($clave === 'sistema.zona_horaria'): ?>
+                                <input class="form-control" id="<?= e($id) ?>" name="config[<?= e($clave) ?>]" value="<?= e(normalizarZonaHoraria($valor ?: 'America/Mexico_City')) ?>" list="zonas_horarias_sistema" autocomplete="off">
+                                <datalist id="zonas_horarias_sistema">
+                                    <?php foreach ($zonasHorarias as $zona): ?>
+                                        <option value="<?= e($zona) ?>"></option>
+                                    <?php endforeach; ?>
+                                </datalist>
+                                <div class="form-text">Zona horaria PHP/IANA. Ejemplo: America/Mexico_City.</div>
                             <?php elseif ($clave === 'whatsapp.codigo_pais'): ?>
                                 <div class="input-group">
                                     <span class="input-group-text">+</span>
@@ -103,7 +125,7 @@ $codigosWhatsapp = [
                                 <div class="form-text">Puedes pegar una URL/ruta o subir un JPG, PNG o WEBP.</div>
                             <?php endif; ?>
 
-                            <?php if (!in_array($clave, ['sistema.moneda', 'whatsapp.codigo_pais'], true)): ?>
+                            <?php if (!in_array($clave, ['sistema.moneda', 'sistema.zona_horaria', 'whatsapp.codigo_pais'], true)): ?>
                                 <div class="form-text">Tipo: <?= e($tipo) ?></div>
                             <?php endif; ?>
                         </div>

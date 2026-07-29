@@ -49,7 +49,15 @@ function env_value(string $key, mixed $default = null): mixed
     return $env[$key] ?? $default;
 }
 
-date_default_timezone_set((string) env_value('APP_TIMEZONE', 'America/Mexico_City'));
+$appTimezone = normalizarZonaHoraria((string) env_value('APP_TIMEZONE', 'America/Mexico_City'));
+date_default_timezone_set($appTimezone);
+try {
+    $dbTimezone = (string) (new \App\Services\ConfiguracionService())->get('sistema.zona_horaria', $appTimezone);
+    date_default_timezone_set(normalizarZonaHoraria($dbTimezone, $appTimezone));
+    \App\Core\Database::syncTimezone();
+} catch (\Throwable) {
+    date_default_timezone_set($appTimezone);
+}
 
 $appDebug = filter_var(env_value('APP_DEBUG', false), FILTER_VALIDATE_BOOL);
 error_reporting(E_ALL);
