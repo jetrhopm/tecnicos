@@ -20,7 +20,12 @@ final class ConfiguracionService
 
     public function allGrouped(): array
     {
-        $rows = Database::connection()->query('SELECT * FROM configuraciones ORDER BY grupo, clave')->fetchAll();
+        $sql = 'SELECT * FROM configuraciones';
+        if (!Auth::can('licencias', 'ver')) {
+            $sql .= " WHERE grupo <> 'licencia'";
+        }
+        $sql .= ' ORDER BY grupo, clave';
+        $rows = Database::connection()->query($sql)->fetchAll();
         $grouped = [];
         foreach ($rows as $row) {
             $grouped[$row['grupo']][] = $row;
@@ -32,7 +37,12 @@ final class ConfiguracionService
     public function actualizar(array $valores, ?array $logoFile = null): void
     {
         $db = Database::connection();
-        $rows = $db->query('SELECT clave, valor, tipo FROM configuraciones ORDER BY clave')->fetchAll();
+        $sql = 'SELECT clave, valor, tipo FROM configuraciones';
+        if (!Auth::can('licencias', 'administrar')) {
+            $sql .= " WHERE grupo <> 'licencia'";
+        }
+        $sql .= ' ORDER BY clave';
+        $rows = $db->query($sql)->fetchAll();
         $existentes = [];
         foreach ($rows as $row) {
             $existentes[$row['clave']] = $row;
@@ -72,6 +82,26 @@ final class ConfiguracionService
         } catch (\Throwable) {
             $db->rollBack();
             throw new RuntimeException('No se pudo guardar la configuracion.');
+        }
+    }
+
+    public function upsertMany(array $items): void
+    {
+        $db = Database::connection();
+        $stmt = $db->prepare(
+            "INSERT INTO configuraciones (clave, valor, tipo, grupo)
+             VALUES (:clave, :valor, :tipo, :grupo)
+             ON DUPLICATE KEY UPDATE valor = VALUES(valor), tipo = VALUES(tipo), grupo = VALUES(grupo)"
+        );
+
+        foreach ($items as $item) {
+            [$clave, $valor, $tipo, $grupo] = $item;
+            $stmt->execute([
+                'clave' => (string) $clave,
+                'valor' => (string) $valor,
+                'tipo' => (string) $tipo,
+                'grupo' => (string) $grupo,
+            ]);
         }
     }
 

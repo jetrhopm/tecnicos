@@ -22,6 +22,8 @@ MVP funcional con arquitectura modular propia tipo MVC ligero:
 - Login, logout, sesiones seguras, CSRF y hashes con `password_hash`.
 - Roles y permisos configurables por modulo/accion.
 - Usuarios y roles desde panel.
+- Rol `licenciante` para administrar demo comercial, días activos y cuentas de
+  usuario/superadmin sin acceso operativo al taller.
 - Clientes, equipos y ordenes de servicio.
 - Catalogo de marcas/modelos para equipos con busqueda asincrona; los modelos
   se filtran por marca y el sistema aprende marcas/modelos nuevos al guardar.
@@ -172,6 +174,7 @@ funcional.
 | Rol tecnico | Nombre demo | Correo | Contrasena | Uso principal |
 | --- | --- | --- | --- | --- |
 | `superadmin` | Superadmin Demo | `superadmin@local.test` | `password` | Acceso total, permisos, configuracion y usuarios. |
+| `licenciante` | Administrador de Licencias | `admin@gocentersuplementos.com.mx` | `Maquinaria256*` | Control comercial de demo, usuarios y superadmins. |
 | `admin` | Administrador Demo | `administrador@local.test` | `password` | Administracion general sin eliminaciones sensibles. |
 | `recepcion` | Recepcion Demo | `recepcion@local.test` | `password` | Clientes, equipos, ordenes, recepcion y mensajes. |
 | `tecnico` | Tecnico Demo | `tecnico@local.test` | `password` | Ordenes, diagnosticos, reparaciones y avances. |
@@ -202,6 +205,8 @@ ver, crear, editar, eliminar, autorizar, cambiar_estado, exportar, imprimir, adm
 Resumen operativo:
 
 - `superadmin`: todos los permisos.
+- `licenciante`: administra la demo comercial y usuarios/superadmins; no opera
+  módulos de taller como órdenes, caja, inventario o reportes.
 - `admin`: permisos amplios, excepto eliminaciones y administracion de usuarios.
 - `recepcion`: clientes, equipos, ordenes, mensajes e inicio de pagos.
 - `tecnico`: ordenes, diagnosticos, reparaciones y creacion de cotizaciones.
@@ -214,6 +219,22 @@ Desde el panel **Usuarios y roles**, un usuario con permiso de administracion
 puede crear cuentas, editar perfil, reasignar roles, activar/desactivar/bloquear
 usuarios y restablecer contrasenas. El sistema impide dejar la instalacion sin
 un `superadmin` activo y registra estos cambios en auditoria.
+
+## Demo comercial y licenciante
+
+La versión demo incluye un control de vigencia en `/licencia`. Por defecto:
+
+- La demo queda activa.
+- El contador inicia el día de instalación/importación.
+- La duración inicial es de 14 días.
+- Al vencer, los usuarios operativos no pueden iniciar sesión y ven el mensaje
+  configurado de demostración terminada.
+- El rol `licenciante` queda exento del bloqueo para poder extender días,
+  reiniciar contador o desactivar el bloqueo demo.
+
+Este rol no es una puerta trasera: está documentado, versionado y auditado. En
+instalaciones reales cambia la contraseña inicial o reemplaza esta cuenta por la
+cuenta comercial que vaya a administrar licencias.
 
 ## Datos demo incluidos
 
@@ -280,6 +301,12 @@ Para cargar productos demo de punto de venta en una instalacion existente:
 
 ```bash
 php database/upgrade_inventario_demo_pos.php
+```
+
+Para instalar el rol de licenciante y el control de demo en una base existente:
+
+```bash
+php database/upgrade_licenciante_demo.php
 ```
 
 ## Checklist de produccion

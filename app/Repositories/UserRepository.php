@@ -78,9 +78,9 @@ final class UserRepository extends BaseRepository
              JOIN permissions p ON p.id = rp.permission_id
              WHERE u.id = :user_id
                AND u.status = 'activo'
-               AND (r.name = 'superadmin' OR (p.module = :module AND p.action = :action))
+               AND ((r.name = 'superadmin' AND :module_superadmin <> 'licencias') OR (p.module = :module AND p.action = :action))
              LIMIT 1",
-            ['user_id' => $userId, 'module' => $module, 'action' => $action]
+            ['user_id' => $userId, 'module' => $module, 'module_superadmin' => $module, 'action' => $action]
         );
 
         return $row !== null;
@@ -94,6 +94,12 @@ final class UserRepository extends BaseRepository
     public function roles(): array
     {
         return $this->fetchAll('SELECT id, name, label FROM roles ORDER BY label');
+    }
+
+    public function roleIdByName(string $name): ?int
+    {
+        $row = $this->fetch('SELECT id FROM roles WHERE name = :name LIMIT 1', ['name' => $name]);
+        return $row ? (int) $row['id'] : null;
     }
 
     public function create(array $data): int
@@ -124,6 +130,11 @@ final class UserRepository extends BaseRepository
         $this->execute('UPDATE users SET status = :status WHERE id = :id', ['id' => $id, 'status' => $status]);
     }
 
+    public function softDelete(int $id): void
+    {
+        $this->execute('UPDATE users SET deleted_at = NOW(), status = "inactivo" WHERE id = :id', ['id' => $id]);
+    }
+
     public function updateRoles(int $userId, array $roleIds): void
     {
         $this->execute('DELETE FROM user_roles WHERE user_id = :user_id', ['user_id' => $userId]);
@@ -136,7 +147,9 @@ final class UserRepository extends BaseRepository
     public function all(): array
     {
         return $this->fetchAll(
-            "SELECT u.id, u.name, u.email, u.phone, u.status, u.last_login_at, GROUP_CONCAT(r.label ORDER BY r.label SEPARATOR ', ') roles
+            "SELECT u.id, u.name, u.email, u.phone, u.status, u.last_login_at,
+                    GROUP_CONCAT(r.label ORDER BY r.label SEPARATOR ', ') roles,
+                    GROUP_CONCAT(r.name ORDER BY r.name SEPARATOR ',') role_names
              FROM users u
              LEFT JOIN user_roles ur ON ur.user_id = u.id
              LEFT JOIN roles r ON r.id = ur.role_id

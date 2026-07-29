@@ -43,6 +43,8 @@ final class AuthService
             return false;
         }
 
+        (new LicenciaService())->verificarAcceso((int) $user['id']);
+
         Session::regenerate();
         // Regenerar ID reduce session fixation despues de autenticacion correcta.
         Session::put('user_id', (int) $user['id']);

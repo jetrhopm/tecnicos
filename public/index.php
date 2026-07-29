@@ -17,6 +17,7 @@ use App\Controllers\EquipoController;
 use App\Controllers\EntregaController;
 use App\Controllers\GarantiaController;
 use App\Controllers\InventarioController;
+use App\Controllers\LicenciaController;
 use App\Controllers\NotificacionController;
 use App\Controllers\OrdenController;
 use App\Controllers\ProveedorController;
@@ -125,6 +126,11 @@ $router->post('/usuarios', [UsuarioController::class, 'store']);
 $router->get('/usuarios/{id}/edit', [UsuarioController::class, 'edit']);
 $router->post('/usuarios/{id}', [UsuarioController::class, 'update']);
 $router->post('/usuarios/{id}/status', [UsuarioController::class, 'status']);
+$router->post('/usuarios/{id}/delete', [UsuarioController::class, 'delete']);
+
+$router->get('/licencia', [LicenciaController::class, 'index']);
+$router->post('/licencia', [LicenciaController::class, 'update']);
+$router->post('/licencia/reiniciar', [LicenciaController::class, 'reiniciar']);
 
 $router->get('/consulta', [PublicController::class, 'consulta']);
 $router->get('/consulta.php', [PublicController::class, 'consulta']);

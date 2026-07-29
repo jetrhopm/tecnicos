@@ -89,4 +89,16 @@ final class UsuarioController
         }
         Response::back();
     }
+
+    public function delete(Request $request, string $id): void
+    {
+        Auth::requirePermission('usuarios', 'eliminar');
+        try {
+            (new UserService())->eliminar((int) $id);
+            Session::flash('success', 'Usuario eliminado correctamente.');
+        } catch (\Throwable $exception) {
+            Session::flash('error', $exception->getMessage());
+        }
+        Response::redirect('/usuarios');
+    }
 }

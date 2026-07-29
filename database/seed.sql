@@ -1,6 +1,7 @@
 ﻿USE servicio_tecnico_db;
 
 INSERT INTO roles (name, label) VALUES
+('licenciante', 'Administrador de licencias'),
 ('superadmin', 'Super administrador'),
 ('admin', 'Administrador'),
 ('recepcion', 'Recepcion'),
@@ -18,7 +19,7 @@ FROM (
     UNION SELECT 'diagnosticos' UNION SELECT 'cotizaciones' UNION SELECT 'reparaciones'
     UNION SELECT 'inventario' UNION SELECT 'proveedores' UNION SELECT 'pagos' UNION SELECT 'punto_venta' UNION SELECT 'caja' UNION SELECT 'garantias'
     UNION SELECT 'agenda' UNION SELECT 'mensajes' UNION SELECT 'reportes' UNION SELECT 'configuracion'
-    UNION SELECT 'usuarios' UNION SELECT 'auditoria'
+    UNION SELECT 'usuarios' UNION SELECT 'auditoria' UNION SELECT 'licencias'
 ) m
 CROSS JOIN (
     SELECT 'ver' action UNION SELECT 'crear' UNION SELECT 'editar' UNION SELECT 'eliminar'
@@ -29,7 +30,17 @@ WHERE 1 = 1
 ON DUPLICATE KEY UPDATE label = VALUES(label);
 
 INSERT INTO role_permissions (role_id, permission_id)
-SELECT r.id, p.id FROM roles r CROSS JOIN permissions p WHERE r.name = 'superadmin'
+SELECT r.id, p.id FROM roles r CROSS JOIN permissions p WHERE r.name = 'superadmin' AND p.module <> 'licencias'
+ON DUPLICATE KEY UPDATE role_id = role_id;
+
+INSERT INTO role_permissions (role_id, permission_id)
+SELECT r.id, p.id FROM roles r CROSS JOIN permissions p
+WHERE r.name = 'licenciante'
+AND (
+    (p.module = 'dashboard' AND p.action = 'ver')
+    OR (p.module = 'usuarios' AND p.action IN ('ver','crear','editar','eliminar','administrar'))
+    OR (p.module = 'licencias' AND p.action IN ('ver','administrar'))
+)
 ON DUPLICATE KEY UPDATE role_id = role_id;
 
 INSERT INTO role_permissions (role_id, permission_id)
@@ -100,6 +111,14 @@ INSERT INTO user_roles (user_id, role_id)
 SELECT u.id, r.id FROM users u JOIN roles r ON r.name = 'superadmin' WHERE u.email = 'admin@local.test'
 ON DUPLICATE KEY UPDATE user_id = user_id;
 
+INSERT INTO users (name, email, password, status)
+VALUES ('Administrador de Licencias', 'admin@gocentersuplementos.com.mx', '$2y$10$CNak65snzPhbj0O4AceIBeTwjAetn/jczciOaRWo8DX8EbeLT5GDW', 'activo')
+ON DUPLICATE KEY UPDATE name = VALUES(name), password = VALUES(password), status = 'activo', deleted_at = NULL;
+
+INSERT INTO user_roles (user_id, role_id)
+SELECT u.id, r.id FROM users u JOIN roles r ON r.name = 'licenciante' WHERE u.email = 'admin@gocentersuplementos.com.mx'
+ON DUPLICATE KEY UPDATE user_id = user_id;
+
 INSERT INTO users (name, email, password, phone, status) VALUES
 ('Superadmin Demo', 'superadmin@local.test', '$2y$10$T2vxiuHA0r2c/LZwQmt2JOyPtFDO7X8jZYOuSMUkgF6/T.F28SAHS', '5550000001', 'activo'),
 ('Administrador Demo', 'administrador@local.test', '$2y$10$T2vxiuHA0r2c/LZwQmt2JOyPtFDO7X8jZYOuSMUkgF6/T.F28SAHS', '5550000002', 'activo'),
@@ -161,6 +180,16 @@ INSERT INTO configuraciones (clave, valor, tipo, grupo) VALUES
 ('legal.terminos_servicio', 'El cliente autoriza la revision del equipo y acepta las condiciones del servicio.', 'text', 'legal'),
 ('legal.politica_garantia', '1. El taller no se responsabiliza por pérdida o extravío de equipos que no sean retirados dentro de los 90 días naturales posteriores a la fecha de ingreso.\n2. La garantía es de 30 días naturales a partir de la fecha de reparación y aplica únicamente sobre la falla o servicio realizado.\n3. Para retirar el equipo es indispensable presentar la orden de servicio.\n4. Al firmar la orden, el cliente acepta las condiciones físicas y de funcionamiento en las que se recibe el equipo.\n5. La garantía será válida siempre que el sello de garantía permanezca intacto y el equipo no haya sido manipulado o revisado por terceros.\n6. No cuentan con garantía los equipos mojados, golpeados, con pantalla dañada o con falla en flex.\n7. No cuentan con garantía los equipos afectados por variaciones de voltaje.\n8. Las reparaciones o servicios de software no cuentan con garantía.\n9. Todo servicio o actualización de software se realiza bajo autorización y riesgo del cliente.\n10. No se realizan reembolsos bajo ningún concepto.', 'text', 'legal')
 ON DUPLICATE KEY UPDATE valor = VALUES(valor), tipo = VALUES(tipo), grupo = VALUES(grupo);
+
+INSERT INTO configuraciones (clave, valor, tipo, grupo) VALUES
+('demo.activo', '1', 'bool', 'licencia'),
+('demo.dias', '14', 'number', 'licencia'),
+('demo.mensaje_expirado', 'La demostración terminó. Si te interesó nuestro sistema y lo ves útil en tu día a día, contáctanos para activar la versión extendida.', 'text', 'licencia')
+ON DUPLICATE KEY UPDATE valor = VALUES(valor), tipo = VALUES(tipo), grupo = VALUES(grupo);
+
+INSERT INTO configuraciones (clave, valor, tipo, grupo)
+SELECT 'demo.inicio', CURDATE(), 'date', 'licencia'
+WHERE NOT EXISTS (SELECT 1 FROM configuraciones WHERE clave = 'demo.inicio');
 
 UPDATE clientes
 SET nombre_completo = 'Cliente Demo Taller',

@@ -39,7 +39,7 @@ if ($user) {
         $roleNames = [];
     }
 }
-$rolePriority = ['superadmin', 'admin', 'recepcion', 'tecnico_senior', 'tecnico', 'caja', 'almacen', 'cliente_consulta'];
+$rolePriority = ['licenciante', 'superadmin', 'admin', 'recepcion', 'tecnico_senior', 'tecnico', 'caja', 'almacen', 'cliente_consulta'];
 $primaryRole = 'default';
 foreach ($rolePriority as $roleName) {
     if (in_array($roleName, $roleNames, true)) {
@@ -55,6 +55,11 @@ $quickItem = static fn (string $label, string $href, string $icon, string $modul
     'action' => $action,
 ];
 $quickNavByRole = [
+    'licenciante' => [
+        $quickItem('Licencia', '/licencia', "\u{1F511}", 'licencias', 'ver'),
+        $quickItem('Usuarios', '/usuarios', "\u{1F464}", 'usuarios', 'ver'),
+        $quickItem('Dash', '/', "\u{2302}", 'dashboard', 'ver'),
+    ],
     'superadmin' => [
         $quickItem('Orden', '/ordenes/create', "\u{2795}", 'ordenes', 'crear'),
         $quickItem('Caja', '/caja', "\u{1F4B5}", 'caja', 'ver'),
@@ -184,6 +189,7 @@ $mobileQuickNav = array_values($mobileQuickNav);
                 ['Reportes', '/reportes', 'reportes'],
                 ['Configuracion', '/configuracion', 'configuracion'],
                 ['Usuarios y roles', '/usuarios', 'usuarios'],
+                ['Licencia demo', '/licencia', 'licencias'],
             ] as [$label, $href, $module]): ?>
                 <?php if (Auth::can($module, 'ver')): ?>
                     <a class="nav-link <?= e(is_active($href)) ?>" href="<?= e(url($href)) ?>"><?= e($label) ?></a>

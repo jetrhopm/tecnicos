@@ -19,7 +19,12 @@ final class UserService
 
     public function roles(): array
     {
-        return $this->users->roles();
+        $roles = $this->users->roles();
+        if (!(new LicenciaService())->usuarioActualEsLicenciante()) {
+            $roles = array_values(array_filter($roles, static fn (array $role): bool => $role['name'] !== LicenciaService::ROLE));
+        }
+
+        return $roles;
     }
 
     public function crear(array $data): int
@@ -37,6 +42,7 @@ final class UserService
         if ($this->users->emailExists($email)) {
             throw new RuntimeException('Ya existe un usuario con ese email.');
         }
+        $this->validarRolLicenciante($roleIds, []);
 
         $db = Database::connection();
         $db->beginTransaction();
@@ -78,6 +84,8 @@ final class UserService
         }
 
         $rolesAntes = $this->users->rolesForUser($id);
+        $this->validarUsuarioProtegido($id, $rolesAntes);
+        $this->validarRolLicenciante($roleIds, $rolesAntes);
         $this->validarSuperadminActivo($id, $perfil['status'], $roleIds, $rolesAntes);
 
         $db = Database::connection();
@@ -131,10 +139,35 @@ final class UserService
         }
 
         $roles = $this->users->rolesForUser($id);
+        $this->validarUsuarioProtegido($id, $roles);
         $this->validarSuperadminActivo($id, $status, array_column($roles, 'id'), $roles);
 
         $this->users->updateStatus($id, $status);
         $this->auditoria->registrar('cambiar_estado', 'usuarios', $id, ['status' => $usuario['status']], ['status' => $status]);
+    }
+
+    public function eliminar(int $id): void
+    {
+        if (!(new LicenciaService())->usuarioActualEsLicenciante()) {
+            throw new RuntimeException('Sólo el administrador de licencias puede eliminar usuarios.');
+        }
+        if ($id === Auth::id()) {
+            throw new RuntimeException('No puedes eliminar tu propia cuenta.');
+        }
+
+        $usuario = $this->users->find($id);
+        if (!$usuario) {
+            throw new RuntimeException('Usuario no encontrado.');
+        }
+
+        $roles = $this->users->rolesForUser($id);
+        $this->validarSuperadminActivo($id, 'inactivo', [], $roles);
+        if (in_array(LicenciaService::ROLE, array_column($roles, 'name'), true)) {
+            throw new RuntimeException('No se puede eliminar una cuenta de licenciamiento.');
+        }
+
+        $this->users->softDelete($id);
+        $this->auditoria->registrar('eliminar', 'usuarios', $id, $usuario, ['deleted_at' => date('Y-m-d H:i:s')]);
     }
 
     private function normalizarPerfil(array $data): array
@@ -200,6 +233,32 @@ final class UserService
         }
         if ($this->users->countActiveSuperadmins() <= 1) {
             throw new RuntimeException('Debe existir al menos un superadmin activo.');
+        }
+    }
+
+    private function validarRolLicenciante(array $roleIdsNuevos, array $rolesAntes): void
+    {
+        $licencianteId = $this->users->roleIdByName(LicenciaService::ROLE);
+        if ($licencianteId === null) {
+            return;
+        }
+
+        $teniaLicenciante = in_array(LicenciaService::ROLE, array_column($rolesAntes, 'name'), true);
+        $tendraLicenciante = in_array($licencianteId, $roleIdsNuevos, true);
+
+        if (($teniaLicenciante || $tendraLicenciante) && !(new LicenciaService())->usuarioActualEsLicenciante()) {
+            throw new RuntimeException('Sólo el administrador de licencias puede asignar o modificar el rol licenciante.');
+        }
+    }
+
+    private function validarUsuarioProtegido(int $id, array $rolesAntes): void
+    {
+        if ($id === Auth::id()) {
+            return;
+        }
+
+        if (in_array(LicenciaService::ROLE, array_column($rolesAntes, 'name'), true) && !(new LicenciaService())->usuarioActualEsLicenciante()) {
+            throw new RuntimeException('Esta cuenta de licenciamiento está protegida.');
         }
     }
 }

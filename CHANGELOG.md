@@ -8,6 +8,19 @@ responsable del proyecto.
 
 ## 2026-07-28
 
+### Demo comercial y rol licenciante
+
+- Se agrego el rol `licenciante` para administrar la vigencia de la demo y
+  usuarios/superadmins sin acceso operativo a los modulos del taller.
+- Se agrego el modulo `/licencia` con activacion/desactivacion de demo, fecha
+  de inicio, dias disponibles, mensaje de demo terminada y reinicio de contador.
+- El login bloquea usuarios operativos cuando la demo vence; el licenciante
+  queda exento para poder extender o reactivar la instalacion.
+- El permiso `licencias` no usa el bypass general de `superadmin`; solo el rol
+  licenciante puede ver y administrar ese modulo.
+- Se agrego `database/upgrade_licenciante_demo.php` para instalaciones
+  existentes.
+
 ### Inventario demo para punto de venta
 
 - Se agrego un paquete de productos demo al inventario: pantallas, baterias,
