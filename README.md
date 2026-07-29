@@ -23,6 +23,8 @@ MVP funcional con arquitectura modular propia tipo MVC ligero:
 - Roles y permisos configurables por modulo/accion.
 - Usuarios y roles desde panel.
 - Clientes, equipos y ordenes de servicio.
+- Catalogo de marcas/modelos para equipos con busqueda asincrona; los modelos
+  se filtran por marca y el sistema aprende marcas/modelos nuevos al guardar.
 - Alta rapida de orden con cliente/equipo nuevo o existente.
 - Edicion controlada de datos del cliente/equipo al crear orden.
 - Opcion de crear equipo nuevo tomando como base un equipo existente.
@@ -219,6 +221,8 @@ El seed crea:
 
 - Roles base.
 - Permisos base.
+- Catalogo inicial de marcas y modelos comunes del mercado para celulares,
+  laptops, consolas, impresoras, electrodomesticos, herramientas y motos.
 - Usuarios demo con contrasena `password`.
 - Cliente demo: `Cliente Demo Taller`.
 - Nueve equipos demo, uno por tipo.
@@ -251,6 +255,25 @@ pegar al dispositivo. Ese codigo funciona con lectores USB como si fuera
 teclado y tambien puede leerse desde el modulo de entregas con camara cuando el
 navegador lo permita. La etiqueta no contiene patron, costos ni notas internas;
 solo sirve como llave operativa para localizar y liberar el equipo correcto.
+
+## Catalogo de marcas y modelos
+
+Los formularios de **Equipos** y **Nueva orden** usan busqueda asincrona en los
+campos Marca y Modelo:
+
+- Al escribir una marca, el sistema consulta `/api/catalogos/marcas`.
+- Al escribir un modelo, el sistema consulta `/api/catalogos/modelos` filtrando
+  por la marca seleccionada o escrita.
+- Si la marca o modelo no existe, se puede dejar el texto capturado; al guardar
+  se crea en `equipo_marcas` o `equipo_modelos` para futuras ordenes.
+- La tabla `equipos` conserva los textos `marca` y `modelo` por compatibilidad,
+  y tambien guarda `marca_id` y `modelo_id` cuando existe relacion con catalogo.
+
+Para actualizar una instalacion existente sin reinstalar:
+
+```bash
+php database/upgrade_catalogo_marcas_modelos.php
+```
 
 ## Checklist de produccion
 

@@ -1,6 +1,7 @@
 <?php
 $isEdit = !empty($equipo);
 $pageScripts = [
+    asset('js/equipo-catalogo.js') . '?v=20260728-catalogo',
     asset('js/pattern-lock.js') . '?v=20260707-real-drag',
 ];
 $tiposEquipo = ['celular','laptop','pc','consola','impresora','electrodomestico','herramienta','moto','otro'];
@@ -53,8 +54,22 @@ $passwordEquipo = (string) ($equipo['password_equipo'] ?? '');
             </div>
         </div>
 
-        <div class="col-md-3"><label class="form-label" data-icon="&#9671;">Marca</label><input class="form-control" name="marca" value="<?= e($equipo['marca'] ?? '') ?>"></div>
-        <div class="col-md-3"><label class="form-label" data-icon="&#128421;">Modelo</label><input class="form-control" name="modelo" value="<?= e($equipo['modelo'] ?? '') ?>"></div>
+        <div class="col-md-3">
+            <label class="form-label" data-icon="&#9671;">Marca</label>
+            <div class="catalog-combo" data-equipo-catalogo data-brand-url="<?= e(url('/api/catalogos/marcas')) ?>" data-model-url="<?= e(url('/api/catalogos/modelos')) ?>">
+                <input type="hidden" name="marca_id" value="<?= e($equipo['marca_id'] ?? '') ?>" data-brand-id>
+                <input class="form-control" name="marca" value="<?= e($equipo['marca'] ?? '') ?>" autocomplete="off" data-brand-input>
+                <div class="catalog-combo__menu d-none" data-brand-menu></div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label" data-icon="&#128421;">Modelo</label>
+            <div class="catalog-combo" data-equipo-catalogo-model>
+                <input type="hidden" name="modelo_id" value="<?= e($equipo['modelo_id'] ?? '') ?>" data-model-id>
+                <input class="form-control" name="modelo" value="<?= e($equipo['modelo'] ?? '') ?>" autocomplete="off" data-model-input>
+                <div class="catalog-combo__menu d-none" data-model-menu></div>
+            </div>
+        </div>
         <div class="col-md-3"><label class="form-label" data-icon="&#9635;">Serie</label><input class="form-control" name="numero_serie" value="<?= e($equipo['numero_serie'] ?? '') ?>"></div>
         <div class="col-md-3"><label class="form-label" data-icon="&#35;">IMEI</label><input class="form-control" name="imei" value="<?= e($equipo['imei'] ?? '') ?>"></div>
         <div class="col-md-3"><label class="form-label" data-icon="&#9679;">Color</label><input class="form-control" name="color" value="<?= e($equipo['color'] ?? '') ?>"></div>

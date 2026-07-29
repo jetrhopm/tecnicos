@@ -503,12 +503,14 @@ a {
 }
 
 .service-combo,
-.entity-combo {
+.entity-combo,
+.catalog-combo {
   position: relative;
 }
 
 .service-combo__menu,
-.entity-combo__menu {
+.entity-combo__menu,
+.catalog-combo__menu {
   position: absolute;
   z-index: 1080;
   top: calc(100% + 6px);
@@ -523,7 +525,8 @@ a {
 }
 
 .service-combo__option,
-.entity-combo__option {
+.entity-combo__option,
+.catalog-combo__option {
   display: block;
   width: 100%;
   padding: 10px 12px;
@@ -538,19 +541,23 @@ a {
 .service-combo__option:hover,
 .service-combo__option.is-active,
 .entity-combo__option:hover,
-.entity-combo__option.is-active {
+.entity-combo__option.is-active,
+.catalog-combo__option:hover,
+.catalog-combo__option.is-active {
   background: rgba(19, 184, 200, 0.14);
   color: #087f8c;
 }
 
 .service-combo__empty,
-.entity-combo__empty {
+.entity-combo__empty,
+.catalog-combo__empty {
   padding: 12px;
   color: var(--muted);
   font-size: 0.88rem;
 }
 
-.entity-combo__option small {
+.entity-combo__option small,
+.catalog-combo__option small {
   display: block;
   color: var(--muted);
   font-weight: 600;

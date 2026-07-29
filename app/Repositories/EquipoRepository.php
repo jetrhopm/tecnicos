@@ -34,8 +34,8 @@ final class EquipoRepository extends BaseRepository
     public function create(array $data): int
     {
         return $this->insert(
-            "INSERT INTO equipos (cliente_id, tipo, marca, modelo, numero_serie, imei, color, password_equipo, accesorios_recibidos, estado_fisico, observaciones)
-             VALUES (:cliente_id, :tipo, :marca, :modelo, :numero_serie, :imei, :color, :password_equipo, :accesorios_recibidos, :estado_fisico, :observaciones)",
+            "INSERT INTO equipos (cliente_id, tipo, marca_id, modelo_id, marca, modelo, numero_serie, imei, color, password_equipo, accesorios_recibidos, estado_fisico, observaciones)
+             VALUES (:cliente_id, :tipo, :marca_id, :modelo_id, :marca, :modelo, :numero_serie, :imei, :color, :password_equipo, :accesorios_recibidos, :estado_fisico, :observaciones)",
             $data
         );
     }
@@ -44,7 +44,7 @@ final class EquipoRepository extends BaseRepository
     {
         $data['id'] = $id;
         $this->execute(
-            "UPDATE equipos SET cliente_id = :cliente_id, tipo = :tipo, marca = :marca, modelo = :modelo, numero_serie = :numero_serie,
+            "UPDATE equipos SET cliente_id = :cliente_id, tipo = :tipo, marca_id = :marca_id, modelo_id = :modelo_id, marca = :marca, modelo = :modelo, numero_serie = :numero_serie,
              imei = :imei, color = :color, password_equipo = :password_equipo, accesorios_recibidos = :accesorios_recibidos,
              estado_fisico = :estado_fisico, observaciones = :observaciones WHERE id = :id",
             $data

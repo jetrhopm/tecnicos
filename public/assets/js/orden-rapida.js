@@ -459,6 +459,8 @@
     if (hasEquipment && selectedEquipment) {
       setEquipmentType(selectedEquipment.dataset.tipo);
       fillNamedFields(newEquipment, {
+        marca_id: selectedEquipment.dataset.marcaId,
+        modelo_id: selectedEquipment.dataset.modeloId,
         marca: selectedEquipment.dataset.marca,
         modelo: selectedEquipment.dataset.modelo,
         numero_serie: selectedEquipment.dataset.numeroSerie,
@@ -471,7 +473,7 @@
       setPatternValue(selectedEquipment.dataset.passwordEquipo);
     } else {
       setEquipmentType('celular');
-      clearNamedFields(newEquipment, ['marca', 'modelo', 'numero_serie', 'imei', 'color', 'accesorios_recibidos', 'estado_fisico', 'observaciones_equipo']);
+      clearNamedFields(newEquipment, ['marca_id', 'modelo_id', 'marca', 'modelo', 'numero_serie', 'imei', 'color', 'accesorios_recibidos', 'estado_fisico', 'observaciones_equipo']);
       setPatternValue('');
     }
 

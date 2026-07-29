@@ -27,6 +27,8 @@ DROP TABLE IF EXISTS cotizaciones;
 DROP TABLE IF EXISTS diagnosticos;
 DROP TABLE IF EXISTS ordenes_servicio;
 DROP TABLE IF EXISTS equipos;
+DROP TABLE IF EXISTS equipo_modelos;
+DROP TABLE IF EXISTS equipo_marcas;
 DROP TABLE IF EXISTS clientes;
 DROP TABLE IF EXISTS configuraciones;
 DROP TABLE IF EXISTS user_roles;
@@ -114,10 +116,39 @@ CREATE TABLE clientes (
     INDEX idx_clientes_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE equipo_marcas (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(120) NOT NULL,
+    slug VARCHAR(140) NOT NULL UNIQUE,
+    estatus ENUM('activo','inactivo') NOT NULL DEFAULT 'activo',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_equipo_marcas_nombre (nombre),
+    INDEX idx_equipo_marcas_estatus (estatus)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE equipo_modelos (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    marca_id INT UNSIGNED NOT NULL,
+    nombre VARCHAR(120) NOT NULL,
+    slug VARCHAR(140) NOT NULL,
+    tipo_equipo ENUM('celular','laptop','pc','consola','impresora','electrodomestico','herramienta','moto','otro') NULL,
+    estatus ENUM('activo','inactivo') NOT NULL DEFAULT 'activo',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_equipo_modelos_marca FOREIGN KEY (marca_id) REFERENCES equipo_marcas(id) ON DELETE CASCADE,
+    UNIQUE KEY uq_equipo_modelo_marca_slug (marca_id, slug),
+    INDEX idx_equipo_modelos_nombre (nombre),
+    INDEX idx_equipo_modelos_tipo (tipo_equipo),
+    INDEX idx_equipo_modelos_estatus (estatus)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE equipos (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     cliente_id INT UNSIGNED NOT NULL,
     tipo ENUM('celular','laptop','pc','consola','impresora','electrodomestico','herramienta','moto','otro') NOT NULL DEFAULT 'otro',
+    marca_id INT UNSIGNED NULL,
+    modelo_id INT UNSIGNED NULL,
     marca VARCHAR(120) NULL,
     modelo VARCHAR(120) NULL,
     numero_serie VARCHAR(120) NULL,
@@ -131,7 +162,12 @@ CREATE TABLE equipos (
     updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
     deleted_at DATETIME NULL,
     CONSTRAINT fk_equipos_cliente FOREIGN KEY (cliente_id) REFERENCES clientes(id),
+    CONSTRAINT fk_equipos_marca FOREIGN KEY (marca_id) REFERENCES equipo_marcas(id) ON DELETE SET NULL,
+    CONSTRAINT fk_equipos_modelo FOREIGN KEY (modelo_id) REFERENCES equipo_modelos(id) ON DELETE SET NULL,
     INDEX idx_equipos_cliente (cliente_id),
+    INDEX idx_equipos_marca (marca_id),
+    INDEX idx_equipos_modelo (modelo_id),
+    INDEX idx_equipos_tipo (tipo),
     INDEX idx_equipos_serie (numero_serie),
     INDEX idx_equipos_imei (imei)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

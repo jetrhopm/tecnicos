@@ -1,8 +1,5 @@
--- Sistema Web de Gestion de Servicios Tecnicos y Reparaciones
--- SQL completo para Hostinger / hosting compartido
--- Importar dentro de la base de datos creada desde el panel de Hostinger.
--- No crea ni selecciona base de datos.
--- Charset recomendado: utf8mb4 (UTF-8 completo para MySQL).
+-- SQL completo para Hostinger/phpMyAdmin. Importar dentro de una base ya creada.
+-- No incluye CREATE DATABASE ni USE. Charset/collation: utf8mb4.
 
 SET NAMES utf8mb4;
 SET CHARACTER SET utf8mb4;
@@ -33,6 +30,8 @@ DROP TABLE IF EXISTS cotizaciones;
 DROP TABLE IF EXISTS diagnosticos;
 DROP TABLE IF EXISTS ordenes_servicio;
 DROP TABLE IF EXISTS equipos;
+DROP TABLE IF EXISTS equipo_modelos;
+DROP TABLE IF EXISTS equipo_marcas;
 DROP TABLE IF EXISTS clientes;
 DROP TABLE IF EXISTS configuraciones;
 DROP TABLE IF EXISTS user_roles;
@@ -120,10 +119,39 @@ CREATE TABLE clientes (
     INDEX idx_clientes_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE equipo_marcas (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(120) NOT NULL,
+    slug VARCHAR(140) NOT NULL UNIQUE,
+    estatus ENUM('activo','inactivo') NOT NULL DEFAULT 'activo',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_equipo_marcas_nombre (nombre),
+    INDEX idx_equipo_marcas_estatus (estatus)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE equipo_modelos (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    marca_id INT UNSIGNED NOT NULL,
+    nombre VARCHAR(120) NOT NULL,
+    slug VARCHAR(140) NOT NULL,
+    tipo_equipo ENUM('celular','laptop','pc','consola','impresora','electrodomestico','herramienta','moto','otro') NULL,
+    estatus ENUM('activo','inactivo') NOT NULL DEFAULT 'activo',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_equipo_modelos_marca FOREIGN KEY (marca_id) REFERENCES equipo_marcas(id) ON DELETE CASCADE,
+    UNIQUE KEY uq_equipo_modelo_marca_slug (marca_id, slug),
+    INDEX idx_equipo_modelos_nombre (nombre),
+    INDEX idx_equipo_modelos_tipo (tipo_equipo),
+    INDEX idx_equipo_modelos_estatus (estatus)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE equipos (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     cliente_id INT UNSIGNED NOT NULL,
     tipo ENUM('celular','laptop','pc','consola','impresora','electrodomestico','herramienta','moto','otro') NOT NULL DEFAULT 'otro',
+    marca_id INT UNSIGNED NULL,
+    modelo_id INT UNSIGNED NULL,
     marca VARCHAR(120) NULL,
     modelo VARCHAR(120) NULL,
     numero_serie VARCHAR(120) NULL,
@@ -137,7 +165,12 @@ CREATE TABLE equipos (
     updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
     deleted_at DATETIME NULL,
     CONSTRAINT fk_equipos_cliente FOREIGN KEY (cliente_id) REFERENCES clientes(id),
+    CONSTRAINT fk_equipos_marca FOREIGN KEY (marca_id) REFERENCES equipo_marcas(id) ON DELETE SET NULL,
+    CONSTRAINT fk_equipos_modelo FOREIGN KEY (modelo_id) REFERENCES equipo_modelos(id) ON DELETE SET NULL,
     INDEX idx_equipos_cliente (cliente_id),
+    INDEX idx_equipos_marca (marca_id),
+    INDEX idx_equipos_modelo (modelo_id),
+    INDEX idx_equipos_tipo (tipo),
     INDEX idx_equipos_serie (numero_serie),
     INDEX idx_equipos_imei (imei)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -593,9 +626,6 @@ CREATE TABLE password_resets (
     INDEX idx_pr_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
--- Datos iniciales, roles, permisos y usuarios demo
-
 INSERT INTO roles (name, label) VALUES
 ('superadmin', 'Super administrador'),
 ('admin', 'Administrador'),
@@ -775,6 +805,132 @@ INSERT INTO clientes (nombre_completo, telefono, whatsapp, email, domicilio, ciu
 SELECT 'Cliente Demo Taller', '5551002000', '5551002000', 'cliente.demo@local.test', 'Av. Servicio 123', 'Ciudad Demo', 'Estado Demo', '00000', 'XAXX010101000', 'Cliente de ejemplo creado por seed.', 'activo'
 WHERE NOT EXISTS (SELECT 1 FROM clientes WHERE email = 'cliente.demo@local.test' AND deleted_at IS NULL);
 
+INSERT INTO equipo_marcas (nombre, slug, estatus) VALUES
+('Acer', 'acer', 'activo'),
+('Apple', 'apple', 'activo'),
+('Asus', 'asus', 'activo'),
+('Black+Decker', 'black-decker', 'activo'),
+('Bosch', 'bosch', 'activo'),
+('Brother', 'brother', 'activo'),
+('Canon', 'canon', 'activo'),
+('Dell', 'dell', 'activo'),
+('DeWalt', 'dewalt', 'activo'),
+('Epson', 'epson', 'activo'),
+('Generica', 'generica', 'activo'),
+('Hisense', 'hisense', 'activo'),
+('Honda', 'honda', 'activo'),
+('Honor', 'honor', 'activo'),
+('HP', 'hp', 'activo'),
+('Huawei', 'huawei', 'activo'),
+('Italika', 'italika', 'activo'),
+('Lenovo', 'lenovo', 'activo'),
+('LG', 'lg', 'activo'),
+('Mabe', 'mabe', 'activo'),
+('Makita', 'makita', 'activo'),
+('Microsoft', 'microsoft', 'activo'),
+('Motorola', 'motorola', 'activo'),
+('MSI', 'msi', 'activo'),
+('Nintendo', 'nintendo', 'activo'),
+('Nokia', 'nokia', 'activo'),
+('OnePlus', 'oneplus', 'activo'),
+('Oppo', 'oppo', 'activo'),
+('PlayStation', 'playstation', 'activo'),
+('Realme', 'realme', 'activo'),
+('Ryobi', 'ryobi', 'activo'),
+('Samsung', 'samsung', 'activo'),
+('Sanyo', 'sanyo', 'activo'),
+('Sony', 'sony', 'activo'),
+('TCL', 'tcl', 'activo'),
+('Toshiba', 'toshiba', 'activo'),
+('Vivo', 'vivo', 'activo'),
+('Whirlpool', 'whirlpool', 'activo'),
+('Xiaomi', 'xiaomi', 'activo'),
+('Yamaha', 'yamaha', 'activo')
+ON DUPLICATE KEY UPDATE nombre = VALUES(nombre), estatus = VALUES(estatus);
+
+INSERT INTO equipo_modelos (marca_id, nombre, slug, tipo_equipo, estatus)
+SELECT m.id, x.nombre, x.slug, x.tipo_equipo, 'activo'
+FROM equipo_marcas m
+JOIN (
+    SELECT 'Apple' marca, 'iPhone 11' nombre, 'iphone-11' slug, 'celular' tipo_equipo
+    UNION SELECT 'Apple', 'iPhone 12', 'iphone-12', 'celular'
+    UNION SELECT 'Apple', 'iPhone 13', 'iphone-13', 'celular'
+    UNION SELECT 'Apple', 'iPhone 14', 'iphone-14', 'celular'
+    UNION SELECT 'Apple', 'iPhone 15', 'iphone-15', 'celular'
+    UNION SELECT 'Apple', 'iPhone 16', 'iphone-16', 'celular'
+    UNION SELECT 'Apple', 'iPad', 'ipad', 'otro'
+    UNION SELECT 'Apple', 'MacBook Air', 'macbook-air', 'laptop'
+    UNION SELECT 'Apple', 'MacBook Pro', 'macbook-pro', 'laptop'
+    UNION SELECT 'Samsung', 'Galaxy A03', 'galaxy-a03', 'celular'
+    UNION SELECT 'Samsung', 'Galaxy A14', 'galaxy-a14', 'celular'
+    UNION SELECT 'Samsung', 'Galaxy A15', 'galaxy-a15', 'celular'
+    UNION SELECT 'Samsung', 'Galaxy A24', 'galaxy-a24', 'celular'
+    UNION SELECT 'Samsung', 'Galaxy A34', 'galaxy-a34', 'celular'
+    UNION SELECT 'Samsung', 'Galaxy A54', 'galaxy-a54', 'celular'
+    UNION SELECT 'Samsung', 'Galaxy S21', 'galaxy-s21', 'celular'
+    UNION SELECT 'Samsung', 'Galaxy S22', 'galaxy-s22', 'celular'
+    UNION SELECT 'Samsung', 'Galaxy S23', 'galaxy-s23', 'celular'
+    UNION SELECT 'Samsung', 'Galaxy S24', 'galaxy-s24', 'celular'
+    UNION SELECT 'Samsung', 'Galaxy Tab', 'galaxy-tab', 'otro'
+    UNION SELECT 'Samsung', 'Samsung TV', 'samsung-tv', 'electrodomestico'
+    UNION SELECT 'Motorola', 'Moto G Power', 'moto-g-power', 'celular'
+    UNION SELECT 'Motorola', 'Moto G Play', 'moto-g-play', 'celular'
+    UNION SELECT 'Motorola', 'Moto G Stylus', 'moto-g-stylus', 'celular'
+    UNION SELECT 'Motorola', 'Moto Edge', 'moto-edge', 'celular'
+    UNION SELECT 'Xiaomi', 'Redmi Note 10', 'redmi-note-10', 'celular'
+    UNION SELECT 'Xiaomi', 'Redmi Note 11', 'redmi-note-11', 'celular'
+    UNION SELECT 'Xiaomi', 'Redmi Note 12', 'redmi-note-12', 'celular'
+    UNION SELECT 'Xiaomi', 'Redmi Note 13', 'redmi-note-13', 'celular'
+    UNION SELECT 'Xiaomi', 'Poco X3', 'poco-x3', 'celular'
+    UNION SELECT 'Xiaomi', 'Poco X5', 'poco-x5', 'celular'
+    UNION SELECT 'Huawei', 'P30 Lite', 'p30-lite', 'celular'
+    UNION SELECT 'Huawei', 'P40 Lite', 'p40-lite', 'celular'
+    UNION SELECT 'Huawei', 'Y9', 'y9', 'celular'
+    UNION SELECT 'Honor', 'Honor X8', 'honor-x8', 'celular'
+    UNION SELECT 'Oppo', 'Reno 7', 'reno-7', 'celular'
+    UNION SELECT 'Oppo', 'A57', 'a57', 'celular'
+    UNION SELECT 'Vivo', 'Y20', 'y20', 'celular'
+    UNION SELECT 'Realme', 'C55', 'c55', 'celular'
+    UNION SELECT 'OnePlus', 'Nord', 'nord', 'celular'
+    UNION SELECT 'Lenovo', 'ThinkPad', 'thinkpad', 'laptop'
+    UNION SELECT 'Lenovo', 'IdeaPad', 'ideapad', 'laptop'
+    UNION SELECT 'HP', 'Pavilion', 'pavilion', 'laptop'
+    UNION SELECT 'HP', 'LaserJet', 'laserjet', 'impresora'
+    UNION SELECT 'HP', 'DeskJet', 'deskjet', 'impresora'
+    UNION SELECT 'Dell', 'Inspiron', 'inspiron', 'laptop'
+    UNION SELECT 'Dell', 'Latitude', 'latitude', 'laptop'
+    UNION SELECT 'Asus', 'VivoBook', 'vivobook', 'laptop'
+    UNION SELECT 'Asus', 'ROG', 'rog', 'laptop'
+    UNION SELECT 'Acer', 'Aspire', 'aspire', 'laptop'
+    UNION SELECT 'MSI', 'Modern', 'modern', 'laptop'
+    UNION SELECT 'Brother', 'DCP', 'dcp', 'impresora'
+    UNION SELECT 'Epson', 'EcoTank', 'ecotank', 'impresora'
+    UNION SELECT 'Canon', 'PIXMA', 'pixma', 'impresora'
+    UNION SELECT 'Sony', 'PlayStation 4', 'playstation-4', 'consola'
+    UNION SELECT 'Sony', 'PlayStation 5', 'playstation-5', 'consola'
+    UNION SELECT 'Nintendo', 'Switch', 'switch', 'consola'
+    UNION SELECT 'Microsoft', 'Xbox One', 'xbox-one', 'consola'
+    UNION SELECT 'Microsoft', 'Xbox Series S', 'xbox-series-s', 'consola'
+    UNION SELECT 'Microsoft', 'Xbox Series X', 'xbox-series-x', 'consola'
+    UNION SELECT 'LG', 'Microondas', 'microondas', 'electrodomestico'
+    UNION SELECT 'LG', 'Lavadora', 'lavadora', 'electrodomestico'
+    UNION SELECT 'Whirlpool', 'Lavadora', 'lavadora', 'electrodomestico'
+    UNION SELECT 'Mabe', 'Refrigerador', 'refrigerador', 'electrodomestico'
+    UNION SELECT 'Hisense', 'Pantalla Smart TV', 'pantalla-smart-tv', 'electrodomestico'
+    UNION SELECT 'TCL', 'Pantalla Roku TV', 'pantalla-roku-tv', 'electrodomestico'
+    UNION SELECT 'Bosch', 'Taladro', 'taladro', 'herramienta'
+    UNION SELECT 'Makita', 'Esmeril', 'esmeril', 'herramienta'
+    UNION SELECT 'DeWalt', 'Rotomartillo', 'rotomartillo', 'herramienta'
+    UNION SELECT 'Black+Decker', 'Taladro', 'taladro', 'herramienta'
+    UNION SELECT 'Ryobi', 'Sierra', 'sierra', 'herramienta'
+    UNION SELECT 'Italika', 'FT', 'ft', 'moto'
+    UNION SELECT 'Italika', 'DM', 'dm', 'moto'
+    UNION SELECT 'Honda', 'CG', 'cg', 'moto'
+    UNION SELECT 'Yamaha', 'FZ', 'fz', 'moto'
+    UNION SELECT 'Generica', 'Equipo Otro Demo', 'equipo-otro-demo', 'otro'
+) x ON x.marca = m.nombre
+ON DUPLICATE KEY UPDATE nombre = VALUES(nombre), tipo_equipo = VALUES(tipo_equipo), estatus = VALUES(estatus);
+
 INSERT INTO equipos (cliente_id, tipo, marca, modelo, numero_serie, imei, color, password_equipo, accesorios_recibidos, estado_fisico, observaciones)
 SELECT c.id, x.tipo, x.marca, x.modelo, x.serie, x.imei, x.color, x.pass, x.accesorios, x.estado_fisico, x.observaciones
 FROM clientes c
@@ -791,6 +947,16 @@ JOIN (
 ) x
 WHERE c.telefono = '5551002000'
 AND NOT EXISTS (SELECT 1 FROM equipos e WHERE e.numero_serie = x.serie);
+
+UPDATE equipos e
+JOIN equipo_marcas m ON m.slug = LOWER(REPLACE(REPLACE(e.marca, '+', ''), ' ', '-'))
+SET e.marca_id = m.id
+WHERE e.marca_id IS NULL AND e.marca IS NOT NULL;
+
+UPDATE equipos e
+JOIN equipo_modelos mo ON mo.marca_id = e.marca_id AND mo.slug = LOWER(REPLACE(e.modelo, ' ', '-'))
+SET e.modelo_id = mo.id
+WHERE e.modelo_id IS NULL AND e.marca_id IS NOT NULL AND e.modelo IS NOT NULL;
 
 INSERT INTO proveedores (nombre, contacto, telefono, email, domicilio, sitio_web, notas, estatus)
 SELECT 'Proveedor Demo', 'Contacto Demo', '5552003000', 'proveedor@local.test', 'Calle Refacciones 456', 'https://example.test', 'Proveedor de ejemplo.', 'activo'

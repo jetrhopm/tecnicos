@@ -1,6 +1,7 @@
 <?php
 $pageScripts = [
     asset('js/orden-rapida.js') . '?v=20260707-equipment-decision-final',
+    asset('js/equipo-catalogo.js') . '?v=20260728-catalogo',
     asset('js/pattern-lock.js') . '?v=20260707-real-drag',
 ];
 $tiposEquipo = ['celular','laptop','pc','consola','impresora','electrodomestico','herramienta','moto','otro'];
@@ -152,6 +153,8 @@ $serviciosComunes = [
                                     data-cliente-id="<?= e($equipo['cliente_id']) ?>"
                                     data-search="<?= e(strtolower($equipo['cliente_nombre'] . ' ' . $equipoNombre . ' ' . $equipo['numero_serie'] . ' ' . $equipo['imei'] . ' ' . $equipo['color'])) ?>"
                                     data-tipo="<?= e($equipo['tipo'] ?? '') ?>"
+                                    data-marca-id="<?= e($equipo['marca_id'] ?? '') ?>"
+                                    data-modelo-id="<?= e($equipo['modelo_id'] ?? '') ?>"
                                     data-marca="<?= e($equipo['marca'] ?? '') ?>"
                                     data-modelo="<?= e($equipo['modelo'] ?? '') ?>"
                                     data-numero-serie="<?= e($equipo['numero_serie'] ?? '') ?>"
@@ -185,8 +188,22 @@ $serviciosComunes = [
                                 <?php endforeach; ?>
                             </div>
                         </div>
-                        <div class="col-md-4"><label class="form-label" data-icon="&#9671;">Marca</label><input class="form-control" name="marca"></div>
-                        <div class="col-md-4"><label class="form-label" data-icon="&#128421;">Modelo</label><input class="form-control" name="modelo"></div>
+                        <div class="col-md-4">
+                            <label class="form-label" data-icon="&#9671;">Marca</label>
+                            <div class="catalog-combo" data-equipo-catalogo data-brand-url="<?= e(url('/api/catalogos/marcas')) ?>" data-model-url="<?= e(url('/api/catalogos/modelos')) ?>">
+                                <input type="hidden" name="marca_id" value="" data-brand-id>
+                                <input class="form-control" name="marca" autocomplete="off" data-brand-input>
+                                <div class="catalog-combo__menu d-none" data-brand-menu></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" data-icon="&#128421;">Modelo</label>
+                            <div class="catalog-combo" data-equipo-catalogo-model>
+                                <input type="hidden" name="modelo_id" value="" data-model-id>
+                                <input class="form-control" name="modelo" autocomplete="off" data-model-input>
+                                <div class="catalog-combo__menu d-none" data-model-menu></div>
+                            </div>
+                        </div>
                         <div class="col-md-4"><label class="form-label" data-icon="&#9635;">Serie</label><input class="form-control" name="numero_serie"></div>
                         <div class="col-md-4"><label class="form-label" data-icon="&#35;">IMEI</label><input class="form-control" name="imei"></div>
                         <div class="col-md-4"><label class="form-label" data-icon="&#9679;">Color</label><input class="form-control" name="color"></div>

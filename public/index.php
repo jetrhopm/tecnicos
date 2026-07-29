@@ -142,5 +142,7 @@ $router->post('/api/cotizaciones', [ApiController::class, 'crearCotizacion']);
 $router->post('/api/pagos', [ApiController::class, 'crearPago']);
 $router->get('/api/reportes/dashboard', [ApiController::class, 'dashboard']);
 $router->get('/api/inventario/stock-bajo', [ApiController::class, 'stockBajo']);
+$router->get('/api/catalogos/marcas', [ApiController::class, 'marcasEquipo']);
+$router->get('/api/catalogos/modelos', [ApiController::class, 'modelosEquipo']);
 
 $router->dispatch($request);

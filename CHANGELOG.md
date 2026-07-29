@@ -6,6 +6,21 @@ responsable del proyecto.
 
 ---
 
+## 2026-07-28
+
+### Catalogo de marcas y modelos
+
+- Se agregaron tablas `equipo_marcas` y `equipo_modelos` para normalizar marcas
+  y modelos sin quitar los campos de texto existentes en `equipos`.
+- Los formularios de equipos y nueva orden ahora tienen busqueda asincrona en
+  marca/modelo; los modelos se filtran por la marca seleccionada o escrita.
+- Si el usuario captura una marca o modelo nuevo, el sistema lo registra al
+  guardar el equipo para reutilizarlo despues.
+- Se agregaron endpoints JSON `/api/catalogos/marcas` y
+  `/api/catalogos/modelos`.
+- Se agrego un catalogo inicial con marcas/modelos comunes del mercado y la
+  migracion `database/upgrade_catalogo_marcas_modelos.php`.
+
 ## 2026-07-18
 
 ### SQL para Hostinger

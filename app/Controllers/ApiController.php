@@ -9,6 +9,7 @@ use App\Core\JsonResponse;
 use App\Core\Request;
 use App\Services\ClienteService;
 use App\Services\CotizacionService;
+use App\Services\EquipoCatalogoService;
 use App\Services\InventarioService;
 use App\Services\OrdenService;
 use App\Services\PagoService;
@@ -89,5 +90,25 @@ final class ApiController
     {
         Auth::requirePermission('inventario', 'ver');
         JsonResponse::success('Stock bajo', (new InventarioService())->stockBajo());
+    }
+
+    public function marcasEquipo(Request $request): void
+    {
+        Auth::requireLogin();
+        $items = (new EquipoCatalogoService())->buscarMarcas((string) $request->input('q', ''), 20);
+        JsonResponse::success('Marcas encontradas', ['items' => $items]);
+    }
+
+    public function modelosEquipo(Request $request): void
+    {
+        Auth::requireLogin();
+        $marcaId = $request->input('marca_id');
+        $items = (new EquipoCatalogoService())->buscarModelos(
+            $marcaId !== null && $marcaId !== '' ? (int) $marcaId : null,
+            (string) $request->input('marca', ''),
+            (string) $request->input('q', ''),
+            20
+        );
+        JsonResponse::success('Modelos encontrados', ['items' => $items]);
     }
 }

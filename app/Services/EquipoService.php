@@ -10,6 +10,7 @@ final class EquipoService
 {
     public function __construct(
         private readonly EquipoRepository $equipos = new EquipoRepository(),
+        private readonly EquipoCatalogoService $catalogo = new EquipoCatalogoService(),
         private readonly AuditoriaService $auditoria = new AuditoriaService()
     ) {
     }
@@ -42,11 +43,20 @@ final class EquipoService
     private function normalizar(array $data): array
     {
         $tipos = ['celular','laptop','pc','consola','impresora','electrodomestico','herramienta','moto','otro'];
+        $tipo = in_array(($data['tipo'] ?? 'otro'), $tipos, true) ? $data['tipo'] : 'otro';
+        $catalogo = $this->catalogo->resolver(
+            (string) ($data['marca'] ?? ''),
+            (string) ($data['modelo'] ?? ''),
+            $tipo
+        );
+
         return [
             'cliente_id' => (int) ($data['cliente_id'] ?? 0),
-            'tipo' => in_array(($data['tipo'] ?? 'otro'), $tipos, true) ? $data['tipo'] : 'otro',
-            'marca' => trim((string) ($data['marca'] ?? '')) ?: null,
-            'modelo' => trim((string) ($data['modelo'] ?? '')) ?: null,
+            'tipo' => $tipo,
+            'marca_id' => $catalogo['marca_id'],
+            'modelo_id' => $catalogo['modelo_id'],
+            'marca' => $catalogo['marca'],
+            'modelo' => $catalogo['modelo'],
             'numero_serie' => trim((string) ($data['numero_serie'] ?? '')) ?: null,
             'imei' => trim((string) ($data['imei'] ?? '')) ?: null,
             'color' => trim((string) ($data['color'] ?? '')) ?: null,
