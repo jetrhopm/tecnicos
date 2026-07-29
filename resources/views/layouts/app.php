@@ -151,8 +151,10 @@ $mobileQuickNav = array_values($mobileQuickNav);
         (function () {
             var u = <?= json_encode($user['name'] ?? 'guest') ?>;
             var key = 'tecnico-theme:' + u;
-            var t = localStorage.getItem(key) || localStorage.getItem('tecnico-theme') || '';
-            if (t) { document.documentElement.setAttribute('data-theme', t); }
+            var t = localStorage.getItem(key);
+            if (t === null) { t = localStorage.getItem('tecnico-theme'); }
+            if (t === null) { t = 'blueprint'; }
+            if (t && t !== 'original') { document.documentElement.setAttribute('data-theme', t); }
             window.__themeKey = key;
         })();
     </script>
@@ -245,7 +247,7 @@ $mobileQuickNav = array_values($mobileQuickNav);
                     <div class="dropdown-menu dropdown-menu-end p-2" style="min-width: 230px;">
                         <div class="fw-bold small text-muted px-1 mb-1">Tema de diseno</div>
                         <label class="dropdown-item d-flex align-items-center gap-2">
-                            <input type="radio" name="theme-choice" value="" class="form-check-input m-0"> Original (Aqua glass)
+                            <input type="radio" name="theme-choice" value="original" class="form-check-input m-0"> Original (Aqua glass)
                         </label>
                         <label class="dropdown-item d-flex align-items-center gap-2">
                             <input type="radio" name="theme-choice" value="crystal" class="form-check-input m-0"> Crystal e.liquid
@@ -290,7 +292,7 @@ $mobileQuickNav = array_values($mobileQuickNav);
 <?php endif; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="<?= e(asset('js/app.js') . '?v=20260708-pos-ticket-draft') ?>"></script>
-<script src="<?= e(asset('js/theme-switcher.js') . '?v=20260707-theme-sync') ?>"></script>
+<script src="<?= e(asset('js/theme-switcher.js') . '?v=20260729-blueprint-default') ?>"></script>
 <?php foreach (($pageScripts ?? []) as $script): ?>
     <script src="<?= e($script) ?>"></script>
 <?php endforeach; ?>

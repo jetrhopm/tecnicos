@@ -16,8 +16,9 @@ $error = Session::flash('error');
     <link href="<?= e(asset('css/themes/blueprint.css') . '?v=20260707-form-ui2') ?>" rel="stylesheet">
     <script>
         (function () {
-            var t = localStorage.getItem('tecnico-theme') || '';
-            if (t) { document.documentElement.setAttribute('data-theme', t); }
+            var t = localStorage.getItem('tecnico-theme');
+            if (t === null) { t = 'blueprint'; }
+            if (t && t !== 'original') { document.documentElement.setAttribute('data-theme', t); }
         })();
     </script>
 </head>

@@ -9,7 +9,7 @@
   var fallbackKey = 'tecnico-theme';
 
   function applyTheme(value) {
-    if (value) {
+    if (value && value !== 'original') {
       document.documentElement.setAttribute('data-theme', value);
     } else {
       document.documentElement.removeAttribute('data-theme');
@@ -17,7 +17,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    var current = document.documentElement.getAttribute('data-theme') || '';
+    var current = document.documentElement.getAttribute('data-theme') || 'original';
     var inputs = document.querySelectorAll('input[name="theme-choice"]');
 
     inputs.forEach(function (input) {
