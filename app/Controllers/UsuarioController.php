@@ -10,6 +10,7 @@ use App\Core\Response;
 use App\Core\Session;
 use App\Core\View;
 use App\Repositories\UserRepository;
+use App\Services\LicenciaService;
 use App\Services\UserService;
 
 final class UsuarioController
@@ -17,7 +18,7 @@ final class UsuarioController
     public function index(): void
     {
         Auth::requirePermission('usuarios', 'ver');
-        View::render('usuarios/index', ['title' => 'Usuarios y roles', 'usuarios' => (new UserRepository())->all()]);
+        View::render('usuarios/index', ['title' => 'Usuarios y roles', 'usuarios' => (new UserService())->listar()]);
     }
 
     public function create(): void
@@ -57,6 +58,12 @@ final class UsuarioController
         }
 
         $rolesUsuario = $repo->rolesForUser((int) $id);
+        if ($this->esUsuarioLicenciante($rolesUsuario) && !(new LicenciaService())->usuarioActualEsLicenciante()) {
+            Response::status(403);
+            View::render('errors/403', ['title' => 'Acceso denegado']);
+            return;
+        }
+
         View::render('usuarios/form', [
             'title' => 'Editar usuario',
             'roles' => (new UserService())->roles(),
@@ -100,5 +107,10 @@ final class UsuarioController
             Session::flash('error', $exception->getMessage());
         }
         Response::redirect('/usuarios');
+    }
+
+    private function esUsuarioLicenciante(array $roles): bool
+    {
+        return in_array(LicenciaService::ROLE, array_column($roles, 'name'), true);
     }
 }

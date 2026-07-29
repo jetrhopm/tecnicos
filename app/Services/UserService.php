@@ -17,6 +17,18 @@ final class UserService
     ) {
     }
 
+    public function listar(): array
+    {
+        $usuarios = $this->users->all();
+        if ((new LicenciaService())->usuarioActualEsLicenciante()) {
+            return $usuarios;
+        }
+
+        return array_values(array_filter($usuarios, static function (array $usuario): bool {
+            return !str_contains(',' . (string) ($usuario['role_names'] ?? '') . ',', ',' . LicenciaService::ROLE . ',');
+        }));
+    }
+
     public function roles(): array
     {
         $roles = $this->users->roles();
@@ -253,10 +265,6 @@ final class UserService
 
     private function validarUsuarioProtegido(int $id, array $rolesAntes): void
     {
-        if ($id === Auth::id()) {
-            return;
-        }
-
         if (in_array(LicenciaService::ROLE, array_column($rolesAntes, 'name'), true) && !(new LicenciaService())->usuarioActualEsLicenciante()) {
             throw new RuntimeException('Esta cuenta de licenciamiento está protegida.');
         }

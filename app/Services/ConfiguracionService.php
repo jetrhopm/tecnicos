@@ -21,8 +21,8 @@ final class ConfiguracionService
     public function allGrouped(): array
     {
         $sql = 'SELECT * FROM configuraciones';
-        if (!Auth::can('licencias', 'ver')) {
-            $sql .= " WHERE grupo <> 'licencia'";
+        if (!(new LicenciaService())->usuarioActualEsLicenciante()) {
+            $sql .= " WHERE grupo <> 'licencia' AND clave NOT LIKE 'demo.%'";
         }
         $sql .= ' ORDER BY grupo, clave';
         $rows = Database::connection()->query($sql)->fetchAll();
@@ -37,9 +37,18 @@ final class ConfiguracionService
     public function actualizar(array $valores, ?array $logoFile = null): void
     {
         $db = Database::connection();
+        $puedeModificarLicencia = (new LicenciaService())->usuarioActualEsLicenciante();
+        if (!$puedeModificarLicencia) {
+            foreach (array_keys($valores) as $clave) {
+                if (str_starts_with((string) $clave, 'demo.')) {
+                    unset($valores[$clave]);
+                }
+            }
+        }
+
         $sql = 'SELECT clave, valor, tipo FROM configuraciones';
-        if (!Auth::can('licencias', 'administrar')) {
-            $sql .= " WHERE grupo <> 'licencia'";
+        if (!$puedeModificarLicencia) {
+            $sql .= " WHERE grupo <> 'licencia' AND clave NOT LIKE 'demo.%'";
         }
         $sql .= ' ORDER BY clave';
         $rows = $db->query($sql)->fetchAll();

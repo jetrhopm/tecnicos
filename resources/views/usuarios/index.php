@@ -1,5 +1,5 @@
 <div class="glass-card">
-    <?php $puedeEliminar = \App\Core\Auth::can('licencias', 'administrar'); ?>
+    <?php $puedeAdministrarLicencia = (new \App\Services\LicenciaService())->usuarioActualEsLicenciante(); ?>
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="h5 mb-0" data-icon="&#128100;">Usuarios y roles</h2>
         <a class="btn btn-primary btn-sm" data-icon="&#43;" href="<?= e(url('/usuarios/create')) ?>">Nuevo usuario</a>
@@ -19,8 +19,10 @@
                     <td><?= e($usuario['last_login_at'] ? fechaHumana($usuario['last_login_at']) : '-') ?></td>
                     <td class="text-end">
                         <div class="d-flex gap-2 justify-content-end flex-wrap">
-                            <a class="btn btn-outline-dark btn-sm" data-icon="&#9998;" href="<?= e(url('/usuarios/' . $usuario['id'] . '/edit')) ?>">Editar</a>
-                            <?php if (!$esLicenciante || $puedeEliminar): ?>
+                            <?php if (!$esLicenciante || $puedeAdministrarLicencia): ?>
+                                <a class="btn btn-outline-dark btn-sm" data-icon="&#9998;" href="<?= e(url('/usuarios/' . $usuario['id'] . '/edit')) ?>">Editar</a>
+                            <?php endif; ?>
+                            <?php if (!$esLicenciante || $puedeAdministrarLicencia): ?>
                                 <form method="post" action="<?= e(url('/usuarios/' . $usuario['id'] . '/status')) ?>">
                                     <?= csrf_field() ?>
                                     <div class="input-group input-group-sm">
@@ -35,7 +37,7 @@
                             <?php else: ?>
                                 <span class="badge text-bg-warning">Protegido</span>
                             <?php endif; ?>
-                            <?php if ($puedeEliminar && !$esLicenciante): ?>
+                            <?php if ($puedeAdministrarLicencia && !$esLicenciante): ?>
                                 <form method="post" action="<?= e(url('/usuarios/' . $usuario['id'] . '/delete')) ?>" onsubmit="return confirm('¿Eliminar este usuario?');">
                                     <?= csrf_field() ?>
                                     <button class="btn btn-outline-danger btn-sm" data-icon="&#128465;">Eliminar</button>

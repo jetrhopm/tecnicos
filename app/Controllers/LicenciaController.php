@@ -16,6 +16,12 @@ final class LicenciaController
     public function index(): void
     {
         Auth::requirePermission('licencias', 'ver');
+        if (!$this->esLicenciante()) {
+            Response::status(403);
+            View::render('errors/403', ['title' => 'Acceso denegado']);
+            return;
+        }
+
         View::render('licencias/index', [
             'title' => 'Licencia demo',
             'estado' => (new LicenciaService())->estado(),
@@ -25,6 +31,12 @@ final class LicenciaController
     public function update(Request $request): void
     {
         Auth::requirePermission('licencias', 'administrar');
+        if (!$this->esLicenciante()) {
+            Response::status(403);
+            View::render('errors/403', ['title' => 'Acceso denegado']);
+            return;
+        }
+
         try {
             (new LicenciaService())->guardar($request->all());
             Session::flash('success', 'Licencia demo actualizada.');
@@ -37,6 +49,12 @@ final class LicenciaController
     public function reiniciar(): void
     {
         Auth::requirePermission('licencias', 'administrar');
+        if (!$this->esLicenciante()) {
+            Response::status(403);
+            View::render('errors/403', ['title' => 'Acceso denegado']);
+            return;
+        }
+
         try {
             (new LicenciaService())->reiniciar();
             Session::flash('success', 'Contador de demo reiniciado.');
@@ -44,5 +62,10 @@ final class LicenciaController
             Session::flash('error', $exception->getMessage());
         }
         Response::redirect('/licencia');
+    }
+
+    private function esLicenciante(): bool
+    {
+        return (new LicenciaService())->usuarioActualEsLicenciante();
     }
 }
