@@ -12,10 +12,10 @@ Historial resumido del sistema. El detalle exacto de cada cambio vive en git.
   carga de datos y verificaciones locales.
 - `database/schema.sql` queda como estructura limpia, sin datos y sin
   `CREATE DATABASE`/`USE`.
-- Se agregaron `database/seed_roles_demo.sql` para roles, permisos,
-  configuracion base y usuarios demo, `database/seed_catalogos_base.sql` para
-  marcas/modelos base, y `database/seed_demo_data.sql` para datos operativos
-  demo.
+- Se agregaron `database/seed_roles_demo.sql` para roles, permisos y usuarios
+  demo, `database/seed_configuracion_base.sql` para configuracion operativa,
+  `database/seed_catalogos_base.sql` para marcas/modelos base, y
+  `database/seed_demo_data.sql` para datos operativos demo.
 - La instalacion nueva se hace importando SQL en orden desde phpMyAdmin/MySQL.
 
 ### Configuracion
