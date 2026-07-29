@@ -809,8 +809,10 @@ ON DUPLICATE KEY UPDATE valor = VALUES(valor), tipo = VALUES(tipo), grupo = VALU
 
 INSERT INTO configuraciones (clave, valor, tipo, grupo) VALUES
 ('demo.activo', '1', 'bool', 'licencia'),
+('demo.bloqueo_manual', '0', 'bool', 'licencia'),
 ('demo.dias', '14', 'number', 'licencia'),
-('demo.mensaje_expirado', 'La demostración terminó. Si te interesó nuestro sistema y lo ves útil en tu día a día, contáctanos para activar la versión extendida.', 'text', 'licencia')
+('demo.mensaje_expirado', 'La demostración terminó. Si te interesó nuestro sistema y lo ves útil en tu día a día, contáctanos para activar la versión extendida.', 'text', 'licencia'),
+('demo.mensaje_bloqueado', 'El acceso a esta demostración fue pausado temporalmente. Contáctanos para reactivar el servicio.', 'text', 'licencia')
 ON DUPLICATE KEY UPDATE valor = VALUES(valor), tipo = VALUES(tipo), grupo = VALUES(grupo);
 
 INSERT INTO configuraciones (clave, valor, tipo, grupo)

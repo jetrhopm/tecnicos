@@ -23,6 +23,7 @@ final class LicenciaService
     public function estado(): array
     {
         $activo = (string) $this->configuracion->get('demo.activo', '1') === '1';
+        $bloqueoManual = (string) $this->configuracion->get('demo.bloqueo_manual', '0') === '1';
         $inicio = $this->fecha((string) $this->configuracion->get('demo.inicio', date('Y-m-d')));
         $dias = min(3650, max(0, (int) $this->configuracion->get('demo.dias', 14)));
         $hoy = new DateTimeImmutable('today');
@@ -35,14 +36,21 @@ final class LicenciaService
             $mensaje = 'La demostración terminó. Si te interesó nuestro sistema y lo ves útil en tu día a día, contáctanos para activar la versión extendida.';
         }
 
+        $mensajeBloqueado = trim((string) $this->configuracion->get('demo.mensaje_bloqueado', ''));
+        if ($mensajeBloqueado === '') {
+            $mensajeBloqueado = 'El acceso a esta demostración fue pausado temporalmente. Contáctanos para reactivar el servicio.';
+        }
+
         return [
             'activo' => $activo,
+            'bloqueo_manual' => $bloqueoManual,
             'inicio' => $inicio->format('Y-m-d'),
             'dias' => $dias,
             'vence' => $vence->format('Y-m-d'),
             'dias_restantes' => $diasRestantes,
             'vencida' => $vencida,
             'mensaje_expirado' => $mensaje,
+            'mensaje_bloqueado' => $mensajeBloqueado,
         ];
     }
 
@@ -53,6 +61,10 @@ final class LicenciaService
         }
 
         $estado = $this->estado();
+        if ($estado['bloqueo_manual']) {
+            $this->auditoria->registrar('demo_bloqueada_login', 'licencias', null, null, ['user_id' => $userId]);
+            throw new RuntimeException((string) $estado['mensaje_bloqueado']);
+        }
         if ($estado['vencida']) {
             $this->auditoria->registrar('demo_expirada_login', 'licencias', null, null, ['user_id' => $userId]);
             throw new RuntimeException((string) $estado['mensaje_expirado']);
@@ -77,22 +89,29 @@ final class LicenciaService
         $inicio = trim((string) ($data['inicio'] ?? date('Y-m-d')));
         $dias = min(3650, max(0, (int) ($data['dias'] ?? 14)));
         $mensaje = trim((string) ($data['mensaje_expirado'] ?? ''));
+        $mensajeBloqueado = trim((string) ($data['mensaje_bloqueado'] ?? ''));
         if (!$this->esFechaValida($inicio)) {
             throw new RuntimeException('La fecha de inicio de demo no es válida.');
         }
         if ($mensaje === '') {
             throw new RuntimeException('El mensaje de demo terminada es obligatorio.');
         }
+        if ($mensajeBloqueado === '') {
+            throw new RuntimeException('El mensaje de bloqueo manual es obligatorio.');
+        }
 
         $this->configuracion->upsertMany([
             ['demo.activo', !empty($data['activo']) ? '1' : '0', 'bool', 'licencia'],
+            ['demo.bloqueo_manual', !empty($data['bloqueo_manual']) ? '1' : '0', 'bool', 'licencia'],
             ['demo.inicio', $inicio, 'date', 'licencia'],
             ['demo.dias', (string) $dias, 'number', 'licencia'],
             ['demo.mensaje_expirado', $mensaje, 'text', 'licencia'],
+            ['demo.mensaje_bloqueado', $mensajeBloqueado, 'text', 'licencia'],
         ]);
 
         $this->auditoria->registrar('editar_demo', 'licencias', null, null, [
             'activo' => !empty($data['activo']),
+            'bloqueo_manual' => !empty($data['bloqueo_manual']),
             'inicio' => $inicio,
             'dias' => $dias,
         ]);

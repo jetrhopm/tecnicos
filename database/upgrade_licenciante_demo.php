@@ -74,10 +74,16 @@ $stmt = $db->prepare("
 ");
 
 $stmt->execute(['clave' => 'demo.activo', 'valor' => '1', 'tipo' => 'bool']);
+$stmt->execute(['clave' => 'demo.bloqueo_manual', 'valor' => '0', 'tipo' => 'bool']);
 $stmt->execute(['clave' => 'demo.dias', 'valor' => '14', 'tipo' => 'number']);
 $stmt->execute([
     'clave' => 'demo.mensaje_expirado',
     'valor' => 'La demostración terminó. Si te interesó nuestro sistema y lo ves útil en tu día a día, contáctanos para activar la versión extendida.',
+    'tipo' => 'text',
+]);
+$stmt->execute([
+    'clave' => 'demo.mensaje_bloqueado',
+    'valor' => 'El acceso a esta demostración fue pausado temporalmente. Contáctanos para reactivar el servicio.',
     'tipo' => 'text',
 ]);
 

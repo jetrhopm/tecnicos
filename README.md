@@ -231,6 +231,8 @@ La versión demo incluye un control de vigencia en `/licencia`. Por defecto:
   configurado de demostración terminada.
 - El rol `licenciante` queda exento del bloqueo para poder extender días,
   reiniciar contador o desactivar el bloqueo demo.
+- El bloqueo manual permite pausar el acceso operativo de inmediato aunque la
+  demo todavía tenga días disponibles.
 
 Este rol no es una puerta trasera: está documentado, versionado y auditado. En
 instalaciones reales cambia la contraseña inicial o reemplaza esta cuenta por la

@@ -16,6 +16,8 @@ responsable del proyecto.
   de inicio, dias disponibles, mensaje de demo terminada y reinicio de contador.
 - El login bloquea usuarios operativos cuando la demo vence; el licenciante
   queda exento para poder extender o reactivar la instalacion.
+- Se agrego bloqueo manual inmediato para pausar el acceso aunque la demo aun
+  tenga dias disponibles.
 - El permiso `licencias` no usa el bypass general de `superadmin`; solo el rol
   licenciante puede ver y administrar ese modulo.
 - Se agrego `database/upgrade_licenciante_demo.php` para instalaciones
