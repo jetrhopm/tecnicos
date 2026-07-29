@@ -97,11 +97,13 @@ Pasos:
    ```text
    database/schema.sql
    database/seed_roles_demo.sql
+   database/seed_catalogos_base.sql
    database/seed_demo_data.sql
    ```
 
-   El tercer archivo es opcional; carga datos demo de operacion para probar
-   ordenes, inventario, pagos y agenda.
+   `seed_catalogos_base.sql` carga marcas/modelos base. El cuarto archivo es
+   opcional; carga datos demo de operacion para probar ordenes, inventario,
+   pagos y agenda.
 
 6. Abre:
 
@@ -135,12 +137,14 @@ APP_URL=https://tudominio.com
    ```text
    database/schema.sql
    database/seed_roles_demo.sql
+   database/seed_catalogos_base.sql
    database/seed_demo_data.sql
    ```
 
    `schema.sql` contiene solo estructura. `seed_roles_demo.sql` contiene roles,
-   permisos, configuracion base y usuarios demo. `seed_demo_data.sql` contiene
-   datos demo operativos, pero no crea roles ni usuarios.
+   permisos, configuracion base y usuarios demo. `seed_catalogos_base.sql`
+   contiene marcas/modelos base. `seed_demo_data.sql` contiene datos demo
+   operativos, pero no crea roles ni usuarios.
 
 3. Copia `.env.example` a `.env`.
 4. Ajusta credenciales si tu MySQL no usa `root / rufles123`.
@@ -153,14 +157,16 @@ importas los SQL en phpMyAdmin con la base ya seleccionada:
 ```text
 database/schema.sql
 database/seed_roles_demo.sql
+database/seed_catalogos_base.sql
 database/seed_demo_data.sql
 ```
 
 Estos archivos no incluyen `CREATE DATABASE` ni `USE`, por eso son compatibles
 con phpMyAdmin de Hostinger cuando ya seleccionaste la base. Usan `utf8mb4` para
 conservar acentos, enie, simbolos y compatibilidad UTF-8 completa en
-MySQL/MariaDB. Si quieres una base sin datos operativos demo, importa solo
-`schema.sql` y `seed_roles_demo.sql`.
+MySQL/MariaDB. Si quieres una base sin datos operativos demo, importa
+`schema.sql`, `seed_roles_demo.sql` y `seed_catalogos_base.sql`, omitiendo
+`seed_demo_data.sql`.
 
 Despues de importarlo, configura `.env` con los datos reales que te da
 Hostinger: `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` y `APP_URL`.
@@ -190,9 +196,11 @@ password
   relaciones. No carga datos.
 - `database/seed_roles_demo.sql`: roles, permisos, configuracion base y usuarios
   demo necesarios para iniciar sesion.
+- `database/seed_catalogos_base.sql`: catalogo base de marcas y modelos para
+  usar el sistema desde la primera configuracion sin cargar datos demo.
 - `database/seed_demo_data.sql`: datos demo operativos, como cliente, equipos,
-  marcas/modelos, proveedor, inventario, orden, diagnostico, cotizacion, pago,
-  garantia, mensajes y agenda. No crea roles ni usuarios.
+  proveedor, inventario, orden, diagnostico, cotizacion, pago, garantia,
+  mensajes y agenda. No crea roles ni usuarios.
 
 ## Roles y usuarios demo
 
@@ -321,7 +329,7 @@ campos Marca y Modelo:
   se crea en `equipo_marcas` o `equipo_modelos` para futuras ordenes.
 - La tabla `equipos` conserva los textos `marca` y `modelo` por compatibilidad,
   y tambien guarda `marca_id` y `modelo_id` cuando existe relacion con catalogo.
-- El catalogo demo de marcas/modelos se carga desde `seed_demo_data.sql`.
+- El catalogo base de marcas/modelos se carga desde `seed_catalogos_base.sql`.
 
 ## Checklist de produccion
 
@@ -433,6 +441,7 @@ Para una instalacion nueva importa siempre los SQL en orden:
 ```text
 database/schema.sql
 database/seed_roles_demo.sql
+database/seed_catalogos_base.sql
 database/seed_demo_data.sql
 ```
 
@@ -554,7 +563,7 @@ app/
   Validators/      Validacion por modulo
   Policies/        Reglas especiales por modulo
 config/            Configuracion PHP
-database/          SQL de estructura, roles demo y datos demo operativos
+database/          SQL de estructura, roles demo, catalogos base y datos demo
 docs/              Manuales y documentos generados
 public/            Front controller y assets publicos
 resources/views/   Vistas HTML/Bootstrap

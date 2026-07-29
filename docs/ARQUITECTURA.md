@@ -58,6 +58,7 @@ cp .env.example .env      # ajustar credenciales de MySQL
 # 3. Crear la base en MySQL/phpMyAdmin e importar SQL en orden
 database/schema.sql
 database/seed_roles_demo.sql
+database/seed_catalogos_base.sql
 database/seed_demo_data.sql
 
 # 4. Abrir
@@ -84,7 +85,7 @@ app/
   Policies/            Reglas de permiso especiales por módulo
   DTO/ Models/         Estructuras de datos (uso ligero; se trabaja con arrays)
 config/                app.php, database.php, permissions.php
-database/              schema.sql, seed_roles_demo.sql y seed_demo_data.sql
+database/              schema.sql, seed_roles_demo.sql, seed_catalogos_base.sql y seed_demo_data.sql
 docs/                  Manuales y este documento
 public/                Front controller (index.php) y assets públicos
   assets/css|js|vendor
@@ -391,9 +392,11 @@ API JSON interna.
 - `schema.sql` — estructura limpia: tablas, indices, llaves y relaciones. No
   incluye datos ni `CREATE DATABASE`/`USE`.
 - `seed_roles_demo.sql` — roles, permisos, configuracion base y usuarios demo.
-- `seed_demo_data.sql` — datos demo operativos: cliente, equipos, catalogos,
-  inventario, orden, diagnostico, cotizacion, pagos, garantia, mensajes y
-  agenda. No crea roles ni usuarios.
+- `seed_catalogos_base.sql` — catalogo base de marcas/modelos para usar el
+  sistema desde la primera configuracion sin datos operativos demo.
+- `seed_demo_data.sql` — datos demo operativos: cliente, equipos, inventario,
+  orden, diagnostico, cotizacion, pagos, garantia, mensajes y agenda. No crea
+  roles ni usuarios.
 
 Al agregar una tabla o columna: actualiza `schema.sql`. Si hay una base en
 produccion con datos reales, crea una migracion SQL especifica y probada para
