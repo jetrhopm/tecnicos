@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS servicio_tecnico_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE servicio_tecnico_db;
+-- Estructura limpia. Crea o selecciona la base de datos antes de importar este archivo.
+SET NAMES utf8mb4;
 
 SET FOREIGN_KEY_CHECKS = 0;
 

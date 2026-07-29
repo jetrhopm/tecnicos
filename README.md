@@ -48,7 +48,7 @@ MVP funcional con arquitectura modular propia tipo MVC ligero:
 - Portal publico de consulta por folio/token.
 - Dashboard, caja/corte operativo, reportes iniciales, configuracion y auditoria.
 - API JSON interna con formato consistente (con CSRF).
-- Seed con usuarios, roles, cliente demo, equipos demo, orden demo y pagos demo.
+- SQL separados para estructura, roles/usuarios demo y datos operativos demo.
 
 > El historial detallado de cambios esta en [CHANGELOG.md](CHANGELOG.md).
 > La arquitectura del sistema (capas, ciclo de peticion, convenciones y como
@@ -86,14 +86,24 @@ Pasos:
 1. Copia el proyecto a `C:\xampp\htdocs\tecnico`.
 2. Copia `.env.example` a `.env`.
 3. Verifica que `.env` tenga las credenciales anteriores.
-4. Ejecuta instalacion:
+4. Crea la base de datos desde phpMyAdmin:
 
-   ```bash
-   php database/install.php
-   php database/check.php
+   ```sql
+   CREATE DATABASE servicio_tecnico_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
    ```
 
-5. Abre:
+5. Importa los SQL en este orden:
+
+   ```text
+   database/schema.sql
+   database/seed_roles_demo.sql
+   database/seed_demo_data.sql
+   ```
+
+   El tercer archivo es opcional; carga datos demo de operacion para probar
+   ordenes, inventario, pagos y agenda.
+
+6. Abre:
 
    ```text
    http://localhost/tecnico
@@ -124,8 +134,13 @@ APP_URL=https://tudominio.com
 
    ```text
    database/schema.sql
-   database/seed.sql
+   database/seed_roles_demo.sql
+   database/seed_demo_data.sql
    ```
+
+   `schema.sql` contiene solo estructura. `seed_roles_demo.sql` contiene roles,
+   permisos, configuracion base y usuarios demo. `seed_demo_data.sql` contiene
+   datos demo operativos, pero no crea roles ni usuarios.
 
 3. Copia `.env.example` a `.env`.
 4. Ajusta credenciales si tu MySQL no usa `root / rufles123`.
@@ -133,15 +148,19 @@ APP_URL=https://tudominio.com
 ## Instalacion en Hostinger
 
 En Hostinger normalmente primero creas la base de datos desde el panel y luego
-importas el SQL en phpMyAdmin. Para ese caso usa:
+importas los SQL en phpMyAdmin con la base ya seleccionada:
 
 ```text
-database/hostinger_full.sql
+database/schema.sql
+database/seed_roles_demo.sql
+database/seed_demo_data.sql
 ```
 
-Ese archivo ya combina estructura y datos iniciales. No incluye instrucciones
-para crear o seleccionar base de datos, y usa `utf8mb4` para conservar acentos,
-enie, simbolos y compatibilidad UTF-8 completa en MySQL/MariaDB.
+Estos archivos no incluyen `CREATE DATABASE` ni `USE`, por eso son compatibles
+con phpMyAdmin de Hostinger cuando ya seleccionaste la base. Usan `utf8mb4` para
+conservar acentos, enie, simbolos y compatibilidad UTF-8 completa en
+MySQL/MariaDB. Si quieres una base sin datos operativos demo, importa solo
+`schema.sql` y `seed_roles_demo.sql`.
 
 Despues de importarlo, configura `.env` con los datos reales que te da
 Hostinger: `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` y `APP_URL`.
@@ -165,11 +184,21 @@ Todos los usuarios demo usan la misma contrasena:
 password
 ```
 
+## SQL incluidos
+
+- `database/schema.sql`: estructura limpia de tablas, llaves, indices y
+  relaciones. No carga datos.
+- `database/seed_roles_demo.sql`: roles, permisos, configuracion base y usuarios
+  demo necesarios para iniciar sesion.
+- `database/seed_demo_data.sql`: datos demo operativos, como cliente, equipos,
+  marcas/modelos, proveedor, inventario, orden, diagnostico, cotizacion, pago,
+  garantia, mensajes y agenda. No crea roles ni usuarios.
+
 ## Roles y usuarios demo
 
-El archivo `database/seed.sql` crea todos los roles base y un usuario demo por
-rol. Estos usuarios son para pruebas locales, capturas, capacitacion y revision
-funcional.
+El archivo `database/seed_roles_demo.sql` crea todos los roles base y un usuario
+demo por rol. Estos usuarios son para pruebas locales, capturas, capacitacion y
+revision funcional.
 
 | Rol tecnico | Nombre demo | Correo | Contrasena | Uso principal |
 | --- | --- | --- | --- | --- |
@@ -292,24 +321,7 @@ campos Marca y Modelo:
   se crea en `equipo_marcas` o `equipo_modelos` para futuras ordenes.
 - La tabla `equipos` conserva los textos `marca` y `modelo` por compatibilidad,
   y tambien guarda `marca_id` y `modelo_id` cuando existe relacion con catalogo.
-
-Para actualizar una instalacion existente sin reinstalar:
-
-```bash
-php database/upgrade_catalogo_marcas_modelos.php
-```
-
-Para cargar productos demo de punto de venta en una instalacion existente:
-
-```bash
-php database/upgrade_inventario_demo_pos.php
-```
-
-Para instalar el rol de licenciante y el control de demo en una base existente:
-
-```bash
-php database/upgrade_licenciante_demo.php
-```
+- El catalogo demo de marcas/modelos se carga desde `seed_demo_data.sql`.
 
 ## Checklist de produccion
 
@@ -413,24 +425,20 @@ El cliente puede ver estado, equipo, diagnostico visible, cotizacion visible,
 comentarios visibles, saldo y datos de contacto. No ve notas internas, usuarios
 internos, costos internos ni auditoria privada.
 
-## Actualizacion de una instalacion existente
+## Base de datos limpia
 
-Si ya tenias el sistema instalado, ejecuta una vez estas migraciones (no borran
-datos; solo ajustan claves de entrega y agregan configuracion nueva):
+Los scripts PHP de migracion fueron eliminados para mantener la entrega limpia.
+Para una instalacion nueva importa siempre los SQL en orden:
 
-```bash
-php database/upgrade_delivery_codes.php   # claves de entrega aleatorias
-php database/upgrade_ticket_config.php     # config de logo y garantia del ticket
-php database/upgrade_garantia_texto.php    # texto legal actualizado de garantia
-php database/upgrade_branding_config.php   # nombre del sistema y logo del taller
-php database/upgrade_garantia_config.php   # dias configurables de garantia
-php database/upgrade_refacciones_ordenes_estado.php # cancelacion de refacciones aplicadas
-php database/upgrade_agenda_roles.php      # permisos del modulo agenda
-php database/upgrade_cotizaciones_inventario.php # cotizaciones ligadas a inventario
-php database/upgrade_punto_venta_refacciones.php # punto de venta de refacciones
-php database/upgrade_caja_corte.php # modulo operativo de caja/corte
-php database/upgrade_currency_whatsapp_config.php # moneda, zona horaria y codigo pais WhatsApp
+```text
+database/schema.sql
+database/seed_roles_demo.sql
+database/seed_demo_data.sql
 ```
+
+Si ya existe una base con datos reales, no importes `schema.sql` encima porque
+contiene `DROP TABLE`. En ese caso conviene respaldar primero y crear una
+migracion SQL especifica para el cambio que necesites.
 
 Opcional en `.env`:
 
@@ -546,7 +554,7 @@ app/
   Validators/      Validacion por modulo
   Policies/        Reglas especiales por modulo
 config/            Configuracion PHP
-database/          schema.sql, seed.sql e instaladores locales
+database/          SQL de estructura, roles demo y datos demo operativos
 docs/              Manuales y documentos generados
 public/            Front controller y assets publicos
 resources/views/   Vistas HTML/Bootstrap

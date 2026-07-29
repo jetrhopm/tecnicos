@@ -55,9 +55,10 @@ C:\xampp\htdocs\tecnico
 # 2. Copiar variables de entorno
 cp .env.example .env      # ajustar credenciales de MySQL
 
-# 3. Instalar base de datos + datos demo
-php database/install.php
-php database/check.php
+# 3. Crear la base en MySQL/phpMyAdmin e importar SQL en orden
+database/schema.sql
+database/seed_roles_demo.sql
+database/seed_demo_data.sql
 
 # 4. Abrir
 http://localhost/tecnico
@@ -83,7 +84,7 @@ app/
   Policies/            Reglas de permiso especiales por módulo
   DTO/ Models/         Estructuras de datos (uso ligero; se trabaja con arrays)
 config/                app.php, database.php, permissions.php
-database/              schema.sql, seed.sql, install.php y scripts upgrade_*.php
+database/              schema.sql, seed_roles_demo.sql y seed_demo_data.sql
 docs/                  Manuales y este documento
 public/                Front controller (index.php) y assets públicos
   assets/css|js|vendor
@@ -257,7 +258,7 @@ Los módulos y acciones válidos se definen en `config/permissions.php`:
 
 Roles base: `superadmin`, `admin`, `recepcion`, `tecnico`, `tecnico_senior`,
 `almacen`, `caja`, `cliente_consulta`. La asignación de permisos por rol vive en
-`seed.sql`.
+`seed_roles_demo.sql`.
 
 ---
 
@@ -385,17 +386,18 @@ API JSON interna.
 
 ---
 
-## 18. Migraciones y scripts (`database/`)
+## 18. SQL de instalacion (`database/`)
 
-- `install.php` / `seed.php` — instalación e inicialización.
-- `check.php`, `*_check.php` — verificaciones de estado.
-- `upgrade_*.php` — **migraciones incrementales**, idempotentes, que se corren a
-  mano en instalaciones existentes (claves de entrega, config de tickets,
-  plantillas de WhatsApp, notificaciones, permisos de almacén, etc.). El listado
-  y el orden recomendado están en el [CHANGELOG](../CHANGELOG.md).
+- `schema.sql` — estructura limpia: tablas, indices, llaves y relaciones. No
+  incluye datos ni `CREATE DATABASE`/`USE`.
+- `seed_roles_demo.sql` — roles, permisos, configuracion base y usuarios demo.
+- `seed_demo_data.sql` — datos demo operativos: cliente, equipos, catalogos,
+  inventario, orden, diagnostico, cotizacion, pagos, garantia, mensajes y
+  agenda. No crea roles ni usuarios.
 
-Al agregar una tabla o columna: actualiza `schema.sql` (instalación nueva) **y**
-crea un `upgrade_*.php` idempotente (instalación existente).
+Al agregar una tabla o columna: actualiza `schema.sql`. Si hay una base en
+produccion con datos reales, crea una migracion SQL especifica y probada para
+esa instalacion; no importes `schema.sql` encima porque contiene `DROP TABLE`.
 
 ---
 
@@ -416,9 +418,9 @@ crea un `upgrade_*.php` idempotente (instalación existente).
 
 ## 20. Cómo agregar un módulo nuevo (receta)
 
-1. **Base de datos**: agrega la tabla en `schema.sql` y crea `database/upgrade_<modulo>.php` idempotente.
+1. **Base de datos**: agrega la tabla en `schema.sql` y, si aplica, prepara una migracion SQL para bases existentes.
 2. **Permiso**: el módulo debe existir en `config/permissions.php` (`modulos`);
-   asigna permisos a los roles en `seed.sql` + una migración.
+   asigna permisos a los roles en `seed_roles_demo.sql` y en la migracion SQL de produccion si ya hay una base instalada.
 3. **Repository**: `app/Repositories/<Modulo>Repository.php` extendiendo `BaseRepository` (solo SQL).
 4. **Service**: `app/Services/<Modulo>Service.php` con reglas y transacciones.
 5. **Controller**: `app/Controllers/<Modulo>Controller.php`; cada acción empieza con `Auth::requirePermission()`.

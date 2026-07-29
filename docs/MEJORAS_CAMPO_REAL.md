@@ -122,8 +122,8 @@ Implementado:
   stock y registra movimiento tipo `cancelacion`.
 - La orden muestra refacciones activas/canceladas, importe estimado y motivo de
   cancelacion.
-- Se agrego `database/upgrade_refacciones_ordenes_estado.php` para instalaciones
-  existentes.
+- La estructura y datos demo quedaron consolidados en los SQL principales de
+  `database/`.
 
 ### 6. Agenda minima operativa
 
@@ -147,8 +147,7 @@ Implementado:
 - El dashboard muestra la agenda programada del dia.
 - Los eventos pueden cambiar entre `programado`, `realizado` y `cancelado` con
   auditoria.
-- Se agrego `database/upgrade_agenda_roles.php` para permisos de roles
-  operativos en instalaciones existentes.
+- Los permisos de agenda quedaron consolidados en `seed_roles_demo.sql`.
 
 ## Prioridad media
 
