@@ -8,6 +8,16 @@ responsable del proyecto.
 
 ## 2026-07-28
 
+### Inventario demo para punto de venta
+
+- Se agrego un paquete de productos demo al inventario: pantallas, baterias,
+  centros de carga, flex, camaras, audio, micas, cables, cargadores, RAM, SSD,
+  piezas de consola, electrodomesticos, herramientas y motos.
+- Los productos incluyen SKU unicos pensados para probar el lector de barras en
+  punto de venta; SKU exacto agrega el producto automaticamente.
+- Se agrego `database/upgrade_inventario_demo_pos.php` para cargar estos
+  productos en instalaciones existentes sin reinstalar.
+
 ### Catalogo de marcas y modelos
 
 - Se agregaron tablas `equipo_marcas` y `equipo_modelos` para normalizar marcas

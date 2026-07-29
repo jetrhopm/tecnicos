@@ -227,7 +227,8 @@ El seed crea:
 - Cliente demo: `Cliente Demo Taller`.
 - Nueve equipos demo, uno por tipo.
 - Proveedor demo.
-- Refaccion demo.
+- Inventario demo para probar cotizaciones y punto de venta con SKU, lector de
+  barras, busqueda por categoria, marca y modelo compatible.
 - Orden demo con folio:
 
   ```text
@@ -273,6 +274,12 @@ Para actualizar una instalacion existente sin reinstalar:
 
 ```bash
 php database/upgrade_catalogo_marcas_modelos.php
+```
+
+Para cargar productos demo de punto de venta en una instalacion existente:
+
+```bash
+php database/upgrade_inventario_demo_pos.php
 ```
 
 ## Checklist de produccion
