@@ -214,10 +214,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const formatMoney = (value) => {
+    const currency = (document.body && document.body.dataset.currency) || 'MXN';
     try {
-      return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value || 0);
+      return new Intl.NumberFormat('es-MX', { style: 'currency', currency }).format(value || 0);
     } catch (error) {
-      return '$' + Number(value || 0).toFixed(2);
+      return '$' + Number(value || 0).toFixed(2) + ' ' + currency;
     }
   };
 

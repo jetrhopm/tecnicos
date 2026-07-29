@@ -429,6 +429,7 @@ php database/upgrade_agenda_roles.php      # permisos del modulo agenda
 php database/upgrade_cotizaciones_inventario.php # cotizaciones ligadas a inventario
 php database/upgrade_punto_venta_refacciones.php # punto de venta de refacciones
 php database/upgrade_caja_corte.php # modulo operativo de caja/corte
+php database/upgrade_currency_whatsapp_config.php # moneda y codigo pais WhatsApp
 ```
 
 Opcional en `.env`:
@@ -447,6 +448,11 @@ texto de garantia del ticket (`ticket.garantia`) o la politica legal
 (`legal.politica_garantia`). La duracion de la garantia automatica al entregar
 un equipo se controla con `garantia.dias_default`; usa `0` si no quieres que se
 genere garantia automatica.
+
+La moneda visible en importes se controla con `sistema.moneda` usando una clave
+ISO de 3 letras, por ejemplo `MXN`, `USD` o `COP`. El prefijo usado en links de
+WhatsApp se controla con `whatsapp.codigo_pais`; guarda solo el codigo numerico,
+por ejemplo `52` para Mexico o `1` para Estados Unidos/Canada.
 
 ## Entrega por codigo de barras
 

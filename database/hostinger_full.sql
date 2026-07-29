@@ -790,6 +790,7 @@ INSERT INTO configuraciones (clave, valor, tipo, grupo) VALUES
 ('negocio.logo_url', '', 'string', 'negocio'),
 ('sistema.nombre', 'Sistema Web de Gestión de Servicios Técnicos', 'string', 'sistema'),
 ('sistema.moneda', 'MXN', 'string', 'sistema'),
+('whatsapp.codigo_pais', '52', 'string', 'mensajes'),
 ('sistema.iva_activo', '0', 'bool', 'sistema'),
 ('sistema.iva_porcentaje', '16', 'number', 'sistema'),
 ('ordenes.prefijo_folio', 'ST', 'string', 'ordenes'),

@@ -76,6 +76,7 @@ final class ConfiguracionService
                 } else {
                     $valor = trim((string) $valor);
                 }
+                $valor = $this->normalizarValor($clave, (string) $valor);
 
                 if ((string) $row['valor'] !== (string) $valor) {
                     $stmt->execute(['clave' => $clave, 'valor' => $valor]);
@@ -112,6 +113,21 @@ final class ConfiguracionService
                 'grupo' => (string) $grupo,
             ]);
         }
+    }
+
+    private function normalizarValor(string $clave, string $valor): string
+    {
+        if ($clave === 'sistema.moneda') {
+            $moneda = strtoupper(preg_replace('/[^A-Za-z]/', '', $valor) ?? '');
+            return strlen($moneda) === 3 ? $moneda : 'MXN';
+        }
+
+        if ($clave === 'whatsapp.codigo_pais') {
+            $codigo = preg_replace('/\D+/', '', $valor) ?? '';
+            return $codigo !== '' ? substr($codigo, 0, 4) : '52';
+        }
+
+        return $valor;
     }
 
     private function guardarLogo(array $file): string

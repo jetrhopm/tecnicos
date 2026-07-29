@@ -1,3 +1,18 @@
+<?php
+$monedas = ['MXN', 'USD', 'EUR', 'COP', 'ARS', 'CLP', 'PEN', 'GTQ', 'CRC', 'DOP'];
+$codigosWhatsapp = [
+    '52' => 'Mexico (+52)',
+    '1' => 'Estados Unidos / Canada (+1)',
+    '57' => 'Colombia (+57)',
+    '54' => 'Argentina (+54)',
+    '56' => 'Chile (+56)',
+    '51' => 'Peru (+51)',
+    '502' => 'Guatemala (+502)',
+    '506' => 'Costa Rica (+506)',
+    '34' => 'Espana (+34)',
+    '55' => 'Brasil (+55)',
+];
+?>
 <form method="post" action="<?= e(url('/configuracion')) ?>" enctype="multipart/form-data">
     <?= csrf_field() ?>
     <div class="d-flex justify-content-between align-items-start gap-3 mb-3 flex-wrap">
@@ -44,7 +59,26 @@
                         <div class="mb-3">
                             <label class="form-label" for="<?= e($id) ?>" data-icon="&#9881;"><?= e($clave) ?></label>
 
-                            <?php if ($tipo === 'text'): ?>
+                            <?php if ($clave === 'sistema.moneda'): ?>
+                                <input class="form-control" id="<?= e($id) ?>" name="config[<?= e($clave) ?>]" value="<?= e(strtoupper($valor ?: 'MXN')) ?>" list="monedas_sistema" maxlength="3" autocomplete="off">
+                                <datalist id="monedas_sistema">
+                                    <?php foreach ($monedas as $moneda): ?>
+                                        <option value="<?= e($moneda) ?>"></option>
+                                    <?php endforeach; ?>
+                                </datalist>
+                                <div class="form-text">Usa clave ISO de 3 letras. Ejemplo: MXN, USD, COP.</div>
+                            <?php elseif ($clave === 'whatsapp.codigo_pais'): ?>
+                                <div class="input-group">
+                                    <span class="input-group-text">+</span>
+                                    <input class="form-control" id="<?= e($id) ?>" name="config[<?= e($clave) ?>]" value="<?= e(preg_replace('/\D+/', '', $valor) ?: '52') ?>" list="codigos_whatsapp" inputmode="numeric" autocomplete="off">
+                                </div>
+                                <datalist id="codigos_whatsapp">
+                                    <?php foreach ($codigosWhatsapp as $codigo => $pais): ?>
+                                        <option value="<?= e($codigo) ?>"><?= e($pais) ?></option>
+                                    <?php endforeach; ?>
+                                </datalist>
+                                <div class="form-text">Prefijo usado para generar enlaces wa.me. Ejemplo Mexico: +52.</div>
+                            <?php elseif ($tipo === 'text'): ?>
                                 <textarea class="form-control" id="<?= e($id) ?>" name="config[<?= e($clave) ?>]" rows="4"><?= e($valor) ?></textarea>
                             <?php elseif ($tipo === 'number'): ?>
                                 <input class="form-control" id="<?= e($id) ?>" type="number" step="0.01" name="config[<?= e($clave) ?>]" value="<?= e($valor) ?>" data-money>
@@ -69,7 +103,9 @@
                                 <div class="form-text">Puedes pegar una URL/ruta o subir un JPG, PNG o WEBP.</div>
                             <?php endif; ?>
 
-                            <div class="form-text">Tipo: <?= e($tipo) ?></div>
+                            <?php if (!in_array($clave, ['sistema.moneda', 'whatsapp.codigo_pais'], true)): ?>
+                                <div class="form-text">Tipo: <?= e($tipo) ?></div>
+                            <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                 </div>

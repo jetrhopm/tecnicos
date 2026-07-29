@@ -22,7 +22,26 @@ function calcularSaldo(float|int $total, float|int $pagosRealizados): float
     return round(max(0, (float) $total - max(0, (float) $pagosRealizados)), 2);
 }
 
-function formatearMoneda(float|int $monto, string $moneda = 'MXN'): string
+function monedaSistema(string $default = 'MXN'): string
 {
+    static $moneda = null;
+    if ($moneda !== null) {
+        return $moneda;
+    }
+
+    try {
+        $valor = (string) (new \App\Services\ConfiguracionService())->get('sistema.moneda', $default);
+        $valor = strtoupper(preg_replace('/[^A-Za-z]/', '', $valor) ?? '');
+        $moneda = strlen($valor) === 3 ? $valor : $default;
+    } catch (\Throwable) {
+        $moneda = $default;
+    }
+
+    return $moneda;
+}
+
+function formatearMoneda(float|int $monto, ?string $moneda = null): string
+{
+    $moneda = $moneda !== null ? strtoupper($moneda) : monedaSistema();
     return '$' . number_format((float) $monto, 2) . ' ' . $moneda;
 }

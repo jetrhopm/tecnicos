@@ -11,8 +11,28 @@ function crearMensajeWhatsapp(string $plantilla, array $datos): string
     return $plantilla;
 }
 
-function linkWhatsapp(string $telefono, string $mensaje, string $codigoPais = '52'): string
+function codigoPaisWhatsapp(string $default = '52'): string
 {
+    static $codigo = null;
+    if ($codigo !== null) {
+        return $codigo;
+    }
+
+    try {
+        $valor = (string) (new \App\Services\ConfiguracionService())->get('whatsapp.codigo_pais', $default);
+        $valor = preg_replace('/\D+/', '', $valor) ?? '';
+        $codigo = $valor !== '' ? substr($valor, 0, 4) : $default;
+    } catch (\Throwable) {
+        $codigo = $default;
+    }
+
+    return $codigo;
+}
+
+function linkWhatsapp(string $telefono, string $mensaje, ?string $codigoPais = null): string
+{
+    $codigoPais = preg_replace('/\D+/', '', (string) ($codigoPais ?? codigoPaisWhatsapp())) ?? '52';
+    $codigoPais = $codigoPais !== '' ? $codigoPais : '52';
     $telefono = normalizarTelefono($telefono);
     if (!str_starts_with($telefono, $codigoPais)) {
         $telefono = $codigoPais . $telefono;

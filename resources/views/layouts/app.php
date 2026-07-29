@@ -10,10 +10,12 @@ $success = Session::flash('success');
 $error = Session::flash('error');
 $appConfig = require BASE_PATH . '/config/app.php';
 $systemName = (string) ($appConfig['name'] ?? 'Servicio Tecnico');
+$systemCurrency = 'MXN';
 $businessLogo = '';
 try {
     $cfg = new ConfiguracionService();
     $systemName = trim((string) $cfg->get('sistema.nombre', $systemName)) ?: $systemName;
+    $systemCurrency = monedaSistema($systemCurrency);
     $businessLogo = config_asset_src((string) $cfg->get('negocio.logo_url', ''));
 } catch (Throwable) {
     $businessLogo = '';
@@ -159,7 +161,7 @@ $mobileQuickNav = array_values($mobileQuickNav);
         })();
     </script>
 </head>
-<body>
+<body data-currency="<?= e($systemCurrency) ?>">
 <div class="sidebar-backdrop" data-sidebar-close></div>
 <div class="app-shell">
     <aside class="sidebar" id="app-sidebar">
@@ -291,7 +293,7 @@ $mobileQuickNav = array_values($mobileQuickNav);
     </nav>
 <?php endif; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="<?= e(asset('js/app.js') . '?v=20260708-pos-ticket-draft') ?>"></script>
+<script src="<?= e(asset('js/app.js') . '?v=20260729-currency-whatsapp') ?>"></script>
 <script src="<?= e(asset('js/theme-switcher.js') . '?v=20260729-blueprint-default') ?>"></script>
 <?php foreach (($pageScripts ?? []) as $script): ?>
     <script src="<?= e($script) ?>"></script>
